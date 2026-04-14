@@ -1,4 +1,4 @@
-import logoImage from '@/components/app/assets/5e7ebd15b35a38fb59d8739e5d44ab9c2a0e359f.png';
+import logoImage from '@/assets/5e7ebd15b35a38fb59d8739e5d44ab9c2a0e359f.png';
 
 interface MembershipCardProps {
   name: string;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { X, Star, Check } from 'lucide-react';
-import { Partner, Benefit } from '@/components/app/data/partnersData';
+import { Partner, Benefit } from '@/data/partnersData';
 
 interface UseBenefitModalProps {
   partner: Partner;

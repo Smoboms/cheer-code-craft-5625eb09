@@ -1,5 +1,5 @@
 import { X, MessageCircle } from 'lucide-react';
-import { Member } from '@/components/app/data/mockData';
+import { Member } from '@/data/mockData';
 
 interface MemberProfileModalProps {
   isOpen: boolean;

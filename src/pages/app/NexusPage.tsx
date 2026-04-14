@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, Users, Calendar, ThumbsUp, MessageSquare, Share2, Check } from 'lucide-react';
-import { mockPosts } from '@/components/app/data/mockData';
+import { mockPosts } from '@/data/mockData';
 
 export function NexusPage() {
   const [showPostBox, setShowPostBox] = useState(false);

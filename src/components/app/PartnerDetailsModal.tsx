@@ -1,8 +1,8 @@
 import { X, MapPin, Star, Phone, Clock, Tag, Gift } from 'lucide-react';
-import { Partner, Benefit } from '@/components/app/data/partnersData';
+import { Partner, Benefit } from '@/data/partnersData';
 import { useState, useEffect } from 'react';
-import { UseBenefitModal } from '@/components/app/components/UseBenefitModal';
-import { ImageWithFallback } from '@/components/app/components/figma/ImageWithFallback';
+import { UseBenefitModal } from '@/components/app/UseBenefitModal';
+import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
 
 interface PartnerDetailsModalProps {
   partner: Partner;

@@ -1,5 +1,5 @@
 import { ArrowLeft } from 'lucide-react';
-import { PurchaseHistory } from '@/components/app/components/PurchaseHistory';
+import { PurchaseHistory } from '@/components/app/PurchaseHistory';
 
 interface PurchaseHistoryPageProps {
   onBack: () => void;

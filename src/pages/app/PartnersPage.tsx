@@ -1,7 +1,7 @@
 import { ArrowLeft } from 'lucide-react';
-import { PartnersList } from '@/components/app/components/PartnersList';
-import { PartnerDetailsModal } from '@/components/app/components/PartnerDetailsModal';
-import { Partner } from '@/components/app/data/partnersData';
+import { PartnersList } from '@/components/app/PartnersList';
+import { PartnerDetailsModal } from '@/components/app/PartnerDetailsModal';
+import { Partner } from '@/data/partnersData';
 import { useState } from 'react';
 
 interface PartnersPageProps {

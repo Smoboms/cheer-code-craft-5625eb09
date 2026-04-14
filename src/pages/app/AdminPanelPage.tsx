@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Users, Store, Plus, Edit2, Trash2, X, Eye, EyeOff } from 'lucide-react';
-import { projectId, publicAnonKey } from '/utils/supabase/info';
-import { mockPartners } from '@/components/app/data/partnersData';
+
+import { mockPartners } from '@/data/partnersData';
 
 interface AdminPanelPageProps {
   onBack: () => void;

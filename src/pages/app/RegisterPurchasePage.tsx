@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Search, Calculator, CheckCircle, DollarSign } from 'lucide-react';
-import { mockPartners } from '@/components/app/data/partnersData';
+import { mockPartners } from '@/data/partnersData';
 
 interface RegisterPurchasePageProps {
   onBack: () => void;

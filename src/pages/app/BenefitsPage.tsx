@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Check, Copy, MapPin, Phone, User, Building } from 'lucide-react';
-import { mockBenefits, categories } from '@/components/app/data/mockData';
-import { copyToClipboard } from '@/components/app/utils/clipboard';
+import { mockBenefits, categories } from '@/data/mockData';
+import { copyToClipboard } from '@/utils/clipboard';
 
 interface CouponData {
   code: string;

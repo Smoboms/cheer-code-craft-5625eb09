@@ -1,5 +1,5 @@
 import { ArrowLeft } from 'lucide-react';
-import { BecomePartner } from '@/components/app/components/BecomePartner';
+import { BecomePartner } from '@/components/app/BecomePartner';
 
 interface BecomePartnerPageProps {
   onBack: () => void;

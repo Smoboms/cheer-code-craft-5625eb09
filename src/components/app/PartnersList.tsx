@@ -1,7 +1,7 @@
 import { MapPin, Star, Tag, Search, Filter, Heart } from 'lucide-react';
 import { useState } from 'react';
 import { PartnerDetailsModal } from '@/components/app/PartnerDetailsModal';
-import { mockPartners as initialPartners, Partner } from '@/components/app/data/partnersData';
+import { mockPartners as initialPartners, Partner } from '@/data/partnersData';
 
 const categories = ['Todos', 'Alimentação', 'Saúde', 'Bem-estar', 'Educação', 'Combustível', 'Serviços'];
 

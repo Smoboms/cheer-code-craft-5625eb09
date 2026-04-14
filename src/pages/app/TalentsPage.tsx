@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Search, ArrowRight, UserPlus, MapPin, Instagram, ChevronDown, ChevronUp, Phone } from 'lucide-react';
-import { talents } from '@/components/app/data/talentsData';
-import { talentCategories } from '@/components/app/data/mockData';
+import { talents } from '@/data/talentsData';
+import { talentCategories } from '@/data/mockData';
 
 export function TalentsPage() {
   const [selectedCategory, setSelectedCategory] = useState('Todos');

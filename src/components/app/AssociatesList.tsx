@@ -1,6 +1,6 @@
 import { Users, TrendingUp, Gift, Share2, Award, Calendar } from 'lucide-react';
 import { useState } from 'react';
-import { copyToClipboard } from '@/components/app/utils/clipboard';
+import { copyToClipboard } from '@/utils/clipboard';
 
 interface Associate {
   id: number;

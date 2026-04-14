@@ -1,5 +1,5 @@
 import { ArrowLeft } from 'lucide-react';
-import { AssociatesList } from '@/components/app/components/AssociatesList';
+import { AssociatesList } from '@/components/app/AssociatesList';
 
 interface AssociatesPageProps {
   onBack: () => void;

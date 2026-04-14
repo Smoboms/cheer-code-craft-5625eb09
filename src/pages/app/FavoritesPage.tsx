@@ -1,5 +1,5 @@
 import { ArrowLeft } from 'lucide-react';
-import { FavoritesList } from '@/components/app/components/FavoritesList';
+import { FavoritesList } from '@/components/app/FavoritesList';
 
 interface FavoritesPageProps {
   onBack: () => void;

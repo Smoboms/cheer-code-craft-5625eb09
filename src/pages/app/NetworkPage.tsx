@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { IdCard, TrendingUp } from 'lucide-react';
-import { DigitalCardModal } from '@/components/app/components/app/DigitalCardModal';
-import { SavingsCalculator } from '@/components/app/components/app/SavingsCalculator';
-import { getTotalBenefitsCount } from '@/components/app/data/partnersData';
-import logoRCard from '@/components/app/assets/e88c6454816224d16b0c3ab8438f10bfae44646a.png';
+import { DigitalCardModal } from '@/components/app/DigitalCardModal';
+import { SavingsCalculator } from '@/components/app/SavingsCalculator';
+import { getTotalBenefitsCount } from '@/data/partnersData';
+import logoRCard from '@/assets/e88c6454816224d16b0c3ab8438f10bfae44646a.png';
 
 interface NetworkPageProps {
   currentUser: {
