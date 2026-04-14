@@ -1,0 +1,152 @@
+import { useState } from 'react';
+import { IdCard, TrendingUp } from 'lucide-react';
+import { DigitalCardModal } from '@/components/app/DigitalCardModal';
+import { SavingsCalculator } from '@/components/app/SavingsCalculator';
+import { getTotalBenefitsCount } from '@/data/partnersData';
+import logoRCard from '@/assets/e88c6454816224d16b0c3ab8438f10bfae44646a.png';
+
+interface NetworkPageProps {
+  currentUser: {
+    name: string;
+    company: string;
+    memberNumber: string;
+    bio: string;
+    photo?: string | null;
+  };
+}
+
+export function NetworkPage({ currentUser }: NetworkPageProps) {
+  const [showCardModal, setShowCardModal] = useState(false);
+
+  // Calcular economia total do localStorage
+  const calculateTotalSavings = (): number => {
+    const currentUserEmail = localStorage.getItem('current_user_email');
+    if (!currentUserEmail) return 0;
+
+    const savingsKey = `savings_${currentUserEmail}`;
+    const savings = JSON.parse(localStorage.getItem(savingsKey) || '[]');
+
+    return savings.reduce((total: number, item: any) => total + (item.savedAmount || 0), 0);
+  };
+
+  const totalSavings = calculateTotalSavings();
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  return (
+    <div className="animate-fadeUp">
+      {/* Section Header */}
+      <div className="mb-6">
+        <div className="flex items-end justify-between mb-2">
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-1">Rede</h2>
+            <p className="text-gray-400 text-sm">50+ empresários conectados</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Membership Card - Black Edition Style */}
+      <div className="bg-gradient-to-br from-black via-gray-900 to-black text-white shadow-2xl aspect-[1.586/1] flex flex-col justify-between p-6 relative overflow-hidden border-2 border-gray-400/40 mb-8">
+        {/* Decorative world map pattern - top right */}
+        <div className="absolute top-0 right-0 w-2/3 h-full opacity-20">
+          <svg viewBox="0 0 400 250" className="w-full h-full">
+            <defs>
+              <pattern id="dots" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+                <circle cx="2" cy="2" r="1.5" fill="currentColor" />
+              </pattern>
+            </defs>
+            <path d="M 100 50 Q 150 30 200 50 T 300 50 L 300 150 Q 250 170 200 150 T 100 150 Z" fill="url(#dots)" />
+            <path d="M 150 80 Q 180 70 210 80 T 270 80 L 270 130 Q 240 140 210 130 T 150 130 Z" fill="url(#dots)" />
+          </svg>
+        </div>
+        
+        {/* R-CARD Logo - Top right corner, large */}
+        <div className="absolute top-4 right-4 z-10">
+          <img src={logoRCard} alt="R-CARD Benefícios" className="h-32 w-auto opacity-40" style={{ filter: 'brightness(0.8)' }} />
+        </div>
+        
+        {/* Header */}
+        <div className="flex items-start justify-between relative z-10">
+          <div className="relative">
+            {/* Badge ASSOCIADO ATIVO - positioned above photo */}
+            <div className="inline-block bg-[#9b59b6] px-2 py-0.5 mb-2">
+              <p className="text-[10px] font-semibold tracking-wide">ASSOCIADO ATIVO</p>
+            </div>
+            {/* User Photo/Initial */}
+            <div className="w-12 h-12 bg-gradient-to-br from-[#FFFFFF] to-[#E0E0E0] flex items-center justify-center border-2 border-[#FFFFFF] flex-shrink-0 overflow-hidden">
+              {currentUser.photo ? (
+                <img src={currentUser.photo} alt={currentUser.name} className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-base font-bold text-black">{getInitials(currentUser.name)}</span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Middle - Name and Card Number */}
+        <div className="flex-1 flex flex-col justify-center relative z-10">
+          <p className="text-base tracking-wider mb-2 font-medium">{currentUser.name}</p>
+          <p className="text-lg tracking-[0.3em] font-mono">{currentUser.memberNumber}</p>
+        </div>
+
+        {/* Bottom - Stats */}
+        <div className="relative z-10">
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="text-xs opacity-70 mb-1">ECONOMIA TOTAL</p>
+              <p className="text-xl font-bold text-green-400">R$ {totalSavings.toFixed(2)}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs opacity-70 mb-1">BENEFÍCIOS</p>
+              <p className="text-xl font-bold">+{getTotalBenefitsCount()}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Digital Card Button */}
+      <button
+        onClick={() => setShowCardModal(true)}
+        className="w-full bg-black hover:bg-gray-950 border-2 border-[#FFFFFF] text-[#FFFFFF] font-bold py-4 text-lg flex items-center justify-center gap-3 transition-colors mb-8"
+      >
+        <IdCard size={22} />
+        Ver Minha Carteirinha
+      </button>
+
+      {/* Total Savings Card - Compressed */}
+      <div className="mb-8 bg-gradient-to-br from-green-500 to-green-600 p-3">
+        <div className="flex items-center gap-3">
+          <TrendingUp size={24} className="text-white flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-white/90 text-xs font-semibold">Economia Total</p>
+            <p className="text-white text-2xl font-bold">R$ {totalSavings.toFixed(2)}</p>
+          </div>
+        </div>
+        <p className="text-white/95 text-xs mt-2">
+          Continue usando seus benefícios para aumentar sua economia!
+        </p>
+      </div>
+
+      {/* Savings Calculator */}
+      <SavingsCalculator />
+
+      {/* Modals */}
+
+      <DigitalCardModal
+        isOpen={showCardModal}
+        onClose={() => setShowCardModal(false)}
+        memberName={currentUser.name}
+        memberCompany={currentUser.company}
+        memberNumber={currentUser.memberNumber}
+        memberPhoto={currentUser.photo}
+      />
+    </div>
+  );
+}
