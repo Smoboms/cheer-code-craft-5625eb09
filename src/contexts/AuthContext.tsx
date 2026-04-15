@@ -50,32 +50,84 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-        checkAdmin(session.user.id);
-      }
-      setIsLoading(false);
-    });
+    let mounted = true;
+    let subscription: { unsubscribe: () => void } | null = null;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+    const initSession = async () => {
+      try {
+        // Clear any corrupted localStorage data that might block session init
+        try {
+          const storageKeys = Object.keys(localStorage);
+          for (const key of storageKeys) {
+            if (key.startsWith('sb-') && key.endsWith('-auth-token')) {
+              const value = localStorage.getItem(key);
+              if (value) {
+                try {
+                  JSON.parse(value);
+                } catch {
+                  console.warn('Removing corrupted auth token from localStorage');
+                  localStorage.removeItem(key);
+                }
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('localStorage cleanup error:', e);
+        }
+
+        const timeoutPromise = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Session timeout')), 5000)
+        );
+
+        const sessionPromise = supabase.auth.getSession();
+        const { data: { session }, error } = await Promise.race([sessionPromise, timeoutPromise]);
+        
+        if (!mounted) return;
+        if (error) {
+          console.error('Error getting session:', error);
+          setIsLoading(false);
+          return;
+        }
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
           await fetchProfile(session.user.id);
           await checkAdmin(session.user.id);
-        } else {
-          setProfile(null);
-          setIsAdmin(false);
         }
-        setIsLoading(false);
+      } catch (err) {
+        console.error('Session init error:', err);
+      } finally {
+        if (mounted) setIsLoading(false);
       }
-    );
+    };
 
-    return () => subscription.unsubscribe();
+    initSession();
+
+    try {
+      const { data } = supabase.auth.onAuthStateChange(
+        async (_event, session) => {
+          if (!mounted) return;
+          setSession(session);
+          setUser(session?.user ?? null);
+          if (session?.user) {
+            await fetchProfile(session.user.id);
+            await checkAdmin(session.user.id);
+          } else {
+            setProfile(null);
+            setIsAdmin(false);
+          }
+          setIsLoading(false);
+        }
+      );
+      subscription = data.subscription;
+    } catch (err) {
+      console.error('Auth state change error:', err);
+    }
+
+    return () => {
+      mounted = false;
+      subscription?.unsubscribe();
+    };
   }, []);
 
   const handleSignIn = async (email: string, password: string) => {
