@@ -3,6 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { LoginPage } from '@/pages/app/LoginPage';
 import { OnboardingPage } from '@/pages/app/OnboardingPage';
 import { ProfilePage } from '@/pages/app/ProfilePage';
+import { AdminPanelPage } from '@/pages/app/AdminPanelPage';
 import { PremiumHeader } from '@/components/app/PremiumHeader';
 import { PremiumBottomNav, TabType } from '@/components/app/PremiumBottomNav';
 import { NetworkPage } from '@/pages/app/NetworkPage';
@@ -14,10 +15,15 @@ function formatCardNumber(cardNumber: string): string {
   return cardNumber.match(/.{1,4}/g)?.join(' ') || cardNumber;
 }
 
+const ADMIN_EMAIL = 'rarquesmatriz@gmail.com';
+
 const Index = () => {
-  const { user, profile, isLoading, signOut, refreshProfile } = useAuth();
+  const { user, profile, isLoading, isAdmin, signOut, refreshProfile } = useAuth();
   const [currentTab, setCurrentTab] = useState<TabType>('rede');
   const [showProfilePage, setShowProfilePage] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+
+  const isAdminUser = isAdmin || user?.email === ADMIN_EMAIL;
 
   if (isLoading) {
     return (
@@ -40,6 +46,15 @@ const Index = () => {
     return <OnboardingPage />;
   }
 
+  if (showAdminPanel && isAdminUser) {
+    return (
+      <AdminPanelPage
+        onBack={() => setShowAdminPanel(false)}
+        accessToken=""
+      />
+    );
+  }
+
   if (showProfilePage && profile) {
     return (
       <ProfilePage
@@ -50,11 +65,15 @@ const Index = () => {
           photo: profile.avatar_url,
         }}
         onUpdateProfile={async (name: string, photo: string | null) => {
-          // Profile updates now handled inside ProfilePage via Supabase
           await refreshProfile();
         }}
         onLogout={async () => {
           await signOut();
+        }}
+        isAdmin={isAdminUser}
+        onAdminPanel={() => {
+          setShowProfilePage(false);
+          setShowAdminPanel(true);
         }}
       />
     );
