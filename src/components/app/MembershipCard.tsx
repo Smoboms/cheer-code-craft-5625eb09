@@ -21,25 +21,24 @@ export function MembershipCard({ name, cardNumber, savings, partners, benefits, 
 
   return (
     <div className="bg-gradient-to-br from-black via-black to-gray-950 text-white shadow-xl aspect-[1.586/1] flex flex-col justify-between p-8 relative overflow-hidden border-2 border-gray-400/40">
+      {/* R-CARD Logo - absolute top right */}
+      <div className="absolute top-4 right-6 text-right z-10">
+        <p className="text-3xl font-bold tracking-wider opacity-40" style={{ fontFamily: 'Cormorant Garamond, serif' }}>R-CARD</p>
+        <p className="text-sm opacity-30 mt-1">Benefícios</p>
+      </div>
+
       {/* Header */}
-      <div className="flex items-start justify-between relative z-10">
-        <div className="flex items-center gap-4">
-          {/* User Photo/Initial */}
-          <div className="w-16 h-16 bg-gradient-to-br from-[#FFFFFF] to-[#E0E0E0] flex items-center justify-center border-2 border-[#FFFFFF] flex-shrink-0 overflow-hidden">
-            {photo ? (
-              <img src={photo} alt={name} className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-xl font-bold text-black">{getInitials(name)}</span>
-            )}
-          </div>
-          <div className="inline-block bg-[#9b59b6] px-4 py-2">
-            <p className="text-sm font-semibold tracking-wide">ASSOCIADO ATIVO</p>
-          </div>
+      <div className="flex items-start gap-4 relative z-10">
+        {/* User Photo/Initial */}
+        <div className="w-16 h-16 bg-gradient-to-br from-[#FFFFFF] to-[#E0E0E0] flex items-center justify-center border-2 border-[#FFFFFF] flex-shrink-0 overflow-hidden">
+          {photo ? (
+            <img src={photo} alt={name} className="w-full h-full object-cover" />
+          ) : (
+            <span className="text-xl font-bold text-black">{getInitials(name)}</span>
+          )}
         </div>
-        {/* R-CARD Logo */}
-        <div className="text-right">
-          <p className="text-3xl font-bold tracking-wider opacity-40" style={{ fontFamily: 'Cormorant Garamond, serif' }}>R-CARD</p>
-          <p className="text-sm opacity-30 mt-1">Benefícios</p>
+        <div className="inline-block bg-[#9b59b6] px-4 py-2">
+          <p className="text-sm font-semibold tracking-wide">ASSOCIADO ATIVO</p>
         </div>
       </div>
 
