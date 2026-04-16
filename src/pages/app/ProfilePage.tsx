@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { ArrowLeft, Camera, User, Mail, LogOut } from 'lucide-react';
+import { ArrowLeft, Camera, User, Mail, LogOut, Shield } from 'lucide-react';
 
 interface ProfilePageProps {
   onBack: () => void;
@@ -10,9 +10,11 @@ interface ProfilePageProps {
   };
   onUpdateProfile: (name: string, photo: string | null) => void;
   onLogout: () => void;
+  onAdminPanel?: () => void;
+  isAdmin?: boolean;
 }
 
-export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout }: ProfilePageProps) {
+export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout, onAdminPanel, isAdmin }: ProfilePageProps) {
   const [name, setName] = useState(userProfile.name);
   const [photo, setPhoto] = useState<string | null>(userProfile.photo);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -127,6 +129,17 @@ export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout }: 
           >
             Salvar alterações
           </button>
+
+          {/* Admin Panel Button */}
+          {isAdmin && onAdminPanel && (
+            <button
+              onClick={onAdminPanel}
+              className="w-full bg-gray-900 text-white font-semibold py-3 hover:bg-gray-800 transition-all flex items-center justify-center gap-2 border border-gray-700"
+            >
+              <Shield size={20} />
+              Painel Administrativo
+            </button>
+          )}
 
           {/* Logout Button */}
           <button
