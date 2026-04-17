@@ -42,6 +42,10 @@ const Index = () => {
     return <LoginPage />;
   }
 
+  if (user && !profile) {
+    return <OnboardingPage />;
+  }
+
   if (profile && !profile.name) {
     return <OnboardingPage />;
   }
