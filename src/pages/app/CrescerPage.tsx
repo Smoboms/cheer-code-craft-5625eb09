@@ -215,7 +215,7 @@ export function CrescerPage() {
     const message = `Oi, fiz o Termômetro do Negócio aqui no app da Rarques e tirei ${diagnosis.score} pontos — classificação: ${diagnosis.classification}. Me identificou bastante na parte de "${diagnosis.mainProblem}". Quero entender o que estou perdendo e como resolver. Posso conversar ${formData.time}.`;
 
     const whatsappNumber = formData.whatsapp.replace(/\D/g, '');
-    const whatsappUrl = `https://wa.me/5562991311776?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/5562981775906?text=${encodeURIComponent(message)}`;
 
     window.open(whatsappUrl, '_blank');
   };
