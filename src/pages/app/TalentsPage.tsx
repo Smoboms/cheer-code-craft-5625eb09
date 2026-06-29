@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, ArrowRight, UserPlus, MapPin, Instagram, ChevronDown, ChevronUp, Phone } from 'lucide-react';
+import { Search, ArrowRight, MapPin, Instagram, ChevronDown, ChevronUp, Phone } from 'lucide-react';
 import { talents } from '@/data/talentsData';
 import { talentCategories } from '@/data/mockData';
 
