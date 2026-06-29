@@ -603,7 +603,7 @@ export const mockBenefits: Benefit[] = [
   },
   {
     id: '25',
-    company: 'Zadoque Educação & Telemedicina',
+    company: 'Zadoque Educação',
     category: 'Saúde',
     discount: '50%',
     discountPercent: 50,
