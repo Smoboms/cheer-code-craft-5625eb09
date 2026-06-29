@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IdCard, TrendingUp } from 'lucide-react';
 import { DigitalCardModal } from '@/components/app/DigitalCardModal';
 import { SavingsCalculator } from '@/components/app/SavingsCalculator';
 import { getTotalBenefitsCount } from '@/data/partnersData';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import logoRCard from '@/assets/e88c6454816224d16b0c3ab8438f10bfae44646a.png';
 
 interface NetworkPageProps {
@@ -16,20 +18,52 @@ interface NetworkPageProps {
 }
 
 export function NetworkPage({ currentUser }: NetworkPageProps) {
+  const { user } = useAuth();
   const [showCardModal, setShowCardModal] = useState(false);
+  const [totalSavings, setTotalSavings] = useState(0);
 
-  // Calcular economia total do localStorage
-  const calculateTotalSavings = (): number => {
-    const currentUserEmail = localStorage.getItem('current_user_email');
-    if (!currentUserEmail) return 0;
+  useEffect(() => {
+    if (!user) {
+      setTotalSavings(0);
+      return;
+    }
+    let active = true;
 
-    const savingsKey = `savings_${currentUserEmail}`;
-    const savings = JSON.parse(localStorage.getItem(savingsKey) || '[]');
+    const loadSavings = async () => {
+      const { data, error } = await supabase
+        .from('purchases')
+        .select('discount_amount')
+        .eq('user_id', user.id);
 
-    return savings.reduce((total: number, item: any) => total + (item.savedAmount || 0), 0);
-  };
+      if (!active) return;
+      if (error) {
+        console.error('Erro ao carregar economia:', error);
+        setTotalSavings(0);
+        return;
+      }
+      const total = (data || []).reduce(
+        (sum, row: any) => sum + Number(row.discount_amount || 0),
+        0,
+      );
+      setTotalSavings(total);
+    };
 
-  const totalSavings = calculateTotalSavings();
+    void loadSavings();
+
+    const channel = supabase
+      .channel(`purchases-${user.id}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'purchases', filter: `user_id=eq.${user.id}` },
+        () => { void loadSavings(); },
+      )
+      .subscribe();
+
+    return () => {
+      active = false;
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
 
   const getInitials = (name: string) => {
     return name
@@ -66,20 +100,18 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
             <path d="M 150 80 Q 180 70 210 80 T 270 80 L 270 130 Q 240 140 210 130 T 150 130 Z" fill="url(#dots)" />
           </svg>
         </div>
-        
+
         {/* R-CARD Logo - Top right corner, large */}
         <div className="absolute top-4 right-4 z-10">
           <img src={logoRCard} alt="R-CARD Benefícios" className="h-32 w-auto opacity-40" style={{ filter: 'brightness(0.8)' }} />
         </div>
-        
+
         {/* Header */}
         <div className="flex items-start justify-between relative z-10">
           <div className="relative">
-            {/* Badge ASSOCIADO ATIVO - positioned above photo */}
             <div className="inline-block bg-[#9b59b6] px-2 py-0.5 mb-2">
               <p className="text-[10px] font-semibold tracking-wide">ASSOCIADO ATIVO</p>
             </div>
-            {/* User Photo/Initial */}
             <div className="w-12 h-12 bg-gradient-to-br from-[#FFFFFF] to-[#E0E0E0] flex items-center justify-center border-2 border-[#FFFFFF] flex-shrink-0 overflow-hidden">
               {currentUser.photo ? (
                 <img src={currentUser.photo} alt={currentUser.name} className="w-full h-full object-cover" />
@@ -111,15 +143,6 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
         </div>
       </div>
 
-      {/* Digital Card Button */}
-      <button
-        onClick={() => setShowCardModal(true)}
-        className="w-full bg-black hover:bg-gray-950 border-2 border-[#FFFFFF] text-[#FFFFFF] font-bold py-4 text-lg flex items-center justify-center gap-3 transition-colors mb-8"
-      >
-        <IdCard size={22} />
-        Ver Minha Carteirinha
-      </button>
-
       {/* Total Savings Card - Compressed */}
       <div className="mb-8 bg-gradient-to-br from-green-500 to-green-600 p-3">
         <div className="flex items-center gap-3">
@@ -137,8 +160,16 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
       {/* Savings Calculator */}
       <SavingsCalculator />
 
-      {/* Modals */}
+      {/* Digital Card Button - moved to the end and compacted */}
+      <button
+        onClick={() => setShowCardModal(true)}
+        className="w-full bg-black hover:bg-gray-950 border border-white/80 text-white font-semibold py-2.5 text-sm flex items-center justify-center gap-2 transition-colors mt-6"
+      >
+        <IdCard size={16} />
+        Ver Minha Carteirinha
+      </button>
 
+      {/* Modals */}
       <DigitalCardModal
         isOpen={showCardModal}
         onClose={() => setShowCardModal(false)}
