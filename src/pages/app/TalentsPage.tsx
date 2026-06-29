@@ -36,15 +36,11 @@ export function TalentsPage() {
     <div className="animate-fadeUp">
       {/* Section Header */}
       <div className="mb-6">
-        <div className="flex items-end justify-between mb-2">
+        <div className="mb-2">
           <div>
             <h2 className="text-2xl font-bold text-white mb-1">i. Talents</h2>
             <p className="text-gray-400 text-sm">Talentos selecionados e curados</p>
           </div>
-          <button className="bg-[#FFFFFF] hover:bg-[#E0E0E0] text-black font-bold px-4 py-2 text-sm flex items-center gap-2 transition-colors">
-            <UserPlus size={16} />
-            Solicitar
-          </button>
         </div>
       </div>
 
