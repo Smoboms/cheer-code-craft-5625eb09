@@ -45,7 +45,7 @@ export function MembershipCard({ name, cardNumber, savings, partners, benefits, 
       {/* Middle - Name and Card Number */}
       <div className="flex-1 flex flex-col justify-center relative z-10">
         <p className="text-lg tracking-wider mb-3 font-medium">{name}</p>
-        <p className="text-2xl tracking-[0.3em] font-mono">{cardNumber}</p>
+        <p className="text-base sm:text-xl tracking-[0.15em] font-mono whitespace-nowrap">{cardNumber}</p>
       </div>
 
       {/* Bottom - Stats */}
