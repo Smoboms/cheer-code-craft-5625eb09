@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD CONSTRAINT profiles_card_number_key UNIQUE (card_number);
