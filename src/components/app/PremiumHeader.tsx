@@ -1,4 +1,4 @@
-import { Bell, Settings } from 'lucide-react';
+import { Settings } from 'lucide-react';
 
 interface PremiumHeaderProps {
   hasNotifications?: boolean;
