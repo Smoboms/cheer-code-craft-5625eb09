@@ -1,4 +1,4 @@
-import { Bell, Settings } from 'lucide-react';
+import { Settings } from 'lucide-react';
 
 interface PremiumHeaderProps {
   hasNotifications?: boolean;
@@ -23,15 +23,6 @@ export function PremiumHeader({ hasNotifications = true, onNotificationsClick, o
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <button 
-            onClick={onNotificationsClick}
-            className="w-10 h-10 bg-gray-900 flex items-center justify-center hover:bg-gray-800 transition-colors relative"
-          >
-            <Bell size={18} className="text-white" />
-            {hasNotifications && (
-              <span className="absolute top-2 right-2 w-2 h-2 bg-[#FFFFFF] rounded-full"></span>
-            )}
-          </button>
           <button 
             onClick={onSettingsClick}
             className="w-10 h-10 bg-gray-900 flex items-center justify-center hover:bg-gray-800 transition-colors"

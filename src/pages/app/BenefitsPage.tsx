@@ -104,7 +104,7 @@ export function BenefitsPage() {
       </div>
 
       {/* Category Filters */}
-      <div className="mb-6 overflow-x-auto pb-2 -mx-4 px-4">
+      <div className="mb-6 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4">
         <div className="flex gap-2 min-w-max">
           {categories.map((category) => (
             <button
@@ -123,7 +123,7 @@ export function BenefitsPage() {
       </div>
 
       {/* City Filters */}
-      <div className="mb-6 overflow-x-auto pb-2 -mx-4 px-4">
+      <div className="mb-6 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4">
         <div className="flex gap-2 min-w-max">
           {cities.map((city) => (
             <button
