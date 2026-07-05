@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { Check, Copy, MapPin, Phone, User, Building } from 'lucide-react';
+import { Check, Copy, MapPin, Phone, User, Building, Loader2 } from 'lucide-react';
 import { mockBenefits, categories } from '@/data/mockData';
 import { copyToClipboard } from '@/utils/clipboard';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 interface CouponData {
   code: string;
