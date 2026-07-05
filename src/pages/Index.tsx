@@ -9,7 +9,7 @@ import { PremiumBottomNav, TabType } from '@/components/app/PremiumBottomNav';
 import { NetworkPage } from '@/pages/app/NetworkPage';
 import { BenefitsPage } from '@/pages/app/BenefitsPage';
 import { CrescerPage } from '@/pages/app/CrescerPage';
-import { TalentsPage } from '@/pages/app/TalentsPage';
+
 
 function formatCardNumber(cardNumber: string): string {
   return cardNumber.match(/.{1,4}/g)?.join(' ') || cardNumber;
