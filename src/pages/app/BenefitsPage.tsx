@@ -304,11 +304,13 @@ export function BenefitsPage() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleGenerateCoupon(benefit.id, benefit.discountPercent);
+                          void handleGenerateCoupon(benefit.id, benefit.discountPercent);
                         }}
-                        className="w-full bg-white hover:bg-gray-100 text-black font-bold py-3 transition-colors"
+                        disabled={savingId === benefit.id}
+                        className="w-full bg-white hover:bg-gray-100 text-black font-bold py-3 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                       >
-                        Gerar Cupom
+                        {savingId === benefit.id && <Loader2 size={18} className="animate-spin" />}
+                        {savingId === benefit.id ? 'Gerando...' : 'Gerar Cupom'}
                       </button>
                     </div>
                   ) : (
