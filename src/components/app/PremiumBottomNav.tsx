@@ -1,6 +1,6 @@
-import { Building2, Tag, TrendingUp, Target } from 'lucide-react';
+import { Building2, Tag, TrendingUp } from 'lucide-react';
 
-export type TabType = 'rede' | 'beneficios' | 'crescer' | 'talentos';
+export type TabType = 'rede' | 'beneficios' | 'crescer';
 
 interface PremiumBottomNavProps {
   activeTab: TabType;
@@ -12,7 +12,6 @@ export function PremiumBottomNav({ activeTab, onTabChange }: PremiumBottomNavPro
     { id: 'rede' as TabType, label: 'Rede', icon: Building2 },
     { id: 'beneficios' as TabType, label: 'Benefícios', icon: Tag },
     { id: 'crescer' as TabType, label: 'Crescer', icon: TrendingUp },
-    { id: 'talentos' as TabType, label: 'Talentos', icon: Target },
   ];
 
   return (
