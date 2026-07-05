@@ -98,7 +98,6 @@ const Index = () => {
         {currentTab === 'rede' && <NetworkPage currentUser={currentUser} />}
         {currentTab === 'beneficios' && <BenefitsPage />}
         {currentTab === 'crescer' && <CrescerPage />}
-        {currentTab === 'talentos' && <TalentsPage />}
       </div>
       <PremiumBottomNav activeTab={currentTab} onTabChange={setCurrentTab} />
     </div>
