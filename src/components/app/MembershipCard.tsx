@@ -38,7 +38,7 @@ export function MembershipCard({ name, cardNumber, savings, partners, benefits, 
           )}
         </div>
         <div className="inline-block bg-[#9b59b6] px-4 py-2">
-          <p className="text-sm font-semibold tracking-wide">ASSOCIADO ATIVO</p>
+          <p className="text-sm font-semibold tracking-wide">MEMBRO ATIVO</p>
         </div>
       </div>
 
