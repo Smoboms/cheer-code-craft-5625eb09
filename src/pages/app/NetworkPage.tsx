@@ -110,7 +110,7 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
         <div className="flex items-start justify-between relative z-10">
           <div className="relative">
             <div className="inline-block bg-[#9b59b6] px-2 py-0.5 mb-2">
-              <p className="text-[10px] font-semibold tracking-wide">ASSOCIADO ATIVO</p>
+              <p className="text-[10px] font-semibold tracking-wide">MEMBRO ATIVO</p>
             </div>
             <div className="w-12 h-12 bg-gradient-to-br from-[#FFFFFF] to-[#E0E0E0] flex items-center justify-center border-2 border-[#FFFFFF] flex-shrink-0 overflow-hidden">
               {currentUser.photo ? (

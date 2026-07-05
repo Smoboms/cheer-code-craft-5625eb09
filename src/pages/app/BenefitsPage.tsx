@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { Check, Copy, MapPin, Phone, User, Building } from 'lucide-react';
+import { Check, Copy, MapPin, Phone, User, Building, Loader2 } from 'lucide-react';
 import { mockBenefits, categories } from '@/data/mockData';
 import { copyToClipboard } from '@/utils/clipboard';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 interface CouponData {
   code: string;
@@ -11,14 +14,15 @@ interface CouponData {
 }
 
 export function BenefitsPage() {
+  const { user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState('Todos');
   const [selectedCity, setSelectedCity] = useState('Todas');
   const [expandedBenefit, setExpandedBenefit] = useState<string | null>(null);
   const [generatedCoupons, setGeneratedCoupons] = useState<Map<string, CouponData>>(new Map());
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
   const [purchaseValues, setPurchaseValues] = useState<Map<string, string>>(new Map());
+  const [savingId, setSavingId] = useState<string | null>(null);
 
-  // Extrair cidades únicas dos benefícios
   const cities = ['Todas', ...Array.from(new Set(mockBenefits.map(b => b.city)))];
 
   const filteredBenefits = mockBenefits.filter(b => {
@@ -33,44 +37,50 @@ export function BenefitsPage() {
     return `RQS-${prefix}-${random}`;
   };
 
-  const handleGenerateCoupon = (benefitId: string, discountPercent: number) => {
+  const handleGenerateCoupon = async (benefitId: string, discountPercent: number) => {
+    if (!user) {
+      toast.error('Você precisa estar logado para gerar cupons');
+      return;
+    }
     const valueStr = purchaseValues.get(benefitId) || '0';
     const purchaseValue = parseFloat(valueStr.replace(',', '.'));
 
     if (isNaN(purchaseValue) || purchaseValue <= 0) {
-      alert('Por favor, insira um valor válido');
+      toast.error('Por favor, insira um valor válido');
       return;
     }
 
-    const savedAmount = (purchaseValue * discountPercent) / 100;
     const benefit = mockBenefits.find(b => b.id === benefitId);
+    if (!benefit) return;
 
-    if (benefit) {
-      const couponData: CouponData = {
-        code: generateCouponCode(benefit.company),
+    const savedAmount = (purchaseValue * discountPercent) / 100;
+    const code = generateCouponCode(benefit.company);
+
+    setSavingId(benefitId);
+    const { error } = await supabase.from('purchases').insert({
+      user_id: user.id,
+      amount: purchaseValue,
+      discount_amount: savedAmount,
+      benefit_used: benefit.company,
+      coupon_code: code,
+    });
+    setSavingId(null);
+
+    if (error) {
+      console.error('Erro ao registrar cupom:', error);
+      toast.error('Não foi possível registrar o cupom. Tente novamente.');
+      return;
+    }
+
+    setGeneratedCoupons(prev =>
+      new Map(prev).set(benefitId, {
+        code,
         purchaseValue,
         savedAmount,
         date: new Date().toISOString(),
-      };
-
-      // Salvar cupom gerado
-      setGeneratedCoupons(prev => new Map(prev).set(benefitId, couponData));
-
-      // Salvar economia total no localStorage
-      const currentUser = localStorage.getItem('current_user_email');
-      if (currentUser) {
-        const savingsKey = `savings_${currentUser}`;
-        const existingSavings = JSON.parse(localStorage.getItem(savingsKey) || '[]');
-        existingSavings.push({
-          benefitId,
-          company: benefit.company,
-          savedAmount,
-          purchaseValue,
-          date: couponData.date,
-        });
-        localStorage.setItem(savingsKey, JSON.stringify(existingSavings));
-      }
-    }
+      }),
+    );
+    toast.success(`Cupom gerado! Você economizou R$ ${savedAmount.toFixed(2)}`);
   };
 
   const handleCopyCoupon = (code: string) => {
@@ -294,11 +304,13 @@ export function BenefitsPage() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleGenerateCoupon(benefit.id, benefit.discountPercent);
+                          void handleGenerateCoupon(benefit.id, benefit.discountPercent);
                         }}
-                        className="w-full bg-white hover:bg-gray-100 text-black font-bold py-3 transition-colors"
+                        disabled={savingId === benefit.id}
+                        className="w-full bg-white hover:bg-gray-100 text-black font-bold py-3 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                       >
-                        Gerar Cupom
+                        {savingId === benefit.id && <Loader2 size={18} className="animate-spin" />}
+                        {savingId === benefit.id ? 'Gerando...' : 'Gerar Cupom'}
                       </button>
                     </div>
                   ) : (
