@@ -73,12 +73,6 @@ export function DigitalCardModal({ isOpen, onClose, memberName, memberCompany, m
             <p className="text-[#FFFFFF] text-lg font-mono tracking-wider">{memberNumber}</p>
           </div>
 
-          {/* QR Code */}
-          <div className="flex justify-center mb-6">
-            <div className="bg-white p-4">
-              <QRCodeSVG value={qrData} size={160} level="H" />
-            </div>
-          </div>
 
           {/* Badge */}
           <div className="bg-gradient-to-r from-[#FFFFFF]/20 to-transparent border border-[#FFFFFF] p-3 text-center mb-6">
