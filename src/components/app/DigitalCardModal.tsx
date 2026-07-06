@@ -52,7 +52,7 @@ export function DigitalCardModal({ isOpen, onClose, memberName, memberCompany, m
           {/* Company */}
           <div className="text-center mb-6 pb-6 border-b border-gray-700">
             <h3 className="text-2xl font-bold text-white mb-1">{memberCompany}</h3>
-            <p className="text-gray-400 text-sm">Empresa Associada</p>
+            <p className="text-gray-400 text-sm">Membro Associado</p>
           </div>
 
           {/* Member info with photo */}
