@@ -1,5 +1,4 @@
 import { X } from 'lucide-react';
-import { QRCodeSVG } from 'qrcode.react';
 
 interface DigitalCardModalProps {
   isOpen: boolean;
@@ -13,7 +12,6 @@ interface DigitalCardModalProps {
 export function DigitalCardModal({ isOpen, onClose, memberName, memberCompany, memberNumber, memberPhoto }: DigitalCardModalProps) {
   if (!isOpen) return null;
 
-  const qrData = `RARQUES-${memberNumber}`;
 
   const getInitials = (name: string) => {
     return name
