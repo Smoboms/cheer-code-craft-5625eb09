@@ -23,8 +23,9 @@ export function DigitalCardModal({ isOpen, onClose, memberName, memberCompany, m
   };
 
   return (
-    <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 animate-fadeIn">
-      <div className="max-w-md w-full bg-gradient-to-br from-black via-gray-900 to-black border-2 border-[#FFFFFF] relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+      <div className="max-w-md w-full bg-gradient-to-br from-black via-gray-900 to-black border-2 border-[#FFFFFF] rounded-lg shadow-2xl relative overflow-hidden">
+
         {/* Decorative corners */}
         <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-[#FFFFFF]/30"></div>
         <div className="absolute top-0 right-0 w-20 h-20 border-t-4 border-r-4 border-[#FFFFFF]/30"></div>
