@@ -85,7 +85,7 @@ const Index = () => {
 
   const currentUser = {
     name: profile?.name || 'Usuário',
-    company: profile?.company || 'Empresa Associada',
+    company: profile?.company || 'Rarques Association',
     memberNumber: formatCardNumber(profile?.card_number || '0000000000000000'),
     bio: profile?.bio || 'Membro da Rarques Association',
     photo: profile?.avatar_url || null,
