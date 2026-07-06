@@ -1,4 +1,4 @@
-import { Building2, Tag, TrendingUp } from 'lucide-react';
+import { CreditCard, Tag, TrendingUp } from 'lucide-react';
 
 export type TabType = 'rede' | 'beneficios' | 'crescer';
 
@@ -9,7 +9,7 @@ interface PremiumBottomNavProps {
 
 export function PremiumBottomNav({ activeTab, onTabChange }: PremiumBottomNavProps) {
   const tabs = [
-    { id: 'rede' as TabType, label: 'Rede', icon: Building2 },
+    { id: 'rede' as TabType, label: 'R-CARD', icon: CreditCard },
     { id: 'beneficios' as TabType, label: 'Benefícios', icon: Tag },
     { id: 'crescer' as TabType, label: 'Crescer', icon: TrendingUp },
   ];
