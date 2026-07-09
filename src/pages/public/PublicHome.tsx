@@ -11,6 +11,9 @@ export default function PublicHome() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [slide, setSlide] = useState(0);
+  const banner = usePublicBanner();
+
+
 
   const featuredCompanies = mockPartners.slice(0, 5);
   const featuredArticles = journalArticles.filter((a) => a.featured);
