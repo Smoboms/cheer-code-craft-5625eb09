@@ -66,8 +66,7 @@ const Index = () => {
         onLogout={async () => { await signOut(); }}
         isAdmin={isAdminUser}
         onAdminPanel={() => {
-          setCurrentTab('inicio');
-          setShowAdminPanel(true);
+          window.location.assign('/admin');
         }}
       />
     );
