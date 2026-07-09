@@ -64,6 +64,10 @@ export function AdminPanelPage({ onBack }: AdminPanelPageProps) {
   // Photo upload
   const [uploadingPhoto, setUploadingPhoto] = useState<string | null>(null);
 
+  // Public home banner
+  const [banner, setBanner] = useState<PublicBannerConfig>(() => loadBannerConfig());
+
+
   useEffect(() => {
     loadData();
   }, []);
