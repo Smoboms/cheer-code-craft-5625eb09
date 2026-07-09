@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Pencil, Trash2, Image, Save, X, Building, Tag, MapPin, Phone, Globe, Star, Upload } from 'lucide-react';
+import { ArrowLeft, Plus, Pencil, Trash2, Image, Save, X, Building, Tag, MapPin, Phone, Globe, Star, Upload, Megaphone } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { loadBannerConfig, saveBannerConfig, PublicBannerConfig } from '@/data/publicBanner';
 
 interface AdminPanelPageProps {
   onBack: () => void;
   accessToken: string;
 }
 
-type AdminTab = 'partners' | 'categories' | 'cities';
+type AdminTab = 'partners' | 'categories' | 'cities' | 'banner';
+
 
 interface PartnerForm {
   id?: string;
