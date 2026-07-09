@@ -1,6 +1,6 @@
-import { CreditCard, Tag, TrendingUp } from 'lucide-react';
+import { CreditCard, Home, LayoutGrid, Newspaper, Settings } from 'lucide-react';
 
-export type TabType = 'rede' | 'beneficios' | 'crescer';
+export type TabType = 'inicio' | 'rcard' | 'journal' | 'mais' | 'config';
 
 interface PremiumBottomNavProps {
   activeTab: TabType;
@@ -9,9 +9,11 @@ interface PremiumBottomNavProps {
 
 export function PremiumBottomNav({ activeTab, onTabChange }: PremiumBottomNavProps) {
   const tabs = [
-    { id: 'rede' as TabType, label: 'R-CARD', icon: CreditCard },
-    { id: 'beneficios' as TabType, label: 'Benefícios', icon: Tag },
-    { id: 'crescer' as TabType, label: 'Crescer', icon: TrendingUp },
+    { id: 'inicio' as TabType, label: 'Início', icon: Home },
+    { id: 'rcard' as TabType, label: 'R-CARD', icon: CreditCard },
+    { id: 'journal' as TabType, label: 'Journal', icon: Newspaper },
+    { id: 'mais' as TabType, label: 'Mais', icon: LayoutGrid },
+    { id: 'config' as TabType, label: 'Ajustes', icon: Settings },
   ];
 
   return (
@@ -20,19 +22,18 @@ export function PremiumBottomNav({ activeTab, onTabChange }: PremiumBottomNavPro
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
-          
           return (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className="flex flex-col items-center gap-1 px-4 py-1 transition-all"
+              className="flex flex-col items-center gap-1 px-3 py-1 transition-all"
             >
-              <Icon 
-                size={22} 
-                className={isActive ? 'text-[#FFFFFF]' : 'text-gray-400'} 
+              <Icon
+                size={22}
+                className={isActive ? 'text-white' : 'text-gray-400'}
                 strokeWidth={isActive ? 2.5 : 2}
               />
-              <span className={`text-xs ${isActive ? 'text-[#FFFFFF] font-semibold' : 'text-gray-400'}`}>
+              <span className={`text-[11px] ${isActive ? 'text-white font-semibold' : 'text-gray-400'}`}>
                 {tab.label}
               </span>
             </button>
