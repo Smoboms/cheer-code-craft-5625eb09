@@ -87,7 +87,12 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
       </div>
 
       {/* Membership Card - Black Edition Style */}
-      <div className="bg-gradient-to-br from-black via-gray-900 to-black text-white shadow-2xl aspect-[1.586/1] flex flex-col justify-between p-6 relative overflow-hidden border-2 border-gray-400/40 mb-8">
+      <button
+        type="button"
+        onClick={() => setShowCardModal(true)}
+        className="w-full text-left bg-gradient-to-br from-black via-gray-900 to-black text-white shadow-2xl aspect-[1.586/1] flex flex-col justify-between p-6 relative overflow-hidden border-2 border-gray-400/40 mb-8"
+      >
+
         {/* Decorative world map pattern - top right */}
         <div className="absolute top-0 right-0 w-2/3 h-full opacity-20">
           <svg viewBox="0 0 400 250" className="w-full h-full">
