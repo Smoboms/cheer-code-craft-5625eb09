@@ -125,6 +125,8 @@ const Index = () => {
             {currentTab === 'rcard' && <NetworkPage currentUser={currentUser} />}
             {currentTab === 'journal' && <JournalPage onBack={() => setCurrentTab('inicio')} />}
             {currentTab === 'mais' && <MorePage onOpen={setMoreSection} />}
+            {currentTab === 'beneficios' && <BenefitsPage />}
+
           </>
         )}
       </div>
