@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, ArrowRight } from 'lucide-react';
+import { Search, ArrowRight, Megaphone } from 'lucide-react';
 import { mockPartners } from '@/data/partnersData';
 import { journalArticles } from '@/data/journalArticles';
+import { usePublicBanner } from '@/data/publicBanner';
+
+
 
 export default function PublicHome() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [slide, setSlide] = useState(0);
+  const banner = usePublicBanner();
+
+
 
   const featuredCompanies = mockPartners.slice(0, 5);
   const featuredArticles = journalArticles.filter((a) => a.featured);
@@ -25,30 +31,67 @@ export default function PublicHome() {
 
   return (
     <div className="animate-fadeUp pb-4">
-      {/* Banner institucional */}
-      <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 p-5 mb-5">
-        <p className="text-yellow-400 text-[10px] font-semibold tracking-wider mb-2">RARQUES ASSOCIATION</p>
-        <h1 className="text-white text-2xl font-bold leading-tight mb-3">
+      {/* Banner institucional (compacto) */}
+      <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 p-3 mb-3">
+        <p className="text-yellow-400 text-[9px] font-semibold tracking-wider mb-1">RARQUES ASSOCIATION</p>
+        <h1 className="text-white text-lg font-bold leading-tight mb-1.5">
           Conectando empresários e profissionais
         </h1>
-        <p className="text-gray-300 text-sm leading-relaxed mb-4">
-          Uma rede regional que aproxima quem faz negócio acontecer — com benefícios, conteúdo editorial e encontros que geram valor real.
+        <p className="text-gray-300 text-xs leading-snug mb-2.5">
+          Rede regional com benefícios, conteúdo editorial e encontros que geram valor real.
         </p>
         <div className="flex gap-2">
           <Link
             to="/app"
-            className="bg-yellow-500 hover:bg-yellow-400 text-black px-3 py-2 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"
+            className="bg-yellow-500 hover:bg-yellow-400 text-black px-2.5 py-1.5 text-[11px] font-semibold inline-flex items-center gap-1 transition-colors"
           >
-            Seja Associado <ArrowRight size={12} />
+            Seja Associado <ArrowRight size={11} />
           </Link>
           <Link
             to="/empresas"
-            className="border border-white/60 text-white hover:bg-white/10 px-3 py-2 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"
+            className="border border-white/60 text-white hover:bg-white/10 px-2.5 py-1.5 text-[11px] font-semibold inline-flex items-center gap-1 transition-colors"
           >
             Empresas
           </Link>
         </div>
       </div>
+
+      {/* Banner de aviso / anúncio (controlado pelo Admin) */}
+      {banner.active && (banner.title || banner.text) && (
+        <a
+          href={banner.ctaHref || '#'}
+          target={banner.ctaHref?.startsWith('http') ? '_blank' : undefined}
+          rel="noreferrer"
+          className="block bg-[#0b1a3a] border border-yellow-500/40 hover:border-yellow-400 transition-colors mb-4"
+        >
+          <div className="flex items-stretch">
+            <div className="w-16 flex-shrink-0 bg-black/40 flex items-center justify-center overflow-hidden">
+              {banner.imageUrl ? (
+                <img src={banner.imageUrl} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <Megaphone size={22} className="text-yellow-400" />
+              )}
+            </div>
+            <div className="flex-1 p-3 min-w-0">
+              {banner.title && (
+                <p className="text-white text-sm font-semibold leading-tight truncate">{banner.title}</p>
+              )}
+              {banner.text && (
+                <p className="text-gray-300 text-xs leading-snug truncate">{banner.text}</p>
+              )}
+            </div>
+            {banner.ctaLabel && banner.ctaHref && (
+              <div className="flex items-center px-3">
+                <span className="bg-yellow-500 text-black text-[11px] font-semibold px-2.5 py-1.5 inline-flex items-center gap-1">
+                  {banner.ctaLabel} <ArrowRight size={11} />
+                </span>
+              </div>
+            )}
+          </div>
+        </a>
+      )}
+
+
 
       {/* Busca */}
       <form onSubmit={submitSearch} className="relative mb-6">

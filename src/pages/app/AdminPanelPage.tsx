@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Pencil, Trash2, Image, Save, X, Building, Tag, MapPin, Phone, Globe, Star, Upload } from 'lucide-react';
+import { ArrowLeft, Plus, Pencil, Trash2, Image, Save, X, Building, Tag, MapPin, Phone, Globe, Star, Upload, Megaphone } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { loadBannerConfig, saveBannerConfig, PublicBannerConfig } from '@/data/publicBanner';
 
 interface AdminPanelPageProps {
   onBack: () => void;
   accessToken: string;
 }
 
-type AdminTab = 'partners' | 'categories' | 'cities';
+type AdminTab = 'partners' | 'categories' | 'cities' | 'banner';
+
 
 interface PartnerForm {
   id?: string;
@@ -61,6 +63,10 @@ export function AdminPanelPage({ onBack }: AdminPanelPageProps) {
 
   // Photo upload
   const [uploadingPhoto, setUploadingPhoto] = useState<string | null>(null);
+
+  // Public home banner
+  const [banner, setBanner] = useState<PublicBannerConfig>(() => loadBannerConfig());
+
 
   useEffect(() => {
     loadData();
@@ -255,7 +261,13 @@ export function AdminPanelPage({ onBack }: AdminPanelPageProps) {
     { key: 'partners', label: 'Parceiros', icon: Building },
     { key: 'categories', label: 'Categorias', icon: Tag },
     { key: 'cities', label: 'Cidades', icon: MapPin },
+    { key: 'banner', label: 'Banner Home', icon: Megaphone },
   ];
+
+  const handleSaveBanner = () => {
+    saveBannerConfig(banner);
+    toast.success('Banner salvo!');
+  };
 
   return (
     <div className="min-h-screen bg-black">
@@ -544,6 +556,41 @@ export function AdminPanelPage({ onBack }: AdminPanelPageProps) {
                       <p className="text-gray-500 text-sm text-center py-8">Nenhuma cidade cadastrada. Adicione cidades acima.</p>
                     )}
                   </div>
+                </div>
+              )}
+
+              {/* BANNER TAB */}
+              {activeTab === 'banner' && (
+                <div className="space-y-4">
+                  <div className="bg-gray-900 border border-gray-800 p-4">
+                    <label className="flex items-center gap-2 text-white text-sm cursor-pointer">
+                      <input type="checkbox" checked={banner.active}
+                        onChange={e => setBanner({ ...banner, active: e.target.checked })}
+                        className="w-5 h-5" />
+                      Exibir banner na Home do Portal Público
+                    </label>
+                    <p className="text-gray-500 text-xs mt-2">Quando desativado, o banner fica oculto e a Home segue direto do bloco institucional para "Empresas em Destaque".</p>
+                  </div>
+
+                  <input value={banner.title} onChange={e => setBanner({ ...banner, title: e.target.value })}
+                    placeholder="Título curto" className="w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white text-sm" />
+
+                  <input value={banner.text} onChange={e => setBanner({ ...banner, text: e.target.value })}
+                    placeholder="Texto (uma linha)" className="w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white text-sm" />
+
+                  <input value={banner.ctaLabel} onChange={e => setBanner({ ...banner, ctaLabel: e.target.value })}
+                    placeholder="Texto do botão (ex: Saiba mais)" className="w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white text-sm" />
+
+                  <input value={banner.ctaHref} onChange={e => setBanner({ ...banner, ctaHref: e.target.value })}
+                    placeholder="Link do botão (URL ou /caminho)" className="w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white text-sm" />
+
+                  <input value={banner.imageUrl} onChange={e => setBanner({ ...banner, imageUrl: e.target.value })}
+                    placeholder="URL da imagem/ícone (opcional)" className="w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white text-sm" />
+
+                  <button onClick={handleSaveBanner}
+                    className="w-full bg-white text-black font-bold py-3 flex items-center justify-center gap-2 hover:bg-gray-100 transition-colors">
+                    <Save size={20} /> Salvar Banner
+                  </button>
                 </div>
               )}
             </>
