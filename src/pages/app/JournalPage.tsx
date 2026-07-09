@@ -110,6 +110,46 @@ export function JournalPage({ onBack }: Props) {
         ))}
       </div>
 
+      {featured.length > 0 && (
+        <div className="mb-5 relative overflow-hidden bg-gray-900 border border-gray-800">
+          <div
+            className="flex transition-transform duration-500 ease-out"
+            style={{ transform: `translateX(-${slide * 100}%)` }}
+          >
+            {featured.map((a) => (
+              <button
+                type="button"
+                key={a.id}
+                onClick={() => setOpenId(a.id)}
+                className="min-w-full text-left"
+              >
+                <div className="aspect-[16/9] bg-gradient-to-br from-gray-800 to-gray-950" />
+                <div className="p-4">
+                  <p className="text-[10px] font-semibold tracking-wider text-yellow-400 mb-1">
+                    {a.category.toUpperCase()} · DESTAQUE
+                  </p>
+                  <p className="text-white font-semibold mb-1 leading-snug">{a.title}</p>
+                  <p className="text-white text-xs mt-2 underline">Ler matéria completa →</p>
+                </div>
+              </button>
+            ))}
+          </div>
+          {featured.length > 1 && (
+            <div className="flex justify-center gap-1.5 pb-3">
+              {featured.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setSlide(i)}
+                  aria-label={`Destaque ${i + 1}`}
+                  className={`h-1.5 transition-all ${i === slide ? 'w-4 bg-yellow-400' : 'w-1.5 bg-gray-600'}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+
       <div className="space-y-4">
         {list.map((a) => (
           <button
