@@ -24,24 +24,25 @@ export function MorePage({ onOpen }: Props) {
         <p className="text-gray-400 text-sm">Todos os pilares e ferramentas Rarques</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         {items.map((it) => {
           const Icon = it.icon;
           return (
             <button
               key={it.key}
               onClick={() => onOpen(it.key)}
-              className="bg-gray-900 border border-gray-800 hover:border-gray-600 transition-colors p-4 text-left flex flex-col gap-3 aspect-square"
+              className="bg-gray-900 border border-gray-800 hover:border-gray-600 transition-colors p-3 text-left flex flex-col gap-2"
             >
-              <Icon size={28} className={it.accent} />
+              <Icon size={20} className={it.accent} />
               <div className="mt-auto">
-                <p className="text-white font-semibold">{it.label}</p>
-                <p className="text-gray-400 text-xs mt-0.5">{it.desc}</p>
+                <p className="text-white font-semibold text-sm">{it.label}</p>
+                <p className="text-gray-400 text-[11px] mt-0.5 leading-tight">{it.desc}</p>
               </div>
             </button>
           );
         })}
       </div>
+
     </div>
   );
 }
