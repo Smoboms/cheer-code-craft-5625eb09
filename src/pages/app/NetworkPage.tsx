@@ -148,7 +148,8 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
             </div>
           </div>
         </div>
-      </div>
+      </button>
+
 
       {/* Total Savings Card - Compressed */}
       <div className="mb-8 bg-gradient-to-br from-green-500 to-green-600 p-3">
