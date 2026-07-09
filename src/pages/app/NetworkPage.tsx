@@ -123,10 +123,12 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
         </div>
 
         {/* Middle - Name and Card Number */}
-        <div className="flex-1 flex flex-col justify-center relative z-10">
-          <p className="text-base tracking-wider mb-2 font-medium">{currentUser.name}</p>
-          <p className="text-lg tracking-[0.3em] font-mono">{currentUser.memberNumber}</p>
+        <div className="flex-1 flex flex-col justify-center relative z-10 min-w-0">
+          <p className="text-sm sm:text-base tracking-wider mb-2 font-medium truncate">{currentUser.name}</p>
+          <p className="text-sm sm:text-base tracking-[0.15em] font-mono whitespace-nowrap">{currentUser.memberNumber}</p>
+          <p className="text-[10px] opacity-70 mt-1 uppercase truncate">{currentUser.company}</p>
         </div>
+
 
         {/* Bottom - Stats */}
         <div className="relative z-10">
