@@ -9,7 +9,14 @@ import { PremiumBottomNav, TabType } from '@/components/app/PremiumBottomNav';
 import { NetworkPage } from '@/pages/app/NetworkPage';
 import { BenefitsPage } from '@/pages/app/BenefitsPage';
 import { CrescerPage } from '@/pages/app/CrescerPage';
-
+import { HomePage } from '@/pages/app/HomePage';
+import { JournalPage } from '@/pages/app/JournalPage';
+import { MorePage, MoreSection } from '@/pages/app/MorePage';
+import { NexusPage } from '@/pages/app/NexusPage';
+import { ElasPage } from '@/pages/app/ElasPage';
+import { MagnaPage } from '@/pages/app/MagnaPage';
+import { PanoramaPage } from '@/pages/app/PanoramaPage';
+import { MinhaEmpresaPage } from '@/pages/app/MinhaEmpresaPage';
 
 function formatCardNumber(cardNumber: string): string {
   return cardNumber.match(/.{1,4}/g)?.join(' ') || cardNumber;
@@ -19,8 +26,8 @@ const ADMIN_EMAIL = 'rarquesmatriz@gmail.com';
 
 const Index = () => {
   const { user, profile, isLoading, isAdmin, signOut, refreshProfile } = useAuth();
-  const [currentTab, setCurrentTab] = useState<TabType>('rede');
-  const [showProfilePage, setShowProfilePage] = useState(false);
+  const [currentTab, setCurrentTab] = useState<TabType>('inicio');
+  const [moreSection, setMoreSection] = useState<MoreSection | null>(null);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
 
   const isAdminUser = isAdmin || user?.email === ADMIN_EMAIL;
@@ -38,45 +45,28 @@ const Index = () => {
     );
   }
 
-  if (!user) {
-    return <LoginPage />;
-  }
-
-  if (user && !profile) {
-    return <OnboardingPage />;
-  }
-
-  if (profile && !profile.name) {
-    return <OnboardingPage />;
-  }
+  if (!user) return <LoginPage />;
+  if (user && !profile) return <OnboardingPage />;
+  if (profile && !profile.name) return <OnboardingPage />;
 
   if (showAdminPanel && isAdminUser) {
-    return (
-      <AdminPanelPage
-        onBack={() => setShowAdminPanel(false)}
-        accessToken=""
-      />
-    );
+    return <AdminPanelPage onBack={() => setShowAdminPanel(false)} accessToken="" />;
   }
 
-  if (showProfilePage && profile) {
+  if (currentTab === 'config') {
     return (
       <ProfilePage
-        onBack={() => setShowProfilePage(false)}
+        onBack={() => setCurrentTab('inicio')}
         userProfile={{
           email: profile.email || user.email || '',
           name: profile.name,
           photo: profile.avatar_url,
         }}
-        onUpdateProfile={async (name: string, photo: string | null) => {
-          await refreshProfile();
-        }}
-        onLogout={async () => {
-          await signOut();
-        }}
+        onUpdateProfile={async () => { await refreshProfile(); }}
+        onLogout={async () => { await signOut(); }}
         isAdmin={isAdminUser}
         onAdminPanel={() => {
-          setShowProfilePage(false);
+          setCurrentTab('inicio');
           setShowAdminPanel(true);
         }}
       />
@@ -91,15 +81,54 @@ const Index = () => {
     photo: profile?.avatar_url || null,
   };
 
+  const handleTabChange = (tab: TabType) => {
+    setMoreSection(null);
+    setCurrentTab(tab);
+  };
+
+  const renderMoreSection = () => {
+    switch (moreSection) {
+      case 'nexus': return <NexusPage onBack={() => setMoreSection(null)} />;
+      case 'elas': return <ElasPage onBack={() => setMoreSection(null)} />;
+      case 'magna': return <MagnaPage onBack={() => setMoreSection(null)} />;
+      case 'panorama': return <PanoramaPage onBack={() => setMoreSection(null)} />;
+      case 'minhaempresa': return <MinhaEmpresaPage onBack={() => setMoreSection(null)} />;
+      case 'crescer': return (
+        <div className="animate-fadeUp">
+          <button onClick={() => setMoreSection(null)} className="text-gray-300 hover:text-white text-sm mb-3">← Voltar</button>
+          <CrescerPage />
+        </div>
+      );
+      case 'beneficios': return (
+        <div className="animate-fadeUp">
+          <button onClick={() => setMoreSection(null)} className="text-gray-300 hover:text-white text-sm mb-3">← Voltar</button>
+          <BenefitsPage />
+        </div>
+      );
+      default: return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black">
-      <PremiumHeader onSettingsClick={() => setShowProfilePage(true)} />
+      <PremiumHeader onSettingsClick={() => setCurrentTab('config')} />
       <div className="max-w-md mx-auto pt-20 pb-24 px-4">
-        {currentTab === 'rede' && <NetworkPage currentUser={currentUser} />}
-        {currentTab === 'beneficios' && <BenefitsPage />}
-        {currentTab === 'crescer' && <CrescerPage />}
+        {moreSection ? renderMoreSection() : (
+          <>
+            {currentTab === 'inicio' && (
+              <HomePage
+                userName={currentUser.name}
+                onNavigate={handleTabChange}
+                onOpenMore={(s) => { setCurrentTab('mais'); setMoreSection(s); }}
+              />
+            )}
+            {currentTab === 'rcard' && <NetworkPage currentUser={currentUser} />}
+            {currentTab === 'journal' && <JournalPage onBack={() => setCurrentTab('inicio')} />}
+            {currentTab === 'mais' && <MorePage onOpen={setMoreSection} />}
+          </>
+        )}
       </div>
-      <PremiumBottomNav activeTab={currentTab} onTabChange={setCurrentTab} />
+      <PremiumBottomNav activeTab={currentTab} onTabChange={handleTabChange} />
     </div>
   );
 };
