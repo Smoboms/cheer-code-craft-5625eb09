@@ -69,7 +69,7 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
       </div>
 
       {/* Carrossel de banners */}
-      <div className="mb-3 relative overflow-hidden bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-md">
+      <div className="mb-3 relative overflow-hidden bg-gradient-to-br from-gray-900 to-black border border-gray-800">
         <div
           className="flex transition-transform duration-500 ease-out"
           style={{ transform: `translateX(-${slide * 100}%)` }}
@@ -78,7 +78,7 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
             const Icon = b.icon;
             return (
               <div key={i} className="min-w-full p-3">
-                <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 border ${b.accent} mb-2 rounded-sm`}>
+                <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 border ${b.accent} mb-2`}>
                   <Icon size={11} />
                   <p className="text-[10px] font-semibold tracking-wider">{b.title}</p>
                 </div>
@@ -99,23 +99,23 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
               key={i}
               onClick={() => setSlide(i)}
               aria-label={`Slide ${i + 1}`}
-              className={`h-1.5 rounded-full transition-all ${i === slide ? 'w-4 bg-yellow-400' : 'w-1.5 bg-gray-600'}`}
+              className={`h-1.5 transition-all ${i === slide ? 'w-4 bg-yellow-400' : 'w-1.5 bg-gray-600'}`}
             />
           ))}
         </div>
       </div>
 
       {/* Card MEMBRO ATIVO compacto */}
-      <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-md p-3 mb-3 flex items-center justify-between gap-3">
+      <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 p-3 mb-3 flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <div className="inline-block bg-yellow-500/20 border border-yellow-500/40 px-1.5 py-0.5 mb-1 rounded-sm">
+          <div className="inline-block bg-yellow-500/20 border border-yellow-500/40 px-1.5 py-0.5 mb-1">
             <p className="text-[9px] font-semibold tracking-wider text-yellow-400">MEMBRO ATIVO</p>
           </div>
           <p className="text-white text-xs leading-snug">Acesse sua carteirinha e economize com os parceiros.</p>
         </div>
         <button
           onClick={() => onNavigate('rcard')}
-          className="shrink-0 bg-white text-black px-2.5 py-1.5 text-[11px] font-semibold inline-flex items-center gap-1.5 rounded-sm"
+          className="shrink-0 bg-white text-black px-2.5 py-1.5 text-[11px] font-semibold inline-flex items-center gap-1.5"
         >
           <CreditCard size={12} /> R-CARD
         </button>
@@ -123,22 +123,22 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
 
       {/* Grade compacta */}
       <div className="grid grid-cols-2 gap-2">
-        <button onClick={() => onNavigate('journal')} className="bg-gray-900 border border-gray-800 rounded-md p-3 text-left hover:border-gray-600 transition-colors">
+        <button onClick={() => onNavigate('journal')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
           <Newspaper size={18} className="text-white mb-1.5" />
           <p className="text-white font-semibold text-xs">Journal</p>
           <p className="text-gray-400 text-[10px]">Novas matérias</p>
         </button>
-        <button onClick={() => onOpenMore('nexus')} className="bg-gray-900 border border-gray-800 rounded-md p-3 text-left hover:border-gray-600 transition-colors">
+        <button onClick={() => onOpenMore('nexus')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
           <Users size={18} className="text-yellow-400 mb-1.5" />
           <p className="text-white font-semibold text-xs">Nexus</p>
           <p className="text-gray-400 text-[10px]">Próximos encontros</p>
         </button>
-        <button onClick={() => onOpenMore('crescer')} className="bg-gray-900 border border-gray-800 rounded-md p-3 text-left hover:border-gray-600 transition-colors">
+        <button onClick={() => onOpenMore('crescer')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
           <TrendingUp size={18} className="text-green-400 mb-1.5" />
           <p className="text-white font-semibold text-xs">Crescer</p>
           <p className="text-gray-400 text-[10px]">Diagnóstico</p>
         </button>
-        <button onClick={() => onNavigate('mais')} className="bg-gray-900 border border-gray-800 rounded-md p-3 text-left hover:border-gray-600 transition-colors">
+        <button onClick={() => onNavigate('mais')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
           <LayoutGrid size={18} className="text-white mb-1.5" />
           <p className="text-white font-semibold text-xs">Explorar</p>
           <p className="text-gray-400 text-[10px]">Todos os pilares</p>
