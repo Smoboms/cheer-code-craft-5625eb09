@@ -87,7 +87,12 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
       </div>
 
       {/* Membership Card - Black Edition Style */}
-      <div className="bg-gradient-to-br from-black via-gray-900 to-black text-white shadow-2xl aspect-[1.586/1] flex flex-col justify-between p-6 relative overflow-hidden border-2 border-gray-400/40 mb-8">
+      <button
+        type="button"
+        onClick={() => setShowCardModal(true)}
+        className="w-full text-left bg-gradient-to-br from-black via-gray-900 to-black text-white shadow-2xl aspect-[1.586/1] flex flex-col justify-between p-6 relative overflow-hidden border-2 border-gray-400/40 mb-8"
+      >
+
         {/* Decorative world map pattern - top right */}
         <div className="absolute top-0 right-0 w-2/3 h-full opacity-20">
           <svg viewBox="0 0 400 250" className="w-full h-full">
@@ -123,10 +128,12 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
         </div>
 
         {/* Middle - Name and Card Number */}
-        <div className="flex-1 flex flex-col justify-center relative z-10">
-          <p className="text-base tracking-wider mb-2 font-medium">{currentUser.name}</p>
-          <p className="text-lg tracking-[0.3em] font-mono">{currentUser.memberNumber}</p>
+        <div className="flex-1 flex flex-col justify-center relative z-10 min-w-0">
+          <p className="text-sm sm:text-base tracking-wider mb-2 font-medium truncate">{currentUser.name}</p>
+          <p className="text-sm sm:text-base tracking-[0.15em] font-mono whitespace-nowrap">{currentUser.memberNumber}</p>
+          <p className="text-[10px] opacity-70 mt-1 uppercase truncate">{currentUser.company}</p>
         </div>
+
 
         {/* Bottom - Stats */}
         <div className="relative z-10">
@@ -141,7 +148,8 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
             </div>
           </div>
         </div>
-      </div>
+      </button>
+
 
       {/* Total Savings Card - Compressed */}
       <div className="mb-8 bg-gradient-to-br from-green-500 to-green-600 p-3">
