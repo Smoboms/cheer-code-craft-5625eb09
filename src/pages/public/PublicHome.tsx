@@ -4,6 +4,7 @@ import { Search, ArrowRight, Megaphone } from 'lucide-react';
 import { mockPartners } from '@/data/partnersData';
 import { journalArticles } from '@/data/journalArticles';
 import { usePublicBanner } from '@/data/publicBanner';
+import { trackEvent } from '@/lib/analytics';
 
 
 
@@ -17,6 +18,8 @@ export default function PublicHome() {
 
   const featuredCompanies = mockPartners.slice(0, 5);
   const featuredArticles = journalArticles.filter((a) => a.featured);
+
+  useEffect(() => { trackEvent('page_view', 'home', 'Início'); }, []);
 
   useEffect(() => {
     if (featuredCompanies.length < 2) return;

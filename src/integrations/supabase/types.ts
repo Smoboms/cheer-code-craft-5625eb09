@@ -44,6 +44,131 @@ export type Database = {
         }
         Relationships: []
       }
+      additional_cards: {
+        Row: {
+          card_number: string
+          created_at: string
+          holder_name: string
+          id: string
+          is_active: boolean
+          owner_user_id: string
+          relationship: string | null
+          updated_at: string
+        }
+        Insert: {
+          card_number: string
+          created_at?: string
+          holder_name: string
+          id?: string
+          is_active?: boolean
+          owner_user_id: string
+          relationship?: string | null
+          updated_at?: string
+        }
+        Update: {
+          card_number?: string
+          created_at?: string
+          holder_name?: string
+          id?: string
+          is_active?: boolean
+          owner_user_id?: string
+          relationship?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      analytics_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          session_id: string | null
+          target_id: string | null
+          target_label: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          session_id?: string | null
+          target_id?: string | null
+          target_label?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          session_id?: string | null
+          target_id?: string | null
+          target_label?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      article_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      coupons: {
+        Row: {
+          code: string
+          created_at: string
+          discount_percent: number
+          id: string
+          partner_id: string
+          purchase_amount: number
+          savings: number
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          partner_id: string
+          purchase_amount?: number
+          savings?: number
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          partner_id?: string
+          purchase_amount?: number
+          savings?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupons_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       diagnostic_results: {
         Row: {
           answers: Json | null
@@ -103,6 +228,81 @@ export type Database = {
           },
         ]
       }
+      home_carousel_slides: {
+        Row: {
+          active: boolean
+          created_at: string
+          icon: string | null
+          id: string
+          link: string | null
+          sort_order: number
+          text: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          icon?: string | null
+          id?: string
+          link?: string | null
+          sort_order?: number
+          text?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          icon?: string | null
+          id?: string
+          link?: string | null
+          sort_order?: number
+          text?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      journal_articles: {
+        Row: {
+          body: string
+          category: string
+          cover_url: string | null
+          created_at: string
+          excerpt: string
+          featured: boolean
+          id: string
+          published_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          category: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string
+          featured?: boolean
+          id?: string
+          published_at?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          category?: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string
+          featured?: boolean
+          id?: string
+          published_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       partner_benefits: {
         Row: {
           created_at: string
@@ -137,6 +337,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      partner_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
       }
       partner_photos: {
         Row: {
@@ -182,15 +400,20 @@ export type Database = {
           discount: string
           distance: string | null
           id: string
+          instagram: string | null
           is_active: boolean | null
+          is_member: boolean
           logo_url: string | null
           maps_link: string | null
           name: string
+          opening_hours: string | null
           phone: string | null
           profile_image_url: string | null
           rating: number | null
           responsible: string | null
+          status: string
           updated_at: string
+          website: string | null
           whatsapp: string | null
         }
         Insert: {
@@ -204,15 +427,20 @@ export type Database = {
           discount: string
           distance?: string | null
           id?: string
+          instagram?: string | null
           is_active?: boolean | null
+          is_member?: boolean
           logo_url?: string | null
           maps_link?: string | null
           name: string
+          opening_hours?: string | null
           phone?: string | null
           profile_image_url?: string | null
           rating?: number | null
           responsible?: string | null
+          status?: string
           updated_at?: string
+          website?: string | null
           whatsapp?: string | null
         }
         Update: {
@@ -226,15 +454,20 @@ export type Database = {
           discount?: string
           distance?: string | null
           id?: string
+          instagram?: string | null
           is_active?: boolean | null
+          is_member?: boolean
           logo_url?: string | null
           maps_link?: string | null
           name?: string
+          opening_hours?: string | null
           phone?: string | null
           profile_image_url?: string | null
           rating?: number | null
           responsible?: string | null
+          status?: string
           updated_at?: string
+          website?: string | null
           whatsapp?: string | null
         }
         Relationships: []
@@ -248,6 +481,7 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          is_active: boolean
           is_founding: boolean | null
           is_public: boolean | null
           name: string
@@ -266,6 +500,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          is_active?: boolean
           is_founding?: boolean | null
           is_public?: boolean | null
           name?: string
@@ -284,6 +519,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          is_active?: boolean
           is_founding?: boolean | null
           is_public?: boolean | null
           name?: string
@@ -293,6 +529,39 @@ export type Database = {
           user_id?: string
           what_i_offer?: string | null
           what_i_seek?: string | null
+        }
+        Relationships: []
+      }
+      public_home_banner: {
+        Row: {
+          active: boolean
+          cta_href: string
+          cta_label: string
+          id: number
+          image_url: string
+          text: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          cta_href?: string
+          cta_label?: string
+          id?: number
+          image_url?: string
+          text?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          cta_href?: string
+          cta_label?: string
+          id?: number
+          image_url?: string
+          text?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -516,7 +785,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

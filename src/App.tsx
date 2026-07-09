@@ -13,6 +13,15 @@ import PublicJournalArticle from "./pages/public/PublicJournalArticle";
 import PublicCompanies from "./pages/public/PublicCompanies";
 import CompanyProfile from "./pages/public/CompanyProfile";
 import PublicSearch from "./pages/public/PublicSearch";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminEmpresas from "./pages/admin/AdminEmpresas";
+import AdminJournal from "./pages/admin/AdminJournal";
+import AdminCategorias from "./pages/admin/AdminCategorias";
+import AdminAssociados from "./pages/admin/AdminAssociados";
+import AdminCupons from "./pages/admin/AdminCupons";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminBanners from "./pages/admin/AdminBanners";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +42,16 @@ const App = () => (
               <Route path="/buscar" element={<PublicSearch />} />
             </Route>
             <Route path="/app" element={<Index />} />
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="empresas" element={<AdminEmpresas />} />
+              <Route path="journal" element={<AdminJournal />} />
+              <Route path="categorias" element={<AdminCategorias />} />
+              <Route path="associados" element={<AdminAssociados />} />
+              <Route path="cupons" element={<AdminCupons />} />
+              <Route path="analytics" element={<AdminAnalytics />} />
+              <Route path="banners" element={<AdminBanners />} />
+            </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
