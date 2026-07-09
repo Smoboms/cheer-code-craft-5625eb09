@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import logoRCard from '@/assets/e88c6454816224d16b0c3ab8438f10bfae44646a.png';
 
 interface DigitalCardModalProps {
   isOpen: boolean;
@@ -12,79 +13,69 @@ interface DigitalCardModalProps {
 export function DigitalCardModal({ isOpen, onClose, memberName, memberCompany, memberNumber, memberPhoto }: DigitalCardModalProps) {
   if (!isOpen) return null;
 
-
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
+  const getInitials = (name: string) =>
+    name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-      <div className="max-w-md w-full bg-gradient-to-br from-black via-gray-900 to-black border-2 border-[#FFFFFF] rounded-lg shadow-2xl relative overflow-hidden">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-sm bg-gradient-to-br from-black via-gray-900 to-black border-2 border-white/80 shadow-2xl relative"
+      >
+        {/* Close */}
+        <button
+          onClick={onClose}
+          aria-label="Fechar"
+          className="absolute top-2 right-2 w-8 h-8 bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-colors z-10"
+        >
+          <X size={16} className="text-white" />
+        </button>
 
-        {/* Decorative corners */}
-        <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-[#FFFFFF]/30"></div>
-        <div className="absolute top-0 right-0 w-20 h-20 border-t-4 border-r-4 border-[#FFFFFF]/30"></div>
-        <div className="absolute bottom-0 left-0 w-20 h-20 border-b-4 border-l-4 border-[#FFFFFF]/30"></div>
-        <div className="absolute bottom-0 right-0 w-20 h-20 border-b-4 border-r-4 border-[#FFFFFF]/30"></div>
-
-        <div className="relative p-8">
-          {/* Close button */}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-colors"
-          >
-            <X size={18} className="text-white" />
-          </button>
-
-          {/* Logo Rarques */}
-          <div className="text-center mb-6">
-            <h2 className="text-5xl text-white mb-1" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-              R<span className="text-[#FFFFFF]">.</span>
-            </h2>
-            <p className="text-[#FFFFFF] text-xs tracking-widest">RARQUES ASSOCIATION</p>
-          </div>
-
-          {/* Company */}
-          <div className="text-center mb-6 pb-6 border-b border-gray-700">
-            <h3 className="text-2xl font-bold text-white mb-1">{memberCompany}</h3>
-            <p className="text-gray-400 text-sm">Membro Associado</p>
-          </div>
-
-          {/* Member info with photo */}
-          <div className="text-center mb-6">
-            <p className="text-gray-400 text-xs mb-2">MEMBRO</p>
-            {/* Member Photo */}
-            <div className="flex justify-center mb-3">
-              <div className="w-20 h-20 bg-gradient-to-br from-[#FFFFFF] to-[#E0E0E0] flex items-center justify-center border-2 border-[#FFFFFF] overflow-hidden">
-                {memberPhoto ? (
-                  <img src={memberPhoto} alt={memberName} className="w-full h-full object-cover" />
-                ) : (
-                  <span className="text-2xl font-bold text-black">{getInitials(memberName)}</span>
-                )}
-              </div>
+        <div className="relative p-5">
+          {/* R-CARD logo top */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="inline-block bg-yellow-500/20 border border-yellow-500/50 px-2 py-0.5">
+              <p className="text-[10px] font-semibold tracking-wider text-yellow-400">MEMBRO ATIVO</p>
             </div>
-            <p className="text-white text-xl font-semibold mb-3">{memberName}</p>
-            <p className="text-gray-400 text-xs mb-1">NÚMERO DE ASSOCIADO</p>
-            <p className="text-[#FFFFFF] text-lg font-mono tracking-wider">{memberNumber}</p>
+            <img src={logoRCard} alt="R-CARD" className="h-10 w-auto opacity-80" />
           </div>
 
+          {/* Photo + name */}
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-white to-gray-200 flex items-center justify-center border-2 border-white overflow-hidden flex-shrink-0">
+              {memberPhoto ? (
+                <img src={memberPhoto} alt={memberName} className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-lg font-bold text-black">{getInitials(memberName)}</span>
+              )}
+            </div>
+            <div className="min-w-0">
+              <p className="text-white font-semibold text-base truncate">{memberName}</p>
+              <p className="text-gray-400 text-xs truncate">{memberCompany}</p>
+            </div>
+          </div>
 
-          {/* Badge */}
-          <div className="bg-gradient-to-r from-[#FFFFFF]/20 to-transparent border border-[#FFFFFF] p-3 text-center mb-6">
-            <p className="text-[#FFFFFF] text-sm font-semibold">
-              ★ MEMBRO ATIVO — RARQUES ASSOCIATION
+          {/* Card number */}
+          <div className="border-t border-gray-700 pt-4">
+            <p className="text-gray-400 text-[10px] tracking-widest mb-1">NÚMERO DO CARTÃO</p>
+            <p className="text-white text-base sm:text-lg font-mono tracking-[0.2em] whitespace-nowrap overflow-hidden text-ellipsis">
+              {memberNumber}
             </p>
           </div>
 
-          {/* Close button */}
+          {/* Brand strip */}
+          <div className="mt-4 border border-white/40 p-2 text-center">
+            <p className="text-white text-[11px] tracking-wider font-semibold">
+              RARQUES ASSOCIATION · R-CARD
+            </p>
+          </div>
+
           <button
             onClick={onClose}
-            className="w-full bg-[#FFFFFF] hover:bg-[#E0E0E0] text-black font-bold py-3 transition-colors"
+            className="w-full mt-4 bg-white hover:bg-gray-200 text-black font-semibold py-2.5 text-sm transition-colors"
           >
             Fechar
           </button>
