@@ -19,6 +19,8 @@ export default function PublicHome() {
   const featuredCompanies = mockPartners.slice(0, 5);
   const featuredArticles = journalArticles.filter((a) => a.featured);
 
+  useEffect(() => { trackEvent('page_view', 'home', 'Início'); }, []);
+
   useEffect(() => {
     if (featuredCompanies.length < 2) return;
     const id = setInterval(() => setSlide((s) => (s + 1) % featuredCompanies.length), 4500);
