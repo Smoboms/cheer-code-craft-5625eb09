@@ -32,14 +32,14 @@ export async function trackEvent(
 ) {
   try {
     const { data: { user } } = await supabase.auth.getUser();
-    await supabase.from('analytics_events').insert({
+    await supabase.from('analytics_events').insert([{
       event_type,
       target_id: target_id ?? null,
       target_label: target_label ?? null,
       user_id: user?.id ?? null,
       session_id: getSessionId(),
-      metadata: metadata ?? null,
-    });
+      metadata: (metadata ?? null) as any,
+    }]);
   } catch (e) {
     console.warn('analytics track failed', e);
   }
