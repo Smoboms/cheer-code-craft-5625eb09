@@ -53,9 +53,18 @@ const articles = [
 export function JournalPage({ onBack }: Props) {
   const [active, setActive] = useState<(typeof categories)[number]>('Todas');
   const [openId, setOpenId] = useState<number | null>(null);
+  const [slide, setSlide] = useState(0);
 
   const list = active === 'Todas' ? articles : articles.filter((a) => a.category === active);
+  const featured = articles.filter((a) => a.featured);
   const openArticle = articles.find((a) => a.id === openId);
+
+  useEffect(() => {
+    if (featured.length < 2) return;
+    const id = setInterval(() => setSlide((s) => (s + 1) % featured.length), 4500);
+    return () => clearInterval(id);
+  }, [featured.length]);
+
 
   if (openArticle) {
     return (
