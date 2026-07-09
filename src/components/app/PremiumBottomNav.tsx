@@ -1,6 +1,6 @@
-import { CreditCard, Home, LayoutGrid, Newspaper, Settings } from 'lucide-react';
+import { CreditCard, Home, LayoutGrid, Newspaper, Tag } from 'lucide-react';
 
-export type TabType = 'inicio' | 'rcard' | 'journal' | 'mais' | 'config';
+export type TabType = 'inicio' | 'rcard' | 'journal' | 'mais' | 'beneficios' | 'config';
 
 interface PremiumBottomNavProps {
   activeTab: TabType;
@@ -13,8 +13,9 @@ export function PremiumBottomNav({ activeTab, onTabChange }: PremiumBottomNavPro
     { id: 'rcard' as TabType, label: 'R-CARD', icon: CreditCard },
     { id: 'journal' as TabType, label: 'Journal', icon: Newspaper },
     { id: 'mais' as TabType, label: 'Mais', icon: LayoutGrid },
-    { id: 'config' as TabType, label: 'Ajustes', icon: Settings },
+    { id: 'beneficios' as TabType, label: 'Benefícios', icon: Tag },
   ];
+
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-800 z-50">

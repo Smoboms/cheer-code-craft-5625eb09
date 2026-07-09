@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
+
 
 interface Props { onBack: () => void; }
 
@@ -12,6 +13,7 @@ const articles = [
     title: 'O que o novo ciclo de juros muda para o varejo regional',
     excerpt: 'Uma leitura prática de como o custo do dinheiro afeta estoque, crédito ao consumidor e margem.',
     body: 'A recente inflexão da política monetária redesenha o cenário de crédito no varejo regional. Empresas que dependem de giro rápido precisam recalibrar prazos com fornecedores e revisitar a política de parcelamento ao cliente final. Ao mesmo tempo, o momento abre janela para renegociar dívidas antigas em condições mais favoráveis. O Associado que entender esse movimento antes da concorrência sai na frente.',
+    featured: true,
   },
   {
     id: 2,
@@ -19,6 +21,7 @@ const articles = [
     title: 'Consumo local em alta: o mapa das oportunidades',
     excerpt: 'Setores que mais crescem na região e onde o dinheiro do consumidor está indo de fato.',
     body: 'Dados de movimentação do trimestre mostram crescimento acima da média em três setores: gastronomia, bem-estar e serviços recorrentes. A leitura correta desse dado não é copiar o vizinho, e sim identificar em que ponto da sua operação já existe demanda reprimida que pode ser convertida em receita adicional imediata.',
+    featured: false,
   },
   {
     id: 3,
@@ -26,6 +29,7 @@ const articles = [
     title: 'Sucessão que não trava a empresa',
     excerpt: 'Como preparar a próxima geração sem parar o motor que faz a operação girar hoje.',
     body: 'A sucessão bem feita não é um evento, é um processo. Começa por separar governança de operação, segue por criar autonomia de decisão em camadas intermediárias e termina com o fundador migrando para conselho antes de sair do dia a dia. Empresas familiares que atropelam esse rito costumam pagar caro dois anos depois.',
+    featured: true,
   },
   {
     id: 4,
@@ -33,6 +37,7 @@ const articles = [
     title: 'Infraestrutura logística e o próximo salto',
     excerpt: 'Obras em andamento e o impacto direto no custo de operar na região.',
     body: 'Duas frentes de infraestrutura em execução prometem reduzir o custo logístico regional em até dois dígitos nos próximos 24 meses. Para o Associado que trabalha com distribuição, isso significa espaço para renegociar frete, revisar praças atendidas e, principalmente, considerar novos mercados que hoje ficam fora do raio economicamente viável.',
+    featured: false,
   },
   {
     id: 5,
@@ -40,15 +45,26 @@ const articles = [
     title: 'IA na pequena empresa: por onde começar sem queimar caixa',
     excerpt: 'Três frentes de aplicação prática que já pagam o investimento no primeiro trimestre.',
     body: 'Ignorar IA em 2026 é o equivalente a ignorar internet em 2005. Mas adotar mal é queimar dinheiro. As três frentes que mais rápido retornam para empresas regionais são: atendimento (redução de tempo de resposta), operações internas (relatórios e conciliações) e prospecção (qualificação de leads). Comece por uma, meça, avance.',
+    featured: true,
   },
 ];
+
 
 export function JournalPage({ onBack }: Props) {
   const [active, setActive] = useState<(typeof categories)[number]>('Todas');
   const [openId, setOpenId] = useState<number | null>(null);
+  const [slide, setSlide] = useState(0);
 
   const list = active === 'Todas' ? articles : articles.filter((a) => a.category === active);
+  const featured = articles.filter((a) => a.featured);
   const openArticle = articles.find((a) => a.id === openId);
+
+  useEffect(() => {
+    if (featured.length < 2) return;
+    const id = setInterval(() => setSlide((s) => (s + 1) % featured.length), 4500);
+    return () => clearInterval(id);
+  }, [featured.length]);
+
 
   if (openArticle) {
     return (
@@ -93,6 +109,46 @@ export function JournalPage({ onBack }: Props) {
           </button>
         ))}
       </div>
+
+      {featured.length > 0 && (
+        <div className="mb-5 relative overflow-hidden bg-gray-900 border border-gray-800">
+          <div
+            className="flex transition-transform duration-500 ease-out"
+            style={{ transform: `translateX(-${slide * 100}%)` }}
+          >
+            {featured.map((a) => (
+              <button
+                type="button"
+                key={a.id}
+                onClick={() => setOpenId(a.id)}
+                className="min-w-full text-left"
+              >
+                <div className="aspect-[16/9] bg-gradient-to-br from-gray-800 to-gray-950" />
+                <div className="p-4">
+                  <p className="text-[10px] font-semibold tracking-wider text-yellow-400 mb-1">
+                    {a.category.toUpperCase()} · DESTAQUE
+                  </p>
+                  <p className="text-white font-semibold mb-1 leading-snug">{a.title}</p>
+                  <p className="text-white text-xs mt-2 underline">Ler matéria completa →</p>
+                </div>
+              </button>
+            ))}
+          </div>
+          {featured.length > 1 && (
+            <div className="flex justify-center gap-1.5 pb-3">
+              {featured.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setSlide(i)}
+                  aria-label={`Destaque ${i + 1}`}
+                  className={`h-1.5 transition-all ${i === slide ? 'w-4 bg-yellow-400' : 'w-1.5 bg-gray-600'}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
 
       <div className="space-y-4">
         {list.map((a) => (
