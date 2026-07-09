@@ -4,6 +4,7 @@ import { Search, ArrowRight, Megaphone } from 'lucide-react';
 import { mockPartners } from '@/data/partnersData';
 import { journalArticles } from '@/data/journalArticles';
 import { usePublicBanner } from '@/data/publicBanner';
+import { trackEvent } from '@/lib/analytics';
 
 
 
