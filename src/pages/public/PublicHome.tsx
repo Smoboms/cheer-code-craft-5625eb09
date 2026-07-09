@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, ArrowRight } from 'lucide-react';
+import { Search, ArrowRight, Megaphone } from 'lucide-react';
 import { mockPartners } from '@/data/partnersData';
 import { journalArticles } from '@/data/journalArticles';
+import { usePublicBanner } from '@/data/publicBanner';
+
+
 
 export default function PublicHome() {
   const navigate = useNavigate();
