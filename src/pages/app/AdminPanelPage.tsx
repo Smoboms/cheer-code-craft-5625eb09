@@ -261,7 +261,13 @@ export function AdminPanelPage({ onBack }: AdminPanelPageProps) {
     { key: 'partners', label: 'Parceiros', icon: Building },
     { key: 'categories', label: 'Categorias', icon: Tag },
     { key: 'cities', label: 'Cidades', icon: MapPin },
+    { key: 'banner', label: 'Banner Home', icon: Megaphone },
   ];
+
+  const handleSaveBanner = () => {
+    saveBannerConfig(banner);
+    toast.success('Banner salvo!');
+  };
 
   return (
     <div className="min-h-screen bg-black">
