@@ -59,38 +59,36 @@ export default function PublicHome() {
         </div>
       </div>
 
-      {/* Banner de aviso / anúncio (controlado pelo Admin) */}
-      {banner.active && (banner.title || banner.text) && (
+      {/* Banner de aviso / anúncio (controlado pelo Admin) — imagem em tela cheia */}
+      {banner.active && (banner.imageUrl || banner.title || banner.text) && (
         <a
           href={banner.ctaHref || '#'}
           target={banner.ctaHref?.startsWith('http') ? '_blank' : undefined}
           rel="noreferrer"
-          className="block bg-[#0b1a3a] border border-yellow-500/40 hover:border-yellow-400 transition-colors mb-4"
+          className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors mb-4 aspect-[16/9] bg-[#0b1a3a]"
         >
-          <div className="flex items-stretch">
-            <div className="w-16 flex-shrink-0 bg-black/40 flex items-center justify-center overflow-hidden">
-              {banner.imageUrl ? (
-                <img src={banner.imageUrl} alt="" className="w-full h-full object-cover" />
-              ) : (
-                <Megaphone size={22} className="text-yellow-400" />
-              )}
-            </div>
-            <div className="flex-1 p-3 min-w-0">
+          {banner.imageUrl && (
+            <img
+              src={banner.imageUrl}
+              alt={banner.title || ''}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          )}
+          {(banner.title || banner.text || banner.ctaLabel) && (
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-3">
               {banner.title && (
-                <p className="text-white text-sm font-semibold leading-tight truncate">{banner.title}</p>
+                <p className="text-white text-sm font-semibold leading-tight">{banner.title}</p>
               )}
               {banner.text && (
-                <p className="text-gray-300 text-xs leading-snug truncate">{banner.text}</p>
+                <p className="text-gray-200 text-xs leading-snug mt-0.5">{banner.text}</p>
               )}
-            </div>
-            {banner.ctaLabel && banner.ctaHref && (
-              <div className="flex items-center px-3">
-                <span className="bg-yellow-500 text-black text-[11px] font-semibold px-2.5 py-1.5 inline-flex items-center gap-1">
+              {banner.ctaLabel && banner.ctaHref && (
+                <span className="mt-2 bg-yellow-500 text-black text-[11px] font-semibold px-2.5 py-1.5 inline-flex items-center gap-1">
                   {banner.ctaLabel} <ArrowRight size={11} />
                 </span>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </a>
       )}
 
