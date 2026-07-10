@@ -43,6 +43,18 @@ export default function AdminJournal() {
           {data.map((a: any) => (
             <Card key={a.id} className="p-3">
               <div className="flex justify-between items-start gap-3">
+                <div className="w-20 h-14 flex-shrink-0 bg-[#0a0f1e] border border-white/10 overflow-hidden">
+                  {a.cover_url ? (
+                    <img
+                      src={a.cover_url}
+                      alt=""
+                      className="w-full h-full object-cover"
+                      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-500">sem capa</div>
+                  )}
+                </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex gap-2 items-center flex-wrap">
                     <div className="text-white font-medium">{a.title}</div>
