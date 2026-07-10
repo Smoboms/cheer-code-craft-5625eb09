@@ -1,11 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Newspaper, Building2, Search, LogIn } from 'lucide-react';
+import { Home, Newspaper, Building2, ShoppingBag, LogIn } from 'lucide-react';
 
 const tabs = [
   { to: '/', label: 'Início', icon: Home },
   { to: '/journal', label: 'Journal', icon: Newspaper },
   { to: '/empresas', label: 'Empresas', icon: Building2 },
-  { to: '/buscar', label: 'Buscar', icon: Search },
+  { to: '/mercado', label: 'Mercado', icon: ShoppingBag },
   { to: '/app', label: 'Associado', icon: LogIn },
 ];
 

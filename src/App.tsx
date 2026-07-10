@@ -13,7 +13,9 @@ import PublicJournalArticle from "./pages/public/PublicJournalArticle";
 import PublicCompanies from "./pages/public/PublicCompanies";
 import CompanyProfile from "./pages/public/CompanyProfile";
 import PublicSearch from "./pages/public/PublicSearch";
+import PublicMarket from "./pages/public/PublicMarket";
 import AdminLayout from "./pages/admin/AdminLayout";
+import AdminMercado from "./pages/admin/AdminMercado";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminEmpresas from "./pages/admin/AdminEmpresas";
 import AdminJournal from "./pages/admin/AdminJournal";
@@ -39,6 +41,7 @@ const App = () => (
               <Route path="/journal/:id" element={<PublicJournalArticle />} />
               <Route path="/empresas" element={<PublicCompanies />} />
               <Route path="/empresas/:id" element={<CompanyProfile />} />
+              <Route path="/mercado" element={<PublicMarket />} />
               <Route path="/buscar" element={<PublicSearch />} />
             </Route>
             <Route path="/app" element={<Index />} />
@@ -51,6 +54,7 @@ const App = () => (
               <Route path="cupons" element={<AdminCupons />} />
               <Route path="analytics" element={<AdminAnalytics />} />
               <Route path="banners" element={<AdminBanners />} />
+              <Route path="mercado" element={<AdminMercado />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
