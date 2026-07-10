@@ -34,38 +34,31 @@ export default function PublicHome() {
 
   return (
     <div className="animate-fadeUp pb-4">
-      {/* Banner institucional (compacto) */}
-      <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 p-3 mb-3">
-        <p className="text-yellow-400 text-[9px] font-semibold tracking-wider mb-1">RARQUES ASSOCIATION</p>
-        <h1 className="text-white text-lg font-bold leading-tight mb-1.5">
-          Conectando empresários e profissionais
-        </h1>
-        <p className="text-gray-300 text-xs leading-snug mb-2.5">
-          Rede regional com benefícios, conteúdo editorial e encontros que geram valor real.
-        </p>
-        <div className="flex gap-2">
-          <Link
-            to="/app"
-            className="bg-yellow-500 hover:bg-yellow-400 text-black px-2.5 py-1.5 text-[11px] font-semibold inline-flex items-center gap-1 transition-colors"
-          >
-            Seja Associado <ArrowRight size={11} />
-          </Link>
-          <Link
-            to="/empresas"
-            className="border border-white/60 text-white hover:bg-white/10 px-2.5 py-1.5 text-[11px] font-semibold inline-flex items-center gap-1 transition-colors"
-          >
-            Empresas
-          </Link>
+      {/* Banner institucional compacto (estilo MEMBRO ATIVO) */}
+      <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 p-3 mb-3 flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <div className="inline-block bg-yellow-500/20 border border-yellow-500/40 px-1.5 py-0.5 mb-1">
+            <p className="text-[9px] font-semibold tracking-wider text-yellow-400">RARQUES ASSOCIATION</p>
+          </div>
+          <p className="text-white text-xs leading-snug">
+            Conectando empresários e profissionais da região.
+          </p>
         </div>
+        <Link
+          to="/app"
+          className="shrink-0 bg-yellow-500 hover:bg-yellow-400 text-black px-2.5 py-1.5 text-[11px] font-semibold inline-flex items-center gap-1"
+        >
+          Associar <ArrowRight size={11} />
+        </Link>
       </div>
 
-      {/* Banner de aviso / anúncio (controlado pelo Admin) — imagem em tela cheia */}
+      {/* Banner de aviso / anúncio (controlado pelo Admin) — mais compacto */}
       {banner.active && (banner.imageUrl || banner.title || banner.text) && (
         <a
           href={banner.ctaHref || '#'}
           target={banner.ctaHref?.startsWith('http') ? '_blank' : undefined}
           rel="noreferrer"
-          className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors mb-4 aspect-[16/9] bg-[#0b1a3a]"
+          className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors mb-4 aspect-[21/9] bg-[#0b1a3a]"
         >
           {banner.imageUrl && (
             <img
@@ -75,22 +68,23 @@ export default function PublicHome() {
             />
           )}
           {(banner.title || banner.text || banner.ctaLabel) && (
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-3">
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-2">
               {banner.title && (
-                <p className="text-white text-sm font-semibold leading-tight">{banner.title}</p>
+                <p className="text-white text-xs font-semibold leading-tight">{banner.title}</p>
               )}
               {banner.text && (
-                <p className="text-gray-200 text-xs leading-snug mt-0.5">{banner.text}</p>
+                <p className="text-gray-200 text-[11px] leading-snug mt-0.5">{banner.text}</p>
               )}
               {banner.ctaLabel && banner.ctaHref && (
-                <span className="mt-2 bg-yellow-500 text-black text-[11px] font-semibold px-2.5 py-1.5 inline-flex items-center gap-1">
-                  {banner.ctaLabel} <ArrowRight size={11} />
+                <span className="mt-1.5 bg-yellow-500 text-black text-[10px] font-semibold px-2 py-1 inline-flex items-center gap-1">
+                  {banner.ctaLabel} <ArrowRight size={10} />
                 </span>
               )}
             </div>
           )}
         </a>
       )}
+
 
 
 
