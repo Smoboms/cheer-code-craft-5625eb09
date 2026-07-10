@@ -110,7 +110,20 @@ function ArticleForm({ article, categories, onClose, onSaved }: any) {
           {categories.map((c: any) => <option key={c.id} value={c.name}>{c.name}</option>)}
         </Select></div>
         <div><Label>Data de publicação</Label><Input type="date" value={f.published_at} onChange={e=>setF({...f, published_at: e.target.value})} /></div>
-        <div className="md:col-span-2"><Label>Imagem de capa (URL)</Label><Input value={f.cover_url} onChange={e=>setF({...f, cover_url: e.target.value})} /></div>
+        <div className="md:col-span-2">
+          <Label>Imagem de capa (URL)</Label>
+          <Input value={f.cover_url} onChange={e=>setF({...f, cover_url: e.target.value})} placeholder="https://..." />
+          {f.cover_url && (
+            <div className="mt-2 aspect-[16/9] bg-[#0a0f1e] border border-white/10 overflow-hidden">
+              <img
+                src={f.cover_url}
+                alt="Prévia da capa"
+                className="w-full h-full object-cover"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = '0.2'; }}
+              />
+            </div>
+          )}
+        </div>
         <div className="md:col-span-2"><Label>Resumo</Label><Textarea rows={2} value={f.excerpt} onChange={e=>setF({...f, excerpt: e.target.value})} /></div>
         <div className="md:col-span-2"><Label>Corpo do texto</Label><Textarea rows={8} value={f.body} onChange={e=>setF({...f, body: e.target.value})} /></div>
         <label className="flex items-center gap-2 text-sm text-gray-300 md:col-span-2">
