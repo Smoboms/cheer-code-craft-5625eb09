@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ArrowLeft, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { MyProductsSection } from './MyProductsSection';
 
 interface Props { onBack: () => void; }
 
@@ -148,7 +149,10 @@ export function MinhaEmpresaPage({ onBack }: Props) {
           {saving && <Loader2 size={16} className="animate-spin" />}
           Salvar alterações
         </button>
+
+        <MyProductsSection />
       </div>
     </div>
   );
 }
+
