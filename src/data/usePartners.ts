@@ -6,6 +6,7 @@ export interface DirectoryPartner {
   name: string;
   category: string | null;
   discount: string | null;
+  discount_percent: number | null;
   distance: string | null;
   banner_url: string | null;
   profile_image_url: string | null;
@@ -14,11 +15,22 @@ export interface DirectoryPartner {
   description: string | null;
   address: string | null;
   city: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+  email: string | null;
+  website: string | null;
+  instagram: string | null;
+  maps_link: string | null;
+  opening_hours: string | null;
+  responsible: string | null;
+  display_order: number | null;
 }
 
 /**
- * Reads real companies registered as benefit partners (public.partners).
- * Same source used by the R-CARD/Benefits area of the Associate app.
+ * Single source of truth for partner companies used across:
+ * - Área do Associado / Benefícios (R-CARD)
+ * - Página pública Empresas
+ * - Painel ADM
  */
 export function useActivePartners() {
   const [partners, setPartners] = useState<DirectoryPartner[]>([]);
@@ -29,8 +41,9 @@ export function useActivePartners() {
     (async () => {
       const { data, error } = await supabase
         .from('partners')
-        .select('id,name,category,discount,distance,banner_url,profile_image_url,logo_url,is_member,description,address,city,status,is_active')
+        .select('*')
         .eq('is_active', true)
+        .order('display_order', { ascending: true })
         .order('is_member', { ascending: false })
         .order('created_at', { ascending: false });
       if (cancelled) return;
