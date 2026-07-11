@@ -303,6 +303,74 @@ export type Database = {
         }
         Relationships: []
       }
+      market_categories: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      market_subcategories: {
+        Row: {
+          category_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_subcategories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "market_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       marketplace_products: {
         Row: {
           category: string | null
@@ -313,6 +381,8 @@ export type Database = {
           images: string[]
           is_active: boolean
           is_featured: boolean
+          market_category_id: string | null
+          market_subcategory_id: string | null
           name: string
           partner_id: string
           price: number | null
@@ -329,6 +399,8 @@ export type Database = {
           images?: string[]
           is_active?: boolean
           is_featured?: boolean
+          market_category_id?: string | null
+          market_subcategory_id?: string | null
           name: string
           partner_id: string
           price?: number | null
@@ -345,6 +417,8 @@ export type Database = {
           images?: string[]
           is_active?: boolean
           is_featured?: boolean
+          market_category_id?: string | null
+          market_subcategory_id?: string | null
           name?: string
           partner_id?: string
           price?: number | null
@@ -353,6 +427,20 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "marketplace_products_market_category_id_fkey"
+            columns: ["market_category_id"]
+            isOneToOne: false
+            referencedRelation: "market_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_products_market_subcategory_id_fkey"
+            columns: ["market_subcategory_id"]
+            isOneToOne: false
+            referencedRelation: "market_subcategories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "marketplace_products_partner_id_fkey"
             columns: ["partner_id"]
