@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 export function LoginPage() {
   const { signIn, signUp } = useAuth();
@@ -11,6 +12,29 @@ export function LoginPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
+
+  const handleForgotPassword = async () => {
+    setError('');
+    setInfo('');
+    if (!email) {
+      setError('Digite seu e-mail acima para receber o link de recuperação.');
+      return;
+    }
+    setResetLoading(true);
+    try {
+      const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (err) throw err;
+      setInfo('Enviamos um link de recuperação para o seu e-mail.');
+    } catch (err: any) {
+      setError(err.message || 'Não foi possível enviar o e-mail de recuperação.');
+    } finally {
+      setResetLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,6 +130,11 @@ export function LoginPage() {
                 {error}
               </div>
             )}
+            {info && (
+              <div className="border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 px-4 py-3 rounded-sm text-sm">
+                {info}
+              </div>
+            )}
 
             <div>
               <label htmlFor="email" className="block text-xs font-medium text-white/50 mb-2 tracking-widest uppercase">E-mail</label>
@@ -160,6 +189,17 @@ export function LoginPage() {
               style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               {loading ? 'Aguarde...' : isRegistering ? 'Criar conta' : 'Entrar'}
             </button>
+
+            {!isRegistering && (
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={resetLoading}
+                className="w-full text-center text-xs text-white/50 hover:text-white/80 underline underline-offset-4 transition-colors disabled:opacity-50"
+              >
+                {resetLoading ? 'Enviando…' : 'Esqueci minha senha'}
+              </button>
+            )}
           </form>
 
           <div className="mt-6 text-center">
