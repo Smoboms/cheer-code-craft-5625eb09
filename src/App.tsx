@@ -17,6 +17,7 @@ import PublicMarket from "./pages/public/PublicMarket";
 import PublicWeather from "./pages/public/PublicWeather";
 import PublicProfessionals from "./pages/public/PublicProfessionals";
 import PublicProfessionalSubmit from "./pages/public/PublicProfessionalSubmit";
+import PublicLocais from "./pages/public/PublicLocais";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminMercado from "./pages/admin/AdminMercado";
 import AdminDashboard from "./pages/admin/AdminDashboard";
