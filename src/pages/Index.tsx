@@ -27,7 +27,7 @@ const Index = () => {
   const { user, profile, isLoading, isAdmin, signOut, refreshProfile } = useAuth();
   const [currentTab, setCurrentTab] = useState<TabType>('inicio');
   const [moreSection, setMoreSection] = useState<MoreSection | null>(null);
-  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  
 
   const isAdminUser = isAdmin || user?.email === ADMIN_EMAIL;
 
