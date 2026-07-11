@@ -79,12 +79,12 @@ export function CardCarousel<T>({
       <div
         ref={scrollerRef}
         onScroll={onScroll}
-        className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 no-scrollbar"
+        className="flex items-stretch gap-3 overflow-x-auto snap-x snap-mandatory pb-2 no-scrollbar"
         style={{ scrollbarWidth: 'none' }}
       >
         {items.map((item, i) => (
-          <div key={i} className={`snap-start shrink-0 ${itemClassName}`}>
-            {renderItem(item, i)}
+          <div key={i} className={`snap-start shrink-0 flex ${itemClassName}`}>
+            <div className="w-full flex flex-col">{renderItem(item, i)}</div>
           </div>
         ))}
       </div>
