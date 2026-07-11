@@ -88,7 +88,7 @@ export function BenefitsPage() {
       return;
     }
 
-    const benefit = mockBenefits.find(b => b.id === benefitId);
+    const benefit = benefits.find(b => b.id === benefitId);
     if (!benefit) return;
 
     const savedAmount = (purchaseValue * discountPercent) / 100;
