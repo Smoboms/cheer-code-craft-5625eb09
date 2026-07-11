@@ -189,6 +189,17 @@ export function LoginPage() {
               style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               {loading ? 'Aguarde...' : isRegistering ? 'Criar conta' : 'Entrar'}
             </button>
+
+            {!isRegistering && (
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={resetLoading}
+                className="w-full text-center text-xs text-white/50 hover:text-white/80 underline underline-offset-4 transition-colors disabled:opacity-50"
+              >
+                {resetLoading ? 'Enviando…' : 'Esqueci minha senha'}
+              </button>
+            )}
           </form>
 
           <div className="mt-6 text-center">
