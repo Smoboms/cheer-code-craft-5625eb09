@@ -130,6 +130,11 @@ export function LoginPage() {
                 {error}
               </div>
             )}
+            {info && (
+              <div className="border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 px-4 py-3 rounded-sm text-sm">
+                {info}
+              </div>
+            )}
 
             <div>
               <label htmlFor="email" className="block text-xs font-medium text-white/50 mb-2 tracking-widest uppercase">E-mail</label>
