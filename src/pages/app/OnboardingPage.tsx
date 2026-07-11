@@ -136,6 +136,13 @@ export function OnboardingPage() {
               />
             </div>
 
+            {errorMsg && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded-lg text-center">{errorMsg}</p>
+            )}
+            {warnMsg && (
+              <p className="text-sm text-yellow-700 bg-yellow-50 border border-yellow-200 px-3 py-2 rounded-lg text-center">{warnMsg}</p>
+            )}
+
             <button type="submit" disabled={loading || !name.trim()}
               className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all disabled:opacity-50">
               {loading ? 'Salvando...' : 'Começar'}
