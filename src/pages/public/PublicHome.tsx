@@ -6,6 +6,7 @@ import { usePublicBanner } from '@/data/publicBanner';
 import { useActivePartners } from '@/data/usePartners';
 import { CardCarousel } from '@/components/public/CardCarousel';
 import { trackEvent } from '@/lib/analytics';
+import { WeatherHomeBlock } from '@/components/public/WeatherHomeBlock';
 
 export default function PublicHome() {
   const navigate = useNavigate();
