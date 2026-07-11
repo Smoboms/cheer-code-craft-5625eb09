@@ -17,8 +17,8 @@ export interface DirectoryPartner {
 }
 
 /**
- * Reads real companies registered by Associates (profiles.company) via the
- * secure public_companies view. Only safe fields are exposed publicly.
+ * Reads real companies registered as benefit partners (public.partners).
+ * Same source used by the R-CARD/Benefits area of the Associate app.
  */
 export function useActivePartners() {
   const [partners, setPartners] = useState<DirectoryPartner[]>([]);
@@ -28,31 +28,15 @@ export function useActivePartners() {
     let cancelled = false;
     (async () => {
       const { data, error } = await supabase
-        .from('public_companies')
-        .select('id,name,category,logo_url,description')
+        .from('partners')
+        .select('id,name,category,discount,distance,banner_url,profile_image_url,logo_url,is_member,description,address,city,status,is_active')
+        .eq('is_active', true)
+        .order('is_member', { ascending: false })
         .order('created_at', { ascending: false });
       if (cancelled) return;
-      if (error) {
-        console.error('public_companies fetch error', error);
-        setPartners([]);
-      } else {
-        setPartners(
-          (data || []).map((r: any) => ({
-            id: r.id,
-            name: r.name,
-            category: r.category,
-            discount: null,
-            distance: null,
-            banner_url: null,
-            profile_image_url: null,
-            logo_url: r.logo_url,
-            is_member: true,
-            description: r.description,
-            address: null,
-            city: null,
-          })),
-        );
-      }
+      if (error) console.error('partners fetch error', error);
+      const rows = (data || []).filter((p: any) => !p.status || p.status === 'approved');
+      setPartners(rows as any);
       setLoading(false);
     })();
     return () => { cancelled = true; };
