@@ -15,6 +15,7 @@ import CompanyProfile from "./pages/public/CompanyProfile";
 import PublicSearch from "./pages/public/PublicSearch";
 import PublicMarket from "./pages/public/PublicMarket";
 import PublicWeather from "./pages/public/PublicWeather";
+import PublicLocals from "./pages/public/PublicLocals";
 import PublicProfessionals from "./pages/public/PublicProfessionals";
 import PublicProfessionalSubmit from "./pages/public/PublicProfessionalSubmit";
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -51,6 +52,7 @@ const App = () => (
               <Route path="/mercado" element={<PublicMarket />} />
               <Route path="/buscar" element={<PublicSearch />} />
               <Route path="/clima-uruacu" element={<PublicWeather />} />
+              <Route path="/locais" element={<PublicLocals />} />
               <Route path="/profissionais" element={<PublicProfessionals />} />
               <Route path="/profissionais/cadastro" element={<PublicProfessionalSubmit />} />
               <Route path="/profissionais/:categoria" element={<PublicProfessionals />} />
