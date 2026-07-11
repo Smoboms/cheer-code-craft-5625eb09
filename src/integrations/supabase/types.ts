@@ -128,6 +128,39 @@ export type Database = {
         }
         Relationships: []
       }
+      atalhos_da_casa: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          icone: string | null
+          id: string
+          link: string
+          ordem: number
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          icone?: string | null
+          id?: string
+          link: string
+          ordem?: number
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          icone?: string | null
+          id?: string
+          link?: string
+          ordem?: number
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cities: {
         Row: {
           created_at: string
@@ -348,6 +381,77 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "journal_articles_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lugares: {
+        Row: {
+          ativo: boolean
+          categoria: string | null
+          city_id: string | null
+          created_at: string
+          descricao: string | null
+          endereco: string | null
+          foto: string | null
+          horario_funcionamento: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          nome: string
+          site: string | null
+          slug: string
+          telefone: string | null
+          tipo: string
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          categoria?: string | null
+          city_id?: string | null
+          created_at?: string
+          descricao?: string | null
+          endereco?: string | null
+          foto?: string | null
+          horario_funcionamento?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          nome: string
+          site?: string | null
+          slug: string
+          telefone?: string | null
+          tipo: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          categoria?: string | null
+          city_id?: string | null
+          created_at?: string
+          descricao?: string | null
+          endereco?: string | null
+          foto?: string | null
+          horario_funcionamento?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          nome?: string
+          site?: string | null
+          slug?: string
+          telefone?: string | null
+          tipo?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lugares_city_id_fkey"
             columns: ["city_id"]
             isOneToOne: false
             referencedRelation: "cities"
