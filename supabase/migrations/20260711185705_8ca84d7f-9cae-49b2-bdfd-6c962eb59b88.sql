@@ -1,0 +1,3 @@
+UPDATE public.atalhos_da_casa SET link = '/locais?tipo=hotel' WHERE link = '/buscar?type=local&cat=hotel';
+UPDATE public.atalhos_da_casa SET link = '/locais?tipo=turismo' WHERE link = '/buscar?type=local&cat=turismo';
+UPDATE public.atalhos_da_casa SET link = '/locais?tipo=utilidade' WHERE link IN ('/buscar?type=local&cat=utilidade', '/buscar?type=local&cat=servicos-publicos', '/buscar?type=local&cat=servico');
