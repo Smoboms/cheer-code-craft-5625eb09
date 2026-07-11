@@ -48,9 +48,6 @@ const Index = () => {
   if (user && !profile) return <OnboardingPage />;
   if (profile && !profile.name) return <OnboardingPage />;
 
-  if (showAdminPanel && isAdminUser) {
-    return <AdminPanelPage onBack={() => setShowAdminPanel(false)} accessToken="" />;
-  }
 
   if (currentTab === 'config') {
     return (
