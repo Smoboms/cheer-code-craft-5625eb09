@@ -142,10 +142,10 @@ export default function PublicHome() {
           renderItem={(a) => (
             <Link
               to={`/journal/${a.id}`}
-              className="block w-full bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors overflow-hidden"
+              className="block w-full h-full bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors overflow-hidden flex flex-col"
             >
-              <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950" />
-              <div className="p-3">
+              <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 shrink-0" />
+              <div className="p-3 flex-1 flex flex-col">
                 <p className="text-[10px] font-semibold tracking-wider text-yellow-400 mb-1">
                   {a.category.toUpperCase()} · DESTAQUE
                 </p>
