@@ -12,6 +12,29 @@ export function LoginPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
+
+  const handleForgotPassword = async () => {
+    setError('');
+    setInfo('');
+    if (!email) {
+      setError('Digite seu e-mail acima para receber o link de recuperação.');
+      return;
+    }
+    setResetLoading(true);
+    try {
+      const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (err) throw err;
+      setInfo('Enviamos um link de recuperação para o seu e-mail.');
+    } catch (err: any) {
+      setError(err.message || 'Não foi possível enviar o e-mail de recuperação.');
+    } finally {
+      setResetLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
