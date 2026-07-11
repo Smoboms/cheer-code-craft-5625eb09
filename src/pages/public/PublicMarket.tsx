@@ -166,7 +166,7 @@ export default function PublicMarket() {
               <p className="text-gray-400 text-sm">Nenhum produto encontrado.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-3">
               {rest.map((p) => (
                 <ProductCard key={p.id} p={p} onClick={() => { setSelected(p); setImgIdx(0); }} />
               ))}
