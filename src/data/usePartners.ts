@@ -16,23 +16,46 @@ export interface DirectoryPartner {
   city: string | null;
 }
 
-/** Reads real, active partners from the database. */
+/**
+ * Reads real companies registered by Associates (profiles.company) via the
+ * secure public_companies view. Only safe fields are exposed publicly.
+ */
 export function useActivePartners() {
   const [partners, setPartners] = useState<DirectoryPartner[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
-      const { data } = await supabase
-        .from('partners')
-        .select('id,name,category,discount,distance,banner_url,profile_image_url,logo_url,is_member,description,address,city,status,is_active')
-        .eq('is_active', true)
-        .order('is_member', { ascending: false })
+      const { data, error } = await supabase
+        .from('public_companies')
+        .select('id,name,category,logo_url,description')
         .order('created_at', { ascending: false });
-      const rows = (data || []).filter((p: any) => !p.status || p.status === 'approved');
-      setPartners(rows as any);
+      if (cancelled) return;
+      if (error) {
+        console.error('public_companies fetch error', error);
+        setPartners([]);
+      } else {
+        setPartners(
+          (data || []).map((r: any) => ({
+            id: r.id,
+            name: r.name,
+            category: r.category,
+            discount: null,
+            distance: null,
+            banner_url: null,
+            profile_image_url: null,
+            logo_url: r.logo_url,
+            is_member: true,
+            description: r.description,
+            address: null,
+            city: null,
+          })),
+        );
+      }
       setLoading(false);
     })();
+    return () => { cancelled = true; };
   }, []);
 
   return { partners, loading };
