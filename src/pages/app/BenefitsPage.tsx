@@ -146,7 +146,7 @@ export function BenefitsPage() {
         <div className="flex items-end justify-between mb-2">
           <div>
             <h2 className="text-2xl font-bold text-white mb-1">Benefícios</h2>
-            <p className="text-gray-400 text-sm">22 empresas parceiras ativas</p>
+            <p className="text-gray-400 text-sm">{loading ? 'Carregando…' : `${benefits.length} empresas parceiras ativas`}</p>
           </div>
         </div>
       </div>
