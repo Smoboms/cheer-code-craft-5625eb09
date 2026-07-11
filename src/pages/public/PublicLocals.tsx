@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { MapPin, Phone, Globe, Clock, X, Search } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -21,7 +22,7 @@ type Lugar = {
 };
 
 const TIPOS = [
-  { value: '', label: 'Todos' },
+  { value: 'Todos', label: 'Todos' },
   { value: 'utilidade', label: 'Serviços Públicos' },
   { value: 'hotel', label: 'Hotéis' },
   { value: 'turismo', label: 'Turismo' },
@@ -29,10 +30,11 @@ const TIPOS = [
 ];
 
 export default function PublicLocals() {
+  const [params] = useSearchParams();
   const [lugares, setLugares] = useState<Lugar[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tipo, setTipo] = useState('');
-  const [q, setQ] = useState('');
+  const [tipo, setTipo] = useState<string>(params.get('tipo') || 'Todos');
+  const [query, setQuery] = useState('');
   const [sel, setSel] = useState<Lugar | null>(null);
 
   useEffect(() => {
@@ -48,9 +50,9 @@ export default function PublicLocals() {
   }, []);
 
   const filtered = useMemo(() => {
-    const term = q.trim().toLowerCase();
+    const term = query.trim().toLowerCase();
     return lugares.filter((l) => {
-      if (tipo && l.tipo !== tipo) return false;
+      if (tipo !== 'Todos' && l.tipo !== tipo) return false;
       if (!term) return true;
       return (
         l.nome.toLowerCase().includes(term) ||
@@ -58,35 +60,33 @@ export default function PublicLocals() {
         (l.descricao || '').toLowerCase().includes(term)
       );
     });
-  }, [lugares, tipo, q]);
+  }, [lugares, tipo, query]);
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold text-white">Locais em Uruaçu</h1>
-        <p className="text-sm text-gray-400">
-          Serviços públicos, hotéis, turismo e utilidades da cidade.
-        </p>
+    <div className="animate-fadeUp pb-4">
+      <div className="mb-4">
+        <h2 className="text-2xl font-bold text-white mb-1">Locais</h2>
+        <p className="text-gray-400 text-sm">Serviços públicos, hotéis, turismo e utilidades de Uruaçu</p>
       </div>
 
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
+      <div className="relative mb-4">
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
         <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
           placeholder="Buscar local..."
-          className="w-full bg-gray-900 border border-gray-800 rounded-lg pl-9 pr-3 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-gray-600"
+          className="w-full bg-gray-900 border border-gray-800 focus:border-gray-600 outline-none text-white text-sm pl-9 pr-3 py-2.5 transition-colors"
         />
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+      <div className="flex gap-2 overflow-x-auto no-scrollbar mb-5 pb-1">
         {TIPOS.map((t) => (
           <button
             key={t.value}
             onClick={() => setTipo(t.value)}
-            className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+            className={`whitespace-nowrap px-3 py-1.5 text-xs border transition-colors ${
               tipo === t.value
-                ? 'bg-white text-black border-white'
+                ? 'bg-white text-black border-white font-semibold'
                 : 'bg-transparent text-gray-300 border-gray-700 hover:border-gray-500'
             }`}
           >
@@ -96,35 +96,36 @@ export default function PublicLocals() {
       </div>
 
       {loading ? (
-        <div className="text-gray-400 text-sm">Carregando…</div>
-      ) : !filtered.length ? (
-        <div className="text-gray-400 text-sm py-8 text-center">Nenhum local encontrado.</div>
+        <p className="text-gray-500 text-sm text-center py-8">Carregando…</p>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 items-stretch">
           {filtered.map((l) => (
             <button
               key={l.id}
               onClick={() => setSel(l)}
-              className="text-left bg-gray-900 border border-gray-800 rounded-xl p-3 hover:border-gray-600 transition-colors flex gap-3"
+              className="h-full flex flex-col bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors overflow-hidden text-left"
             >
-              {l.foto ? (
-                <img src={l.foto} alt={l.nome} className="w-16 h-16 rounded-lg object-cover shrink-0" />
-              ) : (
-                <div className="w-16 h-16 rounded-lg bg-gray-800 flex items-center justify-center shrink-0">
-                  <MapPin size={22} className="text-gray-500" />
-                </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <div className="text-white font-medium text-sm truncate">{l.nome}</div>
-                <div className="text-[11px] uppercase tracking-wider text-gray-500 mt-0.5">
-                  {l.tipo}{l.categoria ? ` · ${l.categoria}` : ''}
-                </div>
-                {l.endereco && (
-                  <div className="text-xs text-gray-400 truncate mt-1">{l.endereco}</div>
+              <div className="aspect-video bg-gray-800 shrink-0 flex items-center justify-center overflow-hidden">
+                {l.foto ? (
+                  <img src={l.foto} alt={l.nome} className="w-full h-full object-cover" loading="lazy" />
+                ) : (
+                  <MapPin size={28} className="opacity-40 text-gray-500" />
                 )}
+              </div>
+              <div className="p-3 flex-1 flex flex-col">
+                <p className="text-white text-sm font-semibold mb-1 line-clamp-1">{l.nome}</p>
+                {l.categoria && (
+                  <p className="text-gray-400 text-xs mb-1 line-clamp-1">{l.categoria}</p>
+                )}
+                <p className="text-gray-500 text-xs line-clamp-2 mt-auto">
+                  {l.endereco || 'Endereço não informado'}
+                </p>
               </div>
             </button>
           ))}
+          {filtered.length === 0 && (
+            <p className="text-gray-500 text-center text-sm py-8 col-span-full">Nenhum local encontrado.</p>
+          )}
         </div>
       )}
 
@@ -142,22 +143,25 @@ function LocalDetailModal({ lugar, onClose }: { lugar: Lugar; onClose: () => voi
       : null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 flex items-end lg:items-center justify-center p-0 lg:p-6" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4 animate-fadeIn"
+      onClick={onClose}
+    >
       <div
-        className="bg-gray-950 border border-gray-800 rounded-t-2xl lg:rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+        className="bg-gray-950 border border-gray-800 w-[90%] max-w-lg max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative">
           {lugar.foto ? (
             <img src={lugar.foto} alt={lugar.nome} className="w-full h-40 object-cover" />
           ) : (
-            <div className="w-full h-32 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+            <div className="w-full h-32 bg-gray-900 flex items-center justify-center">
               <MapPin size={40} className="text-gray-600" />
             </div>
           )}
           <button
             onClick={onClose}
-            className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 flex items-center justify-center text-white"
+            className="absolute top-3 right-3 w-8 h-8 bg-black/60 flex items-center justify-center text-white"
           >
             <X size={16} />
           </button>
@@ -189,13 +193,13 @@ function LocalDetailModal({ lugar, onClose }: { lugar: Lugar; onClose: () => voi
               <a
                 href={`https://wa.me/${lugar.whatsapp.replace(/\D/g, '')}`}
                 target="_blank" rel="noreferrer"
-                className="flex-1 text-center bg-green-600 hover:bg-green-500 text-white text-sm font-medium py-2.5 rounded-lg"
+                className="flex-1 text-center bg-green-600 hover:bg-green-500 text-white text-xs font-semibold py-2.5"
               >WhatsApp</a>
             )}
             {mapsHref && (
               <a
                 href={mapsHref} target="_blank" rel="noreferrer"
-                className="flex-1 text-center bg-white text-black text-sm font-medium py-2.5 rounded-lg"
+                className="flex-1 text-center bg-white text-black text-xs font-semibold py-2.5"
               >Ver no mapa</a>
             )}
           </div>
