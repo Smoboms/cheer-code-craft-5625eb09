@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Check, Copy, MapPin, Phone, User, Building, Loader2 } from 'lucide-react';
-import { mockBenefits, categories } from '@/data/mockData';
 import { copyToClipboard } from '@/utils/clipboard';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useActivePartners } from '@/data/usePartners';
 import { toast } from 'sonner';
 
 interface CouponData {
@@ -13,8 +13,27 @@ interface CouponData {
   date: string;
 }
 
+interface Benefit {
+  id: string;
+  company: string;
+  category: string;
+  discount: string;
+  discountPercent: number;
+  fullDescription: string;
+  emoji: string;
+  logo?: string;
+  contact: string;
+  whatsapp?: string;
+  location: string;
+  mapsLink?: string;
+  responsible: string;
+  city: string;
+  photos: string[];
+}
+
 export function BenefitsPage() {
   const { user } = useAuth();
+  const { partners, loading } = useActivePartners();
   const [selectedCategory, setSelectedCategory] = useState('Todos');
   const [selectedCity, setSelectedCity] = useState('Todas');
   const [expandedBenefit, setExpandedBenefit] = useState<string | null>(null);
@@ -23,9 +42,28 @@ export function BenefitsPage() {
   const [purchaseValues, setPurchaseValues] = useState<Map<string, string>>(new Map());
   const [savingId, setSavingId] = useState<string | null>(null);
 
-  const cities = ['Todas', ...Array.from(new Set(mockBenefits.map(b => b.city)))];
+  const benefits: Benefit[] = useMemo(() => partners.map((p) => ({
+    id: p.id,
+    company: p.name,
+    category: p.category || 'Outros',
+    discount: p.discount || '',
+    discountPercent: Number(p.discount_percent) || 0,
+    fullDescription: p.description || '',
+    emoji: '🏢',
+    logo: p.logo_url || p.profile_image_url || p.banner_url || undefined,
+    contact: p.phone || '',
+    whatsapp: p.whatsapp || undefined,
+    location: [p.address, p.city].filter(Boolean).join(' - ') || 'Endereço não informado',
+    mapsLink: p.maps_link || undefined,
+    responsible: p.responsible || 'A definir',
+    city: p.city || '—',
+    photos: [],
+  })), [partners]);
 
-  const filteredBenefits = mockBenefits.filter(b => {
+  const categories = useMemo(() => ['Todos', ...Array.from(new Set(benefits.map(b => b.category)))], [benefits]);
+  const cities = useMemo(() => ['Todas', ...Array.from(new Set(benefits.map(b => b.city)))], [benefits]);
+
+  const filteredBenefits = benefits.filter(b => {
     const matchesCategory = selectedCategory === 'Todos' || b.category === selectedCategory;
     const matchesCity = selectedCity === 'Todas' || b.city === selectedCity;
     return matchesCategory && matchesCity;
