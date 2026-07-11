@@ -10,6 +10,8 @@ interface Partner {
   discount: string | null;
   distance: string | null;
   banner_url: string | null;
+  logo_url: string | null;
+  profile_image_url: string | null;
   description: string | null;
   address: string | null;
   city: string | null;
