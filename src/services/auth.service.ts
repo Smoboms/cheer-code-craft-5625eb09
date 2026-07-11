@@ -60,16 +60,19 @@ export async function updateProfile(userId: string, updates: {
 }
 
 export async function uploadAvatar(userId: string, file: File) {
-  const fileExt = file.name.split('.').pop();
-  const filePath = `${userId}/avatar.${fileExt}`;
+  const fileExt = (file.name.split('.').pop() || 'jpg').toLowerCase();
+  // Cache-bust the filename so the browser reloads a new avatar immediately.
+  const filePath = `avatars/${userId}/${Date.now()}.${fileExt}`;
 
+  // Use the public partner-images bucket — the workspace blocks public buckets,
+  // so we reuse the existing public bucket to serve avatars.
   const { error: uploadError } = await supabase.storage
-    .from('avatars')
-    .upload(filePath, file, { upsert: true });
+    .from('partner-images')
+    .upload(filePath, file, { upsert: true, contentType: file.type });
   if (uploadError) throw uploadError;
 
   const { data } = supabase.storage
-    .from('avatars')
+    .from('partner-images')
     .getPublicUrl(filePath);
 
   return data.publicUrl;
