@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 export function LoginPage() {
   const { signIn, signUp } = useAuth();
