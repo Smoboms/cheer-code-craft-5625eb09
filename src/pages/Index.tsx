@@ -3,7 +3,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { LoginPage } from '@/pages/app/LoginPage';
 import { OnboardingPage } from '@/pages/app/OnboardingPage';
 import { ProfilePage } from '@/pages/app/ProfilePage';
-import { AdminPanelPage } from '@/pages/app/AdminPanelPage';
 import { PremiumHeader } from '@/components/app/PremiumHeader';
 import { PremiumBottomNav, TabType } from '@/components/app/PremiumBottomNav';
 import { NetworkPage } from '@/pages/app/NetworkPage';
