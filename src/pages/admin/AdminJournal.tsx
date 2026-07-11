@@ -35,7 +35,7 @@ export default function AdminJournal() {
 
   return (
     <>
-      <PageHeader title="Journal" subtitle="Gestão de matérias e destaques"
+      <PageHeader title="R.Journal" subtitle="Gestão de matérias e destaques"
         actions={<Btn onClick={() => setCreating(true)}>+ Nova matéria</Btn>} />
       {loading ? <EmptyState>Carregando…</EmptyState> :
         !data?.length ? <EmptyState>Nenhuma matéria.</EmptyState> : (
