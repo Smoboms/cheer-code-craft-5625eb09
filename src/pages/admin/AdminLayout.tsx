@@ -1,11 +1,12 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench } from 'lucide-react';
 import { useState } from 'react';
 
 const NAV = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/empresas', label: 'Empresas', icon: Building2 },
+  { to: '/admin/profissionais', label: 'Profissionais', icon: Wrench },
   { to: '/admin/mercado', label: 'Mercado', icon: ShoppingBag },
   { to: '/admin/journal', label: 'Journal', icon: Newspaper },
   { to: '/admin/categorias', label: 'Categorias', icon: Tags },
