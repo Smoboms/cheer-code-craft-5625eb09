@@ -47,11 +47,16 @@ const App = () => (
               <Route path="/empresas/:id" element={<CompanyProfile />} />
               <Route path="/mercado" element={<PublicMarket />} />
               <Route path="/buscar" element={<PublicSearch />} />
+              <Route path="/clima-uruacu" element={<PublicWeather />} />
+              <Route path="/profissionais" element={<PublicProfessionals />} />
+              <Route path="/profissionais/cadastro" element={<PublicProfessionalSubmit />} />
+              <Route path="/profissionais/:categoria" element={<PublicProfessionals />} />
             </Route>
             <Route path="/app" element={<Index />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="empresas" element={<AdminEmpresas />} />
+              <Route path="profissionais" element={<AdminProfissionais />} />
               <Route path="journal" element={<AdminJournal />} />
               <Route path="categorias" element={<AdminCategorias />} />
               <Route path="associados" element={<AdminAssociados />} />
