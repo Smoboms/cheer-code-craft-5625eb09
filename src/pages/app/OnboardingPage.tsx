@@ -3,17 +3,35 @@ import { Camera, User } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { updateProfile, uploadAvatar } from '@/services/auth.service';
 
+// Race a promise against a timeout so we never block the user indefinitely.
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error(`Tempo esgotado ao ${label}. Tente novamente.`)), ms);
+    promise.then(
+      (v) => { clearTimeout(t); resolve(v); },
+      (e) => { clearTimeout(t); reject(e); },
+    );
+  });
+}
+
 export function OnboardingPage() {
   const { user, refreshProfile } = useAuth();
   const [name, setName] = useState('');
   const [photo, setPhoto] = useState<string | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [warnMsg, setWarnMsg] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setErrorMsg('Imagem muito grande (máximo 5MB).');
+        return;
+      }
+      setErrorMsg(null);
       setPhotoFile(file);
       const reader = new FileReader();
       reader.onloadend = () => setPhoto(reader.result as string);
@@ -23,26 +41,56 @@ export function OnboardingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !user) return;
+    if (loading) return; // prevent duplicate submissions
+    const trimmed = name.trim();
+    if (!trimmed || !user) return;
 
     setLoading(true);
+    setErrorMsg(null);
+    setWarnMsg(null);
+
+    // 1) Save name first — this is the critical step and must be fast/reliable.
     try {
-      let avatarUrl: string | undefined;
-      if (photoFile) {
-        avatarUrl = await uploadAvatar(user.id, photoFile);
+      await withTimeout(
+        updateProfile(user.id, { name: trimmed }),
+        15000,
+        'salvar o perfil',
+      );
+    } catch (err: any) {
+      console.error('Error saving profile name:', err);
+      setErrorMsg(err?.message || 'Erro ao salvar perfil. Tente novamente.');
+      setLoading(false);
+      return;
+    }
+
+    // 2) Upload avatar (optional, non-blocking for the flow).
+    if (photoFile) {
+      try {
+        const avatarUrl = await withTimeout(
+          uploadAvatar(user.id, photoFile),
+          20000,
+          'enviar a foto',
+        );
+        await withTimeout(
+          updateProfile(user.id, { avatar_url: avatarUrl }),
+          15000,
+          'salvar a foto',
+        );
+      } catch (err: any) {
+        console.error('Error uploading avatar:', err);
+        setWarnMsg('Perfil salvo, mas não conseguimos enviar a foto agora. Você poderá tentar novamente depois.');
       }
-      await updateProfile(user.id, {
-        name: name.trim(),
-        ...(avatarUrl && { avatar_url: avatarUrl }),
-      });
+    }
+
+    try {
       await refreshProfile();
     } catch (err) {
-      console.error('Error completing onboarding:', err);
-      alert('Erro ao salvar perfil. Tente novamente.');
+      console.error('Error refreshing profile:', err);
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center p-4">
@@ -87,6 +135,13 @@ export function OnboardingPage() {
                 required
               />
             </div>
+
+            {errorMsg && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded-lg text-center">{errorMsg}</p>
+            )}
+            {warnMsg && (
+              <p className="text-sm text-yellow-700 bg-yellow-50 border border-yellow-200 px-3 py-2 rounded-lg text-center">{warnMsg}</p>
+            )}
 
             <button type="submit" disabled={loading || !name.trim()}
               className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all disabled:opacity-50">

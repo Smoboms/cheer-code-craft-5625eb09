@@ -12,6 +12,8 @@ export interface DirectoryPartner {
   logo_url: string | null;
   is_member: boolean | null;
   description: string | null;
+  address: string | null;
+  city: string | null;
 }
 
 /** Reads real, active partners from the database. */
@@ -23,7 +25,7 @@ export function useActivePartners() {
     (async () => {
       const { data } = await supabase
         .from('partners')
-        .select('id,name,category,discount,distance,banner_url,profile_image_url,logo_url,is_member,description,status,is_active')
+        .select('id,name,category,discount,distance,banner_url,profile_image_url,logo_url,is_member,description,address,city,status,is_active')
         .eq('is_active', true)
         .order('is_member', { ascending: false })
         .order('created_at', { ascending: false });
