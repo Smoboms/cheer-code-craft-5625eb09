@@ -24,7 +24,7 @@ const BANNERS: Banner[] = [
   {
     icon: Sparkles,
     title: 'NOVIDADE',
-    text: 'Novas matérias no Journal desta semana.',
+    text: 'Novas matérias no R.Journal desta semana.',
     cta: 'Ler agora',
     action: { type: 'tab', value: 'journal' },
     accent: 'text-yellow-400 border-yellow-500/40 bg-yellow-500/10',
