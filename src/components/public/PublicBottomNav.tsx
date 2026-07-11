@@ -1,12 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Newspaper, Building2, ShoppingBag, LogIn } from 'lucide-react';
+import { Home, Newspaper, Building2, ShoppingBag, Wrench } from 'lucide-react';
 
 const tabs = [
   { to: '/', label: 'Início', icon: Home },
   { to: '/journal', label: 'Journal', icon: Newspaper },
   { to: '/empresas', label: 'Empresas', icon: Building2 },
   { to: '/mercado', label: 'Mercado', icon: ShoppingBag },
-  { to: '/app', label: 'Associado', icon: LogIn },
+  { to: '/profissionais', label: 'Profissionais', icon: Wrench },
 ];
 
 export function PublicBottomNav() {
