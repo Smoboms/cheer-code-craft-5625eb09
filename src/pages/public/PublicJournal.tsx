@@ -72,19 +72,18 @@ export default function PublicJournal() {
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {list.map((a) => (
           <Link
             key={a.id}
             to={`/journal/${a.id}`}
-            className="block w-full text-left bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors"
+            className="block w-full text-left bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors overflow-hidden"
           >
-            <div className="aspect-[16/9] bg-gradient-to-br from-gray-800 to-gray-950" />
-            <div className="p-4">
+            <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950" />
+            <div className="p-3">
               <p className="text-[10px] font-semibold tracking-wider text-yellow-400 mb-1">{a.category.toUpperCase()}</p>
-              <p className="text-white font-semibold mb-1 leading-snug">{a.title}</p>
-              <p className="text-gray-400 text-sm">{a.excerpt}</p>
-              <p className="text-white text-xs mt-2 underline">Ler matéria completa</p>
+              <p className="text-white text-sm font-semibold mb-1 line-clamp-2">{a.title}</p>
+              <p className="text-gray-400 text-xs line-clamp-2">{a.excerpt}</p>
             </div>
           </Link>
         ))}
