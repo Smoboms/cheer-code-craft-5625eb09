@@ -1,33 +1,21 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Search, X, MessageCircle, Store, ShoppingBag, Utensils, Shirt, Home as HomeIcon, Smartphone, Wrench, Car, Sparkles, HardHat, Tag } from 'lucide-react';
+import { Search, X, MessageCircle, Store, ShoppingBag } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent } from '@/lib/analytics';
+import { useMarketCategories, MarketCategory } from '@/data/useMarketCategories';
 
 type Product = {
   id: string;
   partner_id: string;
   name: string;
   category: string | null;
+  market_category_id: string | null;
+  market_subcategory_id: string | null;
   description: string | null;
   price: number | null;
   images: string[];
   is_featured: boolean;
   partners?: { id: string; name: string; whatsapp: string | null; phone: string | null; is_member: boolean } | null;
-};
-
-const CATEGORY_ICONS: Record<string, any> = {
-  'Alimentação': Utensils,
-  'Gastronomia': Utensils,
-  'Moda': Shirt,
-  'Casa e Decoração': HomeIcon,
-  'Eletrônicos': Smartphone,
-  'Serviços': Wrench,
-  'Veículos': Car,
-  'Beleza': Sparkles,
-  'Bem-estar': Sparkles,
-  'Construção': HardHat,
-  'Varejo': ShoppingBag,
-  'Educação': Tag,
 };
 
 function fmtPrice(v: number | null) {
@@ -44,28 +32,27 @@ function waLink(p: NonNullable<Product['partners']>, productName: string) {
 
 export default function PublicMarket() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
-  const [activeCat, setActiveCat] = useState<string | null>(null);
+  const [activeCat, setActiveCat] = useState<MarketCategory | null>(null);
+  const [activeSubId, setActiveSubId] = useState<string | null>(null);
+  const [pickerCat, setPickerCat] = useState<MarketCategory | null>(null);
   const [selected, setSelected] = useState<Product | null>(null);
   const [imgIdx, setImgIdx] = useState(0);
+
+  const { categories, subcategories, loading: catsLoading } = useMarketCategories(true);
 
   useEffect(() => {
     trackEvent('page_view', 'mercado', 'Mercado');
     (async () => {
-      const [{ data: prods }, { data: cats }] = await Promise.all([
-        supabase
-          .from('marketplace_products')
-          .select('id,partner_id,name,category,description,price,images,is_featured,partners(id,name,whatsapp,phone,is_member)')
-          .eq('status', 'approved')
-          .eq('is_active', true)
-          .order('is_featured', { ascending: false })
-          .order('created_at', { ascending: false }),
-        supabase.from('partner_categories').select('name').order('name'),
-      ]);
+      const { data: prods } = await supabase
+        .from('marketplace_products')
+        .select('id,partner_id,name,category,market_category_id,market_subcategory_id,description,price,images,is_featured,partners(id,name,whatsapp,phone,is_member)')
+        .eq('status', 'approved')
+        .eq('is_active', true)
+        .order('is_featured', { ascending: false })
+        .order('created_at', { ascending: false });
       setProducts((prods as any) || []);
-      setCategories((cats || []).map((c: any) => c.name));
       setLoading(false);
     })();
   }, []);
@@ -73,7 +60,8 @@ export default function PublicMarket() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return products.filter((p) => {
-      if (activeCat && p.category !== activeCat) return false;
+      if (activeCat && p.market_category_id !== activeCat.id) return false;
+      if (activeSubId && p.market_subcategory_id !== activeSubId) return false;
       if (!q) return true;
       return (
         p.name.toLowerCase().includes(q) ||
@@ -81,10 +69,27 @@ export default function PublicMarket() {
         (p.partners?.name || '').toLowerCase().includes(q)
       );
     });
-  }, [products, query, activeCat]);
+  }, [products, query, activeCat, activeSubId]);
 
   const featured = filtered.filter((p) => p.is_featured);
   const rest = filtered.filter((p) => !p.is_featured);
+
+  const activeSubName = activeSubId ? subcategories.find((s) => s.id === activeSubId)?.name : null;
+
+  const handleCatClick = (c: MarketCategory | null) => {
+    if (!c) {
+      setActiveCat(null); setActiveSubId(null); return;
+    }
+    setPickerCat(c);
+  };
+
+  const chooseSub = (subId: string | null) => {
+    if (pickerCat) {
+      setActiveCat(pickerCat);
+      setActiveSubId(subId);
+    }
+    setPickerCat(null);
+  };
 
   return (
     <div className="animate-fadeUp pb-4">
@@ -93,7 +98,6 @@ export default function PublicMarket() {
         <p className="text-gray-400 text-xs mt-1">Ofertas exclusivas de Empresas Membro verificadas</p>
       </div>
 
-      {/* Busca */}
       <div className="relative mb-4">
         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
         <input
@@ -104,36 +108,39 @@ export default function PublicMarket() {
         />
       </div>
 
-      {/* Carrossel de categorias */}
-      {categories.length > 0 && (
-        <div className="mb-5 -mx-4 px-4 overflow-x-auto no-scrollbar">
-          <div className="flex gap-3 pb-1">
+      {/* Chips de categorias */}
+      {!catsLoading && categories.length > 0 && (
+        <div className="mb-4 -mx-4 px-4 overflow-x-auto no-scrollbar">
+          <div className="flex gap-2 pb-1">
             <button
-              onClick={() => setActiveCat(null)}
-              className="flex flex-col items-center gap-1 min-w-[60px]"
+              onClick={() => handleCatClick(null)}
+              className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold border ${!activeCat ? 'bg-yellow-500 border-yellow-500 text-black' : 'bg-gray-900 border-gray-800 text-gray-300 hover:border-gray-600'}`}
             >
-              <div className={`w-14 h-14 rounded-full flex items-center justify-center border ${!activeCat ? 'bg-yellow-500 border-yellow-500 text-black' : 'bg-gray-900 border-gray-800 text-gray-300'}`}>
-                <Store size={20} />
-              </div>
-              <span className="text-[10px] text-gray-300">Tudo</span>
+              <Store size={13} /> Todos
             </button>
             {categories.map((c) => {
-              const Icon = CATEGORY_ICONS[c] || Tag;
-              const active = activeCat === c;
+              const active = activeCat?.id === c.id;
               return (
                 <button
-                  key={c}
-                  onClick={() => setActiveCat(active ? null : c)}
-                  className="flex flex-col items-center gap-1 min-w-[60px]"
+                  key={c.id}
+                  onClick={() => handleCatClick(c)}
+                  className={`shrink-0 px-3 py-1.5 text-xs font-semibold border ${active ? 'bg-yellow-500 border-yellow-500 text-black' : 'bg-gray-900 border-gray-800 text-gray-300 hover:border-gray-600'}`}
                 >
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center border ${active ? 'bg-yellow-500 border-yellow-500 text-black' : 'bg-gray-900 border-gray-800 text-gray-300'}`}>
-                    <Icon size={20} />
-                  </div>
-                  <span className="text-[10px] text-gray-300 text-center leading-tight max-w-[60px] truncate">{c}</span>
+                  {c.name}
                 </button>
               );
             })}
           </div>
+          {activeCat && (
+            <div className="flex items-center gap-2 mt-2 text-[11px]">
+              <span className="text-gray-500">Categoria:</span>
+              <span className="text-white font-semibold">{activeCat.name}</span>
+              {activeSubName && <><span className="text-gray-600">›</span><span className="text-yellow-400 font-semibold">{activeSubName}</span></>}
+              <button onClick={() => { setActiveCat(null); setActiveSubId(null); }} className="ml-auto text-gray-400 hover:text-white inline-flex items-center gap-1">
+                <X size={12} /> Limpar
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -158,7 +165,7 @@ export default function PublicMarket() {
       {!loading && (
         <div>
           <h2 className="text-white text-sm font-bold uppercase tracking-wider mb-2">
-            {activeCat ? activeCat : 'Todos os produtos'}
+            {activeCat ? (activeSubName || activeCat.name) : 'Todos os produtos'}
           </h2>
           {rest.length === 0 && featured.length === 0 ? (
             <div className="bg-gray-900 border border-gray-800 p-8 text-center">
@@ -172,6 +179,43 @@ export default function PublicMarket() {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Modal de subcategorias */}
+      {pickerCat && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-end md:items-center justify-center" onClick={() => setPickerCat(null)}>
+          <div className="bg-gray-900 border border-gray-800 w-full max-w-md max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-gray-500">{pickerCat.name}</p>
+                <h3 className="text-white font-semibold text-sm">Selecione uma subcategoria</h3>
+              </div>
+              <button onClick={() => setPickerCat(null)} className="text-gray-400 hover:text-white"><X size={18} /></button>
+            </div>
+            <div className="p-2">
+              <button
+                onClick={() => chooseSub(null)}
+                className="w-full text-left px-3 py-2.5 text-sm text-white hover:bg-white/5 border-b border-gray-800"
+              >
+                Todas de {pickerCat.name}
+              </button>
+              {subcategories.filter((s) => s.category_id === pickerCat.id)
+                .sort((a, b) => a.sort_order - b.sort_order)
+                .map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => chooseSub(s.id)}
+                    className="w-full text-left px-3 py-2.5 text-sm text-white hover:bg-white/5 border-b border-gray-800 last:border-b-0"
+                  >
+                    {s.name}
+                  </button>
+                ))}
+              {subcategories.filter((s) => s.category_id === pickerCat.id).length === 0 && (
+                <p className="text-gray-500 text-xs p-4 text-center">Nenhuma subcategoria cadastrada.</p>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
@@ -236,34 +280,22 @@ function ProductModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 flex items-end md:items-center justify-center" onClick={onClose}>
-      <div
-        className="bg-gray-900 border border-gray-800 w-full max-w-md max-h-[92vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="bg-gray-900 border border-gray-800 w-full max-w-md max-h-[92vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="relative">
-          <button
-            onClick={onClose}
-            className="absolute top-2 right-2 z-10 bg-black/70 border border-white/20 p-1.5 text-white"
-          >
+          <button onClick={onClose} className="absolute top-2 right-2 z-10 bg-black/70 border border-white/20 p-1.5 text-white">
             <X size={16} />
           </button>
           <div className="aspect-square bg-black">
             {imgs[imgIdx] ? (
               <img src={imgs[imgIdx]} alt={product.name} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-700">
-                <ShoppingBag size={48} />
-              </div>
+              <div className="w-full h-full flex items-center justify-center text-gray-700"><ShoppingBag size={48} /></div>
             )}
           </div>
           {imgs.length > 1 && (
             <div className="flex gap-1 p-2 overflow-x-auto no-scrollbar">
               {imgs.map((src, i) => (
-                <button
-                  key={i}
-                  onClick={() => setImgIdx(i)}
-                  className={`shrink-0 w-14 h-14 border ${i === imgIdx ? 'border-yellow-500' : 'border-gray-700'}`}
-                >
+                <button key={i} onClick={() => setImgIdx(i)} className={`shrink-0 w-14 h-14 border ${i === imgIdx ? 'border-yellow-500' : 'border-gray-700'}`}>
                   <img src={src} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
@@ -273,9 +305,7 @@ function ProductModal({
 
         <div className="p-4">
           {product.partners?.is_member && (
-            <span className="inline-block bg-yellow-500 text-black text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider mb-2">
-              Empresa Membro
-            </span>
+            <span className="inline-block bg-yellow-500 text-black text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider mb-2">Empresa Membro</span>
           )}
           <h3 className="text-white text-lg font-bold leading-tight">{product.name}</h3>
           {product.partners?.name && (
@@ -285,14 +315,8 @@ function ProductModal({
           {product.description && (
             <p className="text-gray-300 text-sm mt-3 whitespace-pre-line leading-relaxed">{product.description}</p>
           )}
-
           {wa ? (
-            <a
-              href={wa}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-4 w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-3 flex items-center justify-center gap-2 transition-colors"
-            >
+            <a href={wa} target="_blank" rel="noreferrer" className="mt-4 w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-3 flex items-center justify-center gap-2 transition-colors">
               <MessageCircle size={18} /> Falar no WhatsApp
             </a>
           ) : (
