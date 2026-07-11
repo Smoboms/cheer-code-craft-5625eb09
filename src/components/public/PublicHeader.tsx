@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Newspaper, Building2, ShoppingBag, LogIn } from 'lucide-react';
+import { Home, Newspaper, Building2, ShoppingBag, LogIn, Wrench } from 'lucide-react';
 import rarquesLogo from '@/assets/rarques-logo.png.asset.json';
 
 const navTabs = [
@@ -7,6 +7,7 @@ const navTabs = [
   { to: '/journal', label: 'Journal', icon: Newspaper },
   { to: '/empresas', label: 'Empresas', icon: Building2 },
   { to: '/mercado', label: 'Mercado', icon: ShoppingBag },
+  { to: '/profissionais', label: 'Profissionais', icon: Wrench },
 ];
 
 export function PublicHeader() {
