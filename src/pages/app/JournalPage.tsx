@@ -45,7 +45,7 @@ export function JournalPage({ onBack }: Props) {
         </button>
       )}
       <div className="mb-4">
-        <h2 className="text-2xl font-bold text-white mb-1">Journal</h2>
+        <h2 className="text-2xl font-bold text-white mb-1">R.Journal</h2>
         <p className="text-gray-400 text-sm">Conteúdo editorial completo para o Associado</p>
       </div>
 
