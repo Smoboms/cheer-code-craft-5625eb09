@@ -73,17 +73,30 @@ export function MyProductsSection() {
     );
   }
 
+  const atLimit = products.length >= 200;
+
   return (
     <div className="bg-gray-900 border border-gray-800 p-4">
-      <div className="flex items-center justify-between mb-3">
-        <div>
+      <div className="flex items-center justify-between mb-3 gap-2">
+        <div className="min-w-0">
           <p className="text-white text-sm font-semibold">Meus produtos no Mercado</p>
-          <p className="text-gray-500 text-[11px]">Novos itens passam por curadoria antes de irem ao ar.</p>
+          <p className="text-gray-500 text-[11px]">
+            {products.length} de 200 produtos cadastrados · Passam por curadoria antes de irem ao ar.
+          </p>
         </div>
-        <button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-yellow-500 hover:bg-yellow-400 text-black text-xs font-semibold px-2.5 py-1.5 flex items-center gap-1">
+        <button
+          onClick={() => { if (atLimit) { alert('Limite de 200 produtos atingido. Exclua algum produto para cadastrar um novo.'); return; } setEditing(null); setShowForm(true); }}
+          disabled={atLimit}
+          className="bg-yellow-500 hover:bg-yellow-400 text-black text-xs font-semibold px-2.5 py-1.5 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+        >
           <Plus size={14} /> Novo
         </button>
       </div>
+      {atLimit && (
+        <div className="bg-yellow-500/10 border border-yellow-500/40 text-yellow-300 text-[11px] p-2 mb-3">
+          Você atingiu o limite de 200 produtos cadastrados. Exclua algum para adicionar novos.
+        </div>
+      )}
 
       {products.length === 0 ? (
         <p className="text-gray-500 text-xs text-center py-4">Nenhum produto cadastrado ainda.</p>

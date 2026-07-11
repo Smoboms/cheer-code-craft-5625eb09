@@ -1,18 +1,19 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search } from 'lucide-react';
-import { mockPartners } from '@/data/partnersData';
+import { useActivePartners } from '@/data/usePartners';
 
 export default function PublicCompanies() {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('Todas');
+  const { partners, loading } = useActivePartners();
 
   const categories = useMemo(() => {
-    const set = new Set(mockPartners.map((p) => p.category));
+    const set = new Set(partners.map((p) => p.category).filter(Boolean) as string[]);
     return ['Todas', ...Array.from(set)];
-  }, []);
+  }, [partners]);
 
-  const filtered = mockPartners.filter((p) => {
+  const filtered = partners.filter((p) => {
     const matchesCat = category === 'Todas' || p.category === category;
     const matchesQuery = !query || p.name.toLowerCase().includes(query.toLowerCase());
     return matchesCat && matchesQuery;
@@ -51,33 +52,39 @@ export default function PublicCompanies() {
         ))}
       </div>
 
-      <div className="space-y-3">
-        {filtered.map((p) => (
-          <Link
-            key={p.id}
-            to={`/empresas/${p.id}`}
-            className="block bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors"
-          >
-            <div className="flex">
+      {loading ? (
+        <p className="text-gray-500 text-sm text-center py-8">Carregando…</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          {filtered.map((p) => (
+            <Link
+              key={p.id}
+              to={`/empresas/${p.id}`}
+              className="block bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors overflow-hidden"
+            >
               <div
-                className="w-24 h-24 bg-cover bg-center bg-gray-800 flex-shrink-0"
-                style={p.bannerImage ? { backgroundImage: `url(${p.bannerImage})` } : undefined}
+                className="aspect-video bg-cover bg-center bg-gray-800"
+                style={p.banner_url ? { backgroundImage: `url(${p.banner_url})` } : undefined}
               />
-              <div className="flex-1 p-3 min-w-0">
-                <div className="inline-block bg-yellow-500/20 border border-yellow-500/50 px-1.5 py-0.5 mb-1">
-                  <p className="text-[9px] font-semibold tracking-wider text-yellow-400">EMPRESA MEMBRO</p>
-                </div>
-                <p className="text-white font-semibold text-sm truncate">{p.name}</p>
-                <p className="text-gray-400 text-xs truncate">{p.category} · {p.distance}</p>
-                <p className="text-yellow-400 text-xs mt-1 font-semibold">{p.discount}</p>
+              <div className="p-3">
+                {p.is_member && (
+                  <div className="inline-block bg-yellow-500/20 border border-yellow-500/50 px-1.5 py-0.5 mb-1">
+                    <p className="text-[9px] font-semibold tracking-wider text-yellow-400">EMPRESA MEMBRO</p>
+                  </div>
+                )}
+                <p className="text-white text-sm font-semibold mb-1 line-clamp-1">{p.name}</p>
+                <p className="text-gray-400 text-xs line-clamp-2">
+                  {p.description || `${p.category || 'Empresa parceira'}${p.distance ? ' · ' + p.distance : ''}`}
+                </p>
+                {p.discount && <p className="text-yellow-400 text-xs mt-1 font-semibold">{p.discount}</p>}
               </div>
-            </div>
-          </Link>
-        ))}
-        {filtered.length === 0 && (
-          <p className="text-gray-500 text-center text-sm py-8">Nenhuma empresa encontrada.</p>
-        )}
-      </div>
+            </Link>
+          ))}
+          {filtered.length === 0 && (
+            <p className="text-gray-500 text-center text-sm py-8 col-span-full">Nenhuma empresa encontrada.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
