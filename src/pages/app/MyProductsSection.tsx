@@ -2,11 +2,14 @@ import { useEffect, useState } from 'react';
 import { Plus, Trash2, Edit3, Loader2, X, ImageIcon, Package } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useMarketCategories } from '@/data/useMarketCategories';
 
 type Product = {
   id: string;
   name: string;
   category: string | null;
+  market_category_id: string | null;
+  market_subcategory_id: string | null;
   description: string | null;
   price: number | null;
   images: string[];
