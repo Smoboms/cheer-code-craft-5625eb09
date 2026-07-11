@@ -79,6 +79,9 @@ export default function PublicHome() {
         </a>
       )}
 
+      {/* Clima Uruaçu — bloco compacto (posicionado entre o bloco institucional e a barra de pesquisa) */}
+      <WeatherHomeBlock />
+
       {/* Busca */}
       <form onSubmit={submitSearch} className="relative mb-6">
         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -89,9 +92,6 @@ export default function PublicHome() {
           className="w-full bg-gray-900 border border-gray-800 focus:border-gray-600 outline-none text-white text-sm pl-9 pr-3 py-2.5 transition-colors"
         />
       </form>
-
-      {/* Clima Uruaçu — bloco compacto */}
-      <WeatherHomeBlock />
 
       {/* Empresas em Destaque — carrossel */}
       <div className="mb-6">

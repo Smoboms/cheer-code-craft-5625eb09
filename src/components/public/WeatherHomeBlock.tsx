@@ -6,26 +6,27 @@ export function WeatherHomeBlock() {
   const { data, loading } = useWeather();
 
   return (
-    <Link
-      to="/clima-uruacu"
-      className="flex items-center justify-between gap-3 bg-gray-900 border border-gray-800 hover:border-yellow-500/50 transition-colors px-3 py-2 mb-4"
-    >
-      <div className="flex items-center gap-2 min-w-0">
-        <CloudSun size={18} className="text-yellow-400 shrink-0" />
-        <p className="text-xs text-gray-300 truncate">
+    <div className="bg-gray-900 border border-gray-800 px-3 py-2.5 mb-4 flex items-center justify-between gap-3">
+      <div className="flex items-center gap-2.5 min-w-0">
+        <CloudSun size={22} className="text-yellow-400 shrink-0" />
+        <div className="min-w-0">
+          <p className="text-[10px] uppercase tracking-wider text-gray-500 leading-none">Clima em Uruaçu agora</p>
           {loading || !data ? (
-            <>Clima em Uruaçu agora…</>
+            <p className="text-gray-300 text-xs mt-1">Carregando…</p>
           ) : (
-            <>
-              <span className="text-white font-semibold">Clima em Uruaçu:</span>{' '}
-              {Math.round(data.now.temperature)}°C — {weatherLabel(data.now.weatherCode)}
-            </>
+            <p className="text-white text-sm font-semibold leading-tight mt-0.5">
+              {Math.round(data.now.temperature)}°C
+              <span className="text-gray-400 font-normal"> · {weatherLabel(data.now.weatherCode)}</span>
+            </p>
           )}
-        </p>
+        </div>
       </div>
-      <span className="text-[11px] text-yellow-400 font-semibold inline-flex items-center gap-1 shrink-0">
-        Ver previsão <ArrowRight size={11} />
-      </span>
-    </Link>
+      <Link
+        to="/clima-uruacu"
+        className="shrink-0 text-[11px] text-yellow-400 hover:text-yellow-300 font-semibold inline-flex items-center gap-1"
+      >
+        Ver previsão completa <ArrowRight size={11} />
+      </Link>
+    </div>
   );
 }
