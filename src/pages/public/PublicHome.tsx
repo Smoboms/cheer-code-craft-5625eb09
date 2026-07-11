@@ -104,29 +104,36 @@ export default function PublicHome() {
         ) : (
           <CardCarousel
             items={featuredCompanies}
-            renderItem={(p) => (
-              <button
-                type="button"
-                onClick={() => navigate(`/empresas/${p.id}`)}
-                className="w-full h-full text-left bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors overflow-hidden flex flex-col"
-              >
-                <div
-                  className="aspect-video bg-cover bg-center bg-gradient-to-br from-gray-800 to-gray-950 shrink-0"
-                  style={p.banner_url ? { backgroundImage: `url(${p.banner_url})` } : undefined}
-                />
-                <div className="p-3 flex-1 flex flex-col">
-                  {p.is_member && (
-                    <div className="inline-block bg-yellow-500/20 border border-yellow-500/50 px-1.5 py-0.5 mb-1 self-start">
-                      <p className="text-[9px] font-semibold tracking-wider text-yellow-400">EMPRESA MEMBRO</p>
-                    </div>
-                  )}
-                  <p className="text-white text-sm font-semibold mb-1 line-clamp-1">{p.name}</p>
-                  <p className="text-gray-400 text-xs line-clamp-2">
-                    {p.description || `${p.category || 'Empresa parceira'}${p.distance ? ' · ' + p.distance : ''}`}
-                  </p>
-                </div>
-              </button>
-            )}
+            itemClassName="w-[46%] md:w-[31%] lg:w-[23.5%]"
+            renderItem={(p) => {
+              const img = p.logo_url || p.profile_image_url || p.banner_url;
+              return (
+                <button
+                  type="button"
+                  onClick={() => navigate(`/empresas/${p.id}`)}
+                  className="w-full h-full text-left bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors overflow-hidden flex flex-col"
+                >
+                  <div className="aspect-video bg-gray-800 shrink-0 flex items-center justify-center overflow-hidden">
+                    {img ? (
+                      <img src={img} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                    ) : (
+                      <img src="/placeholder.svg" alt="" className="w-10 h-10 opacity-40" />
+                    )}
+                  </div>
+                  <div className="p-3 flex-1 flex flex-col">
+                    {p.is_member && (
+                      <div className="inline-block bg-yellow-500/20 border border-yellow-500/50 px-1.5 py-0.5 mb-1 self-start">
+                        <p className="text-[9px] font-semibold tracking-wider text-yellow-400">EMPRESA MEMBRO</p>
+                      </div>
+                    )}
+                    <p className="text-white text-sm font-semibold mb-1 line-clamp-1">{p.name}</p>
+                    <p className="text-gray-400 text-xs line-clamp-2">
+                      {p.category || p.description || 'Empresa parceira'}
+                    </p>
+                  </div>
+                </button>
+              );
+            }}
           />
         )}
       </div>
