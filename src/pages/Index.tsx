@@ -3,7 +3,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { LoginPage } from '@/pages/app/LoginPage';
 import { OnboardingPage } from '@/pages/app/OnboardingPage';
 import { ProfilePage } from '@/pages/app/ProfilePage';
-import { AdminPanelPage } from '@/pages/app/AdminPanelPage';
 import { PremiumHeader } from '@/components/app/PremiumHeader';
 import { PremiumBottomNav, TabType } from '@/components/app/PremiumBottomNav';
 import { NetworkPage } from '@/pages/app/NetworkPage';
@@ -28,7 +27,7 @@ const Index = () => {
   const { user, profile, isLoading, isAdmin, signOut, refreshProfile } = useAuth();
   const [currentTab, setCurrentTab] = useState<TabType>('inicio');
   const [moreSection, setMoreSection] = useState<MoreSection | null>(null);
-  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  
 
   const isAdminUser = isAdmin || user?.email === ADMIN_EMAIL;
 
@@ -49,9 +48,6 @@ const Index = () => {
   if (user && !profile) return <OnboardingPage />;
   if (profile && !profile.name) return <OnboardingPage />;
 
-  if (showAdminPanel && isAdminUser) {
-    return <AdminPanelPage onBack={() => setShowAdminPanel(false)} accessToken="" />;
-  }
 
   if (currentTab === 'config') {
     return (
