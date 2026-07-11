@@ -457,7 +457,10 @@ export type Database = {
           created_by: string | null
           description: string | null
           discount: string
+          discount_percent: number | null
+          display_order: number
           distance: string | null
+          email: string | null
           id: string
           instagram: string | null
           is_active: boolean | null
@@ -484,7 +487,10 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           discount: string
+          discount_percent?: number | null
+          display_order?: number
           distance?: string | null
+          email?: string | null
           id?: string
           instagram?: string | null
           is_active?: boolean | null
@@ -511,7 +517,10 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           discount?: string
+          discount_percent?: number | null
+          display_order?: number
           distance?: string | null
+          email?: string | null
           id?: string
           instagram?: string | null
           is_active?: boolean | null
