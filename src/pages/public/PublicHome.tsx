@@ -145,7 +145,7 @@ export default function PublicHome() {
       {/* Destaques Journal — carrossel */}
       <div className="mb-6">
         <div className="flex items-end justify-between mb-3">
-          <h2 className="text-white font-bold text-lg">Destaques Rarques Journal</h2>
+          <h2 className="text-white font-bold text-lg">Destaques R.Journal</h2>
           <Link to="/journal" className="text-gray-400 hover:text-white text-xs">Ver tudo →</Link>
         </div>
         <CardCarousel

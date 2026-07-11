@@ -12,7 +12,7 @@ export function PremiumBottomNav({ activeTab, onTabChange }: PremiumBottomNavPro
     { id: 'inicio' as TabType, label: 'Início', icon: Home },
     { id: 'rcard' as TabType, label: 'R-CARD', icon: CreditCard },
     { id: 'beneficios' as TabType, label: 'Benefícios', icon: Tag },
-    { id: 'journal' as TabType, label: 'Journal', icon: Newspaper },
+    { id: 'journal' as TabType, label: 'R.Journal', icon: Newspaper },
     { id: 'mais' as TabType, label: 'Mais', icon: LayoutGrid },
   ];
 

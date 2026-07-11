@@ -8,7 +8,7 @@ const NAV = [
   { to: '/admin/empresas', label: 'Empresas', icon: Building2 },
   { to: '/admin/profissionais', label: 'Profissionais', icon: Wrench },
   { to: '/admin/mercado', label: 'Mercado', icon: ShoppingBag },
-  { to: '/admin/journal', label: 'Journal', icon: Newspaper },
+  { to: '/admin/journal', label: 'R.Journal', icon: Newspaper },
   { to: '/admin/categorias', label: 'Categorias', icon: Tags },
   { to: '/admin/associados', label: 'Associados', icon: Users },
   { to: '/admin/cupons', label: 'Cupons', icon: Ticket },

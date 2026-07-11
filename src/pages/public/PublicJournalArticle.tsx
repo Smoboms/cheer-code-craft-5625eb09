@@ -42,7 +42,7 @@ export default function PublicJournalArticle() {
           </div>
           <p className="text-white font-semibold mb-1">Conteúdo exclusivo para Associados</p>
           <p className="text-gray-400 text-sm mb-4">
-            Torne-se um Associado Rarques e leia todas as matérias completas do Journal.
+            Torne-se um Associado Rarques e leia todas as matérias completas do R.Journal.
           </p>
           <Link
             to="/app"

@@ -24,7 +24,7 @@ const BANNERS: Banner[] = [
   {
     icon: Sparkles,
     title: 'NOVIDADE',
-    text: 'Novas matérias no Journal desta semana.',
+    text: 'Novas matérias no R.Journal desta semana.',
     cta: 'Ler agora',
     action: { type: 'tab', value: 'journal' },
     accent: 'text-yellow-400 border-yellow-500/40 bg-yellow-500/10',
@@ -125,7 +125,7 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
       <div className="grid grid-cols-2 gap-2">
         <button onClick={() => onNavigate('journal')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
           <Newspaper size={18} className="text-white mb-1.5" />
-          <p className="text-white font-semibold text-xs">Journal</p>
+          <p className="text-white font-semibold text-xs">R.Journal</p>
           <p className="text-gray-400 text-[10px]">Novas matérias</p>
         </button>
         <button onClick={() => onOpenMore('nexus')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
