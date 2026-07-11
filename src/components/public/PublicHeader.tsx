@@ -4,7 +4,7 @@ import rarquesLogo from '@/assets/rarques-logo.png.asset.json';
 
 const navTabs = [
   { to: '/', label: 'Início', icon: Home },
-  { to: '/journal', label: 'Journal', icon: Newspaper },
+  { to: '/journal', label: 'R.Journal', icon: Newspaper },
   { to: '/empresas', label: 'Empresas', icon: Building2 },
   { to: '/mercado', label: 'Mercado', icon: ShoppingBag },
   { to: '/profissionais', label: 'Profissionais', icon: Wrench },
