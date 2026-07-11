@@ -52,6 +52,7 @@ const App = () => (
               <Route path="/mercado" element={<PublicMarket />} />
               <Route path="/buscar" element={<PublicSearch />} />
               <Route path="/clima-uruacu" element={<PublicWeather />} />
+              <Route path="/locais" element={<PublicLocals />} />
               <Route path="/profissionais" element={<PublicProfessionals />} />
               <Route path="/profissionais/cadastro" element={<PublicProfessionalSubmit />} />
               <Route path="/profissionais/:categoria" element={<PublicProfessionals />} />
