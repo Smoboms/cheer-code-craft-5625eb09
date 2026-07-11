@@ -29,6 +29,8 @@ import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminBanners from "./pages/admin/AdminBanners";
 import AdminProfissionais from "./pages/admin/AdminProfissionais";
 import AdminMercadoCategorias from "./pages/admin/AdminMercadoCategorias";
+import AdminLocals from "./pages/admin/AdminLocals";
+import AdminHomeAtalhos from "./pages/admin/AdminHomeAtalhos";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +68,8 @@ const App = () => (
               <Route path="banners" element={<AdminBanners />} />
               <Route path="mercado" element={<AdminMercado />} />
               <Route path="mercado-categorias" element={<AdminMercadoCategorias />} />
+              <Route path="locais" element={<AdminLocals />} />
+              <Route path="atalhos" element={<AdminHomeAtalhos />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
