@@ -10,6 +10,8 @@ interface Partner {
   discount: string | null;
   distance: string | null;
   banner_url: string | null;
+  logo_url: string | null;
+  profile_image_url: string | null;
   description: string | null;
   address: string | null;
   city: string | null;
@@ -61,10 +63,18 @@ export default function CompanyProfile() {
         <ArrowLeft size={18} /> Voltar
       </button>
 
-      <div
-        className="aspect-[16/9] bg-cover bg-center bg-gray-800 mb-4"
-        style={partner.banner_url ? { backgroundImage: `url(${partner.banner_url})` } : undefined}
-      />
+      {(() => {
+        const img = partner.logo_url || partner.profile_image_url || partner.banner_url;
+        return (
+          <div className="aspect-[16/9] bg-gray-800 mb-4 overflow-hidden flex items-center justify-center">
+            {img ? (
+              <img src={img} alt={partner.name} className="w-full h-full object-cover" />
+            ) : (
+              <img src="/placeholder.svg" alt="" className="w-16 h-16 opacity-40" />
+            )}
+          </div>
+        );
+      })()}
 
       {partner.is_member && (
         <div className="inline-block bg-yellow-500/20 border border-yellow-500/50 px-2 py-0.5 mb-2">

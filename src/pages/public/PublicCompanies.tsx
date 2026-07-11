@@ -55,7 +55,7 @@ export default function PublicCompanies() {
       {loading ? (
         <p className="text-gray-500 text-sm text-center py-8">Carregando…</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 items-stretch">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 items-stretch">
           {filtered.map((p) => {
             const logo = p.logo_url || p.profile_image_url || p.banner_url;
             const address = [p.address, p.city].filter(Boolean).join(' - ');

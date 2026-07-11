@@ -14,6 +14,9 @@ import PublicCompanies from "./pages/public/PublicCompanies";
 import CompanyProfile from "./pages/public/CompanyProfile";
 import PublicSearch from "./pages/public/PublicSearch";
 import PublicMarket from "./pages/public/PublicMarket";
+import PublicWeather from "./pages/public/PublicWeather";
+import PublicProfessionals from "./pages/public/PublicProfessionals";
+import PublicProfessionalSubmit from "./pages/public/PublicProfessionalSubmit";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminMercado from "./pages/admin/AdminMercado";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -24,6 +27,7 @@ import AdminAssociados from "./pages/admin/AdminAssociados";
 import AdminCupons from "./pages/admin/AdminCupons";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminBanners from "./pages/admin/AdminBanners";
+import AdminProfissionais from "./pages/admin/AdminProfissionais";
 
 const queryClient = new QueryClient();
 
@@ -43,11 +47,16 @@ const App = () => (
               <Route path="/empresas/:id" element={<CompanyProfile />} />
               <Route path="/mercado" element={<PublicMarket />} />
               <Route path="/buscar" element={<PublicSearch />} />
+              <Route path="/clima-uruacu" element={<PublicWeather />} />
+              <Route path="/profissionais" element={<PublicProfessionals />} />
+              <Route path="/profissionais/cadastro" element={<PublicProfessionalSubmit />} />
+              <Route path="/profissionais/:categoria" element={<PublicProfessionals />} />
             </Route>
             <Route path="/app" element={<Index />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="empresas" element={<AdminEmpresas />} />
+              <Route path="profissionais" element={<AdminProfissionais />} />
               <Route path="journal" element={<AdminJournal />} />
               <Route path="categorias" element={<AdminCategorias />} />
               <Route path="associados" element={<AdminAssociados />} />
