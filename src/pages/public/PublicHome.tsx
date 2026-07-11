@@ -90,6 +90,9 @@ export default function PublicHome() {
         />
       </form>
 
+      {/* Clima Uruaçu — bloco compacto */}
+      <WeatherHomeBlock />
+
       {/* Empresas em Destaque — carrossel */}
       <div className="mb-6">
         <div className="flex items-end justify-between mb-3">
