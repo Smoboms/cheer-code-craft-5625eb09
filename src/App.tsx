@@ -55,6 +55,7 @@ const App = () => (
               <Route path="/profissionais" element={<PublicProfessionals />} />
               <Route path="/profissionais/cadastro" element={<PublicProfessionalSubmit />} />
               <Route path="/profissionais/:categoria" element={<PublicProfessionals />} />
+              <Route path="/locais" element={<PublicLocais />} />
             </Route>
             <Route path="/app" element={<Index />} />
             <Route path="/admin" element={<AdminLayout />}>
