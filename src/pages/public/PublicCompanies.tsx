@@ -1,23 +1,52 @@
-import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { useActivePartners } from '@/data/usePartners';
 
 export default function PublicCompanies() {
+  const [params, setParams] = useSearchParams();
   const [query, setQuery] = useState('');
-  const [category, setCategory] = useState('Todas');
+  const initialCat = params.get('cat') || 'Todas';
+  const [category, setCategory] = useState(initialCat);
   const { partners, loading } = useActivePartners();
+
+  useEffect(() => {
+    const c = params.get('cat');
+    if (c) setCategory(c);
+  }, [params]);
 
   const categories = useMemo(() => {
     const set = new Set(partners.map((p) => p.category).filter(Boolean) as string[]);
-    return ['Todas', ...Array.from(set)];
-  }, [partners]);
+    const list = ['Todas', ...Array.from(set)];
+    if (category !== 'Todas' && !list.includes(category)) list.push(category);
+    return list;
+  }, [partners, category]);
 
   const filtered = partners.filter((p) => {
-    const matchesCat = category === 'Todas' || p.category === category;
-    const matchesQuery = !query || p.name.toLowerCase().includes(query.toLowerCase());
+    const matchesCat =
+      category === 'Todas' ||
+      p.category === category ||
+      (p.category || '').toLowerCase().includes(category.toLowerCase());
+    const q = query.toLowerCase();
+    const matchesQuery =
+      !query ||
+      p.name.toLowerCase().includes(q) ||
+      (p.category || '').toLowerCase().includes(q) ||
+      (p.description || '').toLowerCase().includes(q);
     return matchesCat && matchesQuery;
   });
+
+  const changeCategory = (c: string) => {
+    setCategory(c);
+    if (c === 'Todas') {
+      const next = new URLSearchParams(params);
+      next.delete('cat');
+      setParams(next, { replace: true });
+    } else {
+      setParams({ cat: c }, { replace: true });
+    }
+  };
+
 
   return (
     <div className="animate-fadeUp pb-4">
@@ -40,7 +69,7 @@ export default function PublicCompanies() {
         {categories.map((c) => (
           <button
             key={c}
-            onClick={() => setCategory(c)}
+            onClick={() => changeCategory(c)}
             className={`whitespace-nowrap px-3 py-1.5 text-xs border transition-colors ${
               category === c
                 ? 'bg-white text-black border-white font-semibold'

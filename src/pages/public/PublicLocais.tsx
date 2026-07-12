@@ -207,7 +207,7 @@ function DetailModal({ lugar, onClose }: { lugar: Lugar; onClose: () => void }) 
             {lugar.whatsapp && (
               <InfoRow icon={<Phone size={14} />} label="WhatsApp">
                 <a
-                  href={`https://wa.me/${lugar.whatsapp.replace(/\D/g, '')}`}
+                  href={`https://wa.me/${(lugar.whatsapp.replace(/\D/g, '').startsWith('55') ? '' : '55') + lugar.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Olá, estou entrando em contato através da Cidade Inteligente da Rarques sobre ${lugar.nome}.`)}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-green-400 hover:underline"

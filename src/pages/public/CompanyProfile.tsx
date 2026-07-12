@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { ArrowLeft, MapPin, Phone, Instagram, Globe, Clock, Loader2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Phone, Instagram, Globe, Clock, Loader2, MessageCircle, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Partner {
@@ -95,6 +95,48 @@ export default function CompanyProfile() {
         </div>
       )}
 
+      {/* Botões compactos de ação — padrão Área do Associado */}
+      {(() => {
+        const waNum = (partner.whatsapp || '').replace(/\D/g, '');
+        const waMsg = encodeURIComponent(
+          `Olá! Encontrei a ${partner.name} pelo Portal Rarques Uruaçu e gostaria de mais informações.`
+        );
+        const waHref = waNum ? `https://wa.me/${waNum.startsWith('55') ? waNum : '55' + waNum}?text=${waMsg}` : null;
+        const mapsHref = partner.address
+          ? `https://www.google.com/maps?q=${encodeURIComponent([partner.address, partner.city].filter(Boolean).join(', '))}`
+          : null;
+        const telHref = partner.phone ? `tel:${partner.phone.replace(/\D/g, '')}` : null;
+        const site = partner.website
+          ? (partner.website.startsWith('http') ? partner.website : `https://${partner.website}`)
+          : null;
+        const btn = 'flex-1 min-w-[calc(50%-0.375rem)] md:min-w-0 inline-flex items-center justify-center gap-1.5 border border-gray-700 hover:border-yellow-500 text-white text-xs font-semibold py-2 px-3 transition-colors bg-gray-900';
+        return (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {mapsHref && (
+              <a href={mapsHref} target="_blank" rel="noreferrer" className={btn}>
+                <MapPin size={14} /> Localização
+              </a>
+            )}
+            {waHref && (
+              <a href={waHref} target="_blank" rel="noreferrer" className={`${btn} bg-green-600/10 border-green-600/40 hover:border-green-500 text-green-300`}>
+                <MessageCircle size={14} /> WhatsApp
+              </a>
+            )}
+            {telHref && (
+              <a href={telHref} className={btn}>
+                <Phone size={14} /> Telefone
+              </a>
+            )}
+            {site && (
+              <a href={site} target="_blank" rel="noreferrer" className={btn}>
+                <Globe size={14} /> Site
+              </a>
+            )}
+          </div>
+        );
+      })()}
+
+
       <div className="bg-gray-900 border border-gray-800 p-4 mb-4 space-y-3">
         {(partner.address || partner.city || partner.distance) && (
           <div className="flex items-center gap-3 text-sm">
@@ -130,18 +172,26 @@ export default function CompanyProfile() {
         )}
       </div>
 
-      <div className="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/40 p-5 text-center">
-        <p className="text-white font-semibold mb-1">Quer aproveitar os benefícios?</p>
-        <p className="text-gray-400 text-sm mb-4">
-          Torne-se Associado Rarques e acesse descontos, cashback e vantagens exclusivas.
-        </p>
+      {/* Bloco de benefícios exclusivos para membros */}
+      <div className="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/40 p-5">
+        <div className="flex items-center gap-2 mb-2">
+          <Sparkles size={16} className="text-yellow-400" />
+          <p className="text-[10px] uppercase tracking-[0.25em] font-semibold text-yellow-400">Benefícios para Membros</p>
+        </div>
+        <p className="text-white font-semibold mb-2">Associados Rarques têm vantagens aqui</p>
+        <ul className="text-gray-300 text-sm space-y-1 mb-4 list-disc list-inside">
+          <li>Descontos exclusivos e cashback em compras</li>
+          <li>Atendimento prioritário como Membro Rarques</li>
+          <li>Acesso a ofertas antecipadas e cupons</li>
+        </ul>
         <Link
           to="/app"
           className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-4 py-2 text-sm transition-colors"
         >
-          Acessar Área do Associado
+          Quero ser Membro
         </Link>
       </div>
+
     </div>
   );
 }
