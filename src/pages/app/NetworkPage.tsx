@@ -90,10 +90,8 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
       <button
         type="button"
         onClick={() => setShowCardModal(true)}
-        className="w-full text-left bg-gradient-to-br from-black via-gray-900 to-black text-white shadow-2xl aspect-[1.586/1] flex flex-col justify-between p-6 relative overflow-hidden border-2 border-gray-400/40 mb-8"
+        className="w-full text-left bg-gradient-to-br from-black via-gray-900 to-black text-white shadow-2xl aspect-[1.586/1] flex flex-col justify-between p-3 sm:p-6 relative overflow-hidden border-2 border-gray-400/40 mb-8"
       >
-
-        {/* Decorative world map pattern - top right */}
         <div className="absolute top-0 right-0 w-2/3 h-full opacity-20">
           <svg viewBox="0 0 400 250" className="w-full h-full">
             <defs>
@@ -106,18 +104,16 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
           </svg>
         </div>
 
-        {/* R-CARD Logo - Top right corner, large */}
-        <div className="absolute top-4 right-4 z-10">
-          <img src={logoRCard} alt="R-CARD Benefícios" className="h-32 w-auto opacity-40" style={{ filter: 'brightness(0.8)' }} />
+        <div className="absolute top-3 right-3 z-10">
+          <img src={logoRCard} alt="R-CARD Benefícios" className="h-16 sm:h-32 w-auto opacity-40" style={{ filter: 'brightness(0.8)' }} />
         </div>
 
-        {/* Header */}
-        <div className="flex items-start justify-between relative z-10">
-          <div className="relative">
+        <div className="flex items-start justify-between relative z-10 gap-2">
+          <div className="relative min-w-0">
             <div className="inline-block bg-[#9b59b6] px-2 py-0.5 mb-2">
               <p className="text-[10px] font-semibold tracking-wide">MEMBRO ATIVO</p>
             </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-[#FFFFFF] to-[#E0E0E0] flex items-center justify-center border-2 border-[#FFFFFF] flex-shrink-0 overflow-hidden">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#FFFFFF] to-[#E0E0E0] flex items-center justify-center border-2 border-[#FFFFFF] flex-shrink-0 overflow-hidden">
               {currentUser.photo ? (
                 <img src={currentUser.photo} alt={currentUser.name} className="w-full h-full object-cover" />
               ) : (
@@ -127,24 +123,21 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
           </div>
         </div>
 
-        {/* Middle - Name and Card Number */}
         <div className="flex-1 flex flex-col justify-center relative z-10 min-w-0">
-          <p className="text-sm sm:text-base tracking-wider mb-2 font-medium truncate">{currentUser.name}</p>
-          <p className="text-sm sm:text-base tracking-[0.15em] font-mono whitespace-nowrap">{currentUser.memberNumber}</p>
-          <p className="text-[10px] opacity-70 mt-1 uppercase truncate">{currentUser.company}</p>
+          <p className="text-xs sm:text-base tracking-wider mb-1 sm:mb-2 font-medium truncate">{currentUser.name}</p>
+          <p className="text-[11px] sm:text-base tracking-[0.1em] sm:tracking-[0.15em] font-mono truncate">{currentUser.memberNumber}</p>
+          <p className="text-[9px] sm:text-[10px] opacity-70 mt-1 uppercase truncate">{currentUser.company}</p>
         </div>
 
-
-        {/* Bottom - Stats */}
         <div className="relative z-10">
-          <div className="flex items-end justify-between">
-            <div>
-              <p className="text-xs opacity-70 mb-1">ECONOMIA TOTAL</p>
-              <p className="text-xl font-bold text-green-400">R$ {totalSavings.toFixed(2)}</p>
+          <div className="flex items-end justify-between gap-2">
+            <div className="min-w-0">
+              <p className="text-[10px] sm:text-xs opacity-70 mb-0.5 sm:mb-1">ECONOMIA TOTAL</p>
+              <p className="text-base sm:text-xl font-bold text-green-400 truncate">R$ {totalSavings.toFixed(2)}</p>
             </div>
-            <div className="text-right">
-              <p className="text-xs opacity-70 mb-1">BENEFÍCIOS</p>
-              <p className="text-xl font-bold">+{getTotalBenefitsCount()}</p>
+            <div className="text-right min-w-0">
+              <p className="text-[10px] sm:text-xs opacity-70 mb-0.5 sm:mb-1">BENEFÍCIOS</p>
+              <p className="text-base sm:text-xl font-bold">+{getTotalBenefitsCount()}</p>
             </div>
           </div>
         </div>
