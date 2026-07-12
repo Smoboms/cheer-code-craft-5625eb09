@@ -32,6 +32,8 @@ import AdminProfissionais from "./pages/admin/AdminProfissionais";
 import AdminMercadoCategorias from "./pages/admin/AdminMercadoCategorias";
 import AdminLocals from "./pages/admin/AdminLocals";
 import AdminHomeAtalhos from "./pages/admin/AdminHomeAtalhos";
+import AdminPilares from "./pages/admin/AdminPilares";
+import AdminCidades from "./pages/admin/AdminCidades";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +74,8 @@ const App = () => (
               <Route path="mercado-categorias" element={<AdminMercadoCategorias />} />
               <Route path="locais" element={<AdminLocals />} />
               <Route path="atalhos" element={<AdminHomeAtalhos />} />
+              <Route path="pilares" element={<AdminPilares />} />
+              <Route path="cidades" element={<AdminCidades />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
