@@ -131,6 +131,7 @@ export type Database = {
       atalhos_da_casa: {
         Row: {
           ativo: boolean
+          categoria: string | null
           created_at: string
           icone: string | null
           id: string
@@ -141,6 +142,7 @@ export type Database = {
         }
         Insert: {
           ativo?: boolean
+          categoria?: string | null
           created_at?: string
           icone?: string | null
           id?: string
@@ -151,6 +153,7 @@ export type Database = {
         }
         Update: {
           ativo?: boolean
+          categoria?: string | null
           created_at?: string
           icone?: string | null
           id?: string
@@ -397,6 +400,7 @@ export type Database = {
           descricao: string | null
           endereco: string | null
           foto: string | null
+          google_maps_url: string | null
           horario_funcionamento: string | null
           id: string
           latitude: number | null
@@ -417,6 +421,7 @@ export type Database = {
           descricao?: string | null
           endereco?: string | null
           foto?: string | null
+          google_maps_url?: string | null
           horario_funcionamento?: string | null
           id?: string
           latitude?: number | null
@@ -437,6 +442,7 @@ export type Database = {
           descricao?: string | null
           endereco?: string | null
           foto?: string | null
+          google_maps_url?: string | null
           horario_funcionamento?: string | null
           id?: string
           latitude?: number | null
@@ -798,6 +804,68 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "partners_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pilar_conteudos: {
+        Row: {
+          ativo: boolean
+          city_id: string | null
+          created_at: string
+          data_evento: string | null
+          descricao: string | null
+          id: string
+          imagem_url: string | null
+          link: string | null
+          local: string | null
+          ordem: number
+          pilar: Database["public"]["Enums"]["pilar_kind"]
+          subtitulo: string | null
+          tipo: Database["public"]["Enums"]["pilar_tipo"]
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          city_id?: string | null
+          created_at?: string
+          data_evento?: string | null
+          descricao?: string | null
+          id?: string
+          imagem_url?: string | null
+          link?: string | null
+          local?: string | null
+          ordem?: number
+          pilar: Database["public"]["Enums"]["pilar_kind"]
+          subtitulo?: string | null
+          tipo: Database["public"]["Enums"]["pilar_tipo"]
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          city_id?: string | null
+          created_at?: string
+          data_evento?: string | null
+          descricao?: string | null
+          id?: string
+          imagem_url?: string | null
+          link?: string | null
+          local?: string | null
+          ordem?: number
+          pilar?: Database["public"]["Enums"]["pilar_kind"]
+          subtitulo?: string | null
+          tipo?: Database["public"]["Enums"]["pilar_tipo"]
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pilar_conteudos_city_id_fkey"
             columns: ["city_id"]
             isOneToOne: false
             referencedRelation: "cities"
@@ -1213,6 +1281,8 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      pilar_kind: "nexus" | "elas" | "magna"
+      pilar_tipo: "evento" | "premiacao" | "conteudo"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1341,6 +1411,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      pilar_kind: ["nexus", "elas", "magna"],
+      pilar_tipo: ["evento", "premiacao", "conteudo"],
     },
   },
 } as const
