@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CreditCard, Newspaper, LayoutGrid, TrendingUp, Users, Sparkles, Calendar, Gift, Building2, Scale } from 'lucide-react';
+import { CreditCard, TrendingUp, Users, Sparkles, Calendar, Gift, Building2, Scale } from 'lucide-react';
 import type { TabType } from '@/components/app/PremiumBottomNav';
 import type { MoreSection } from '@/pages/app/MorePage';
 import rarquesLogo from '@/assets/rarques-logo.png.asset.json';
