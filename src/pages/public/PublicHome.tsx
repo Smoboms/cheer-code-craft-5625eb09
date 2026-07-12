@@ -18,7 +18,7 @@ const QUICK_CHIPS = [
   { label: 'Empresas', to: '/empresas' },
   { label: 'Profissionais', to: '/profissionais' },
   { label: 'Mercado', to: '/mercado' },
-  { label: 'R.Journal', to: '/journal' },
+  { label: 'Locais', to: '/locais' },
 ];
 
 const DEMAIS_CATEGORIAS = [
