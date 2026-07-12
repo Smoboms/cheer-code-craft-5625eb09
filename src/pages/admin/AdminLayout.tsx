@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid } from 'lucide-react';
+import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid, Columns3, Building } from 'lucide-react';
 import { useState } from 'react';
 
 const NAV = [
@@ -9,6 +9,7 @@ const NAV = [
   { to: '/admin/profissionais', label: 'Profissionais', icon: Wrench },
   { to: '/admin/mercado', label: 'Mercado', icon: ShoppingBag },
   { to: '/admin/mercado-categorias', label: 'Categorias do Mercado', icon: Layers },
+  { to: '/admin/pilares', label: 'Pilares', icon: Columns3 },
   { to: '/admin/journal', label: 'R.Journal', icon: Newspaper },
   { to: '/admin/categorias', label: 'Categorias', icon: Tags },
   { to: '/admin/associados', label: 'Associados', icon: Users },
@@ -17,6 +18,7 @@ const NAV = [
   { to: '/admin/banners', label: 'Banners', icon: Megaphone },
   { to: '/admin/locais', label: 'Locais', icon: MapPin },
   { to: '/admin/atalhos', label: 'Atalhos da Home', icon: LayoutGrid },
+  { to: '/admin/cidades', label: 'Cidades', icon: Building },
 ];
 
 export default function AdminLayout() {

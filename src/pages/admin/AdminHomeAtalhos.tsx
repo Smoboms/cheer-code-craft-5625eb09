@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Btn, Card, EmptyState, Input, Label, Modal, PageHeader } from './ui';
+import { Btn, Card, EmptyState, Input, Label, Modal, PageHeader, Select } from './ui';
 import { useAsync } from './hooks';
 import { Pencil, Trash2 } from 'lucide-react';
 
@@ -11,9 +11,13 @@ type Atalho = {
   link: string;
   ordem: number;
   ativo: boolean;
+  categoria: string | null;
 };
 
-const empty: Atalho = { titulo: '', icone: '', link: '', ordem: 0, ativo: true };
+const empty: Atalho = { titulo: '', icone: '', link: '', ordem: 0, ativo: true, categoria: '' };
+
+const ICONES_PADRAO = ['MapPin', 'Hotel', 'Cloud', 'ShoppingBag', 'Wrench', 'Newspaper', 'Building2', 'Utensils', 'Coffee', 'Car', 'Heart', 'Star', 'Home', 'Briefcase', 'Phone', 'Calendar', 'Camera', 'Users'];
+const CATEGORIAS_PADRAO = ['Serviços', 'Turismo', 'Hotelaria', 'Gastronomia', 'Saúde', 'Educação', 'Utilidade Pública', 'Comércio', 'Entretenimento'];
 
 export default function AdminHomeAtalhos() {
   const { data, loading, reload } = useAsync(async () =>
@@ -70,7 +74,9 @@ export default function AdminHomeAtalhos() {
                   #{a.ordem} · {a.titulo} {!a.ativo && <span className="text-red-400 text-xs">(inativo)</span>}
                 </div>
                 <div className="text-xs text-gray-400 truncate">
-                  {a.icone && <span className="mr-2">[{a.icone}]</span>}→ {a.link}
+                  {a.icone && <span className="mr-2">[{a.icone}]</span>}
+                  {a.categoria && <span className="mr-2 px-1.5 py-0.5 bg-white/10 text-gray-300 uppercase tracking-wider text-[9px]">{a.categoria}</span>}
+                  → {a.link}
                 </div>
               </div>
               <div className="flex gap-1 shrink-0">
@@ -98,14 +104,23 @@ export default function AdminHomeAtalhos() {
           <div className="md:col-span-2"><Label>Título</Label>
             <Input value={f.titulo} onChange={e => setF({ ...f, titulo: e.target.value })} />
           </div>
-          <div><Label>Ícone (nome lucide)</Label>
-            <Input value={f.icone ?? ''} onChange={e => setF({ ...f, icone: e.target.value })} placeholder="MapPin / Hotel / Cloud" />
+          <div><Label>Ícone (lucide)</Label>
+            <Select value={f.icone ?? ''} onChange={e => setF({ ...f, icone: e.target.value })}>
+              <option value="">— Escolha —</option>
+              {ICONES_PADRAO.map(i => <option key={i} value={i}>{i}</option>)}
+            </Select>
           </div>
           <div><Label>Ordem</Label>
             <Input type="number" value={f.ordem} onChange={e => setF({ ...f, ordem: Number(e.target.value) })} />
           </div>
           <div className="md:col-span-2"><Label>Link</Label>
             <Input value={f.link} onChange={e => setF({ ...f, link: e.target.value })} placeholder="/empresas ou /buscar?type=local&cat=turismo" />
+          </div>
+          <div className="md:col-span-2"><Label>Categoria</Label>
+            <Select value={f.categoria ?? ''} onChange={e => setF({ ...f, categoria: e.target.value })}>
+              <option value="">— Sem categoria —</option>
+              {CATEGORIAS_PADRAO.map(c => <option key={c} value={c}>{c}</option>)}
+            </Select>
           </div>
           <label className="md:col-span-2 flex items-center gap-2 text-sm text-gray-300">
             <input type="checkbox" checked={f.ativo} onChange={e => setF({ ...f, ativo: e.target.checked })} /> Ativo

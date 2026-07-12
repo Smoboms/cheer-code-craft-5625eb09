@@ -17,8 +17,7 @@ type Lugar = {
   telefone: string | null;
   whatsapp: string | null;
   site: string | null;
-  latitude: number | null;
-  longitude: number | null;
+  google_maps_url: string | null;
   horario_funcionamento: string | null;
   foto: string | null;
   ativo: boolean;
@@ -26,7 +25,7 @@ type Lugar = {
 
 const empty: Lugar = {
   nome: '', slug: '', tipo: 'utilidade', categoria: '', descricao: '', endereco: '',
-  telefone: '', whatsapp: '', site: '', latitude: null, longitude: null,
+  telefone: '', whatsapp: '', site: '', google_maps_url: '',
   horario_funcionamento: '', foto: '', ativo: true,
 };
 
@@ -53,8 +52,7 @@ export default function AdminLocals() {
       ...f,
       slug: f.slug?.trim() || slugify(f.nome),
       categoria: f.categoria || null,
-      latitude: f.latitude === null || (f.latitude as any) === '' ? null : Number(f.latitude),
-      longitude: f.longitude === null || (f.longitude as any) === '' ? null : Number(f.longitude),
+      google_maps_url: f.google_maps_url || null,
     };
     const { error } = f.id
       ? await supabase.from('lugares').update(payload).eq('id', f.id)
@@ -144,8 +142,9 @@ export default function AdminLocals() {
           <div><Label>WhatsApp</Label><Input value={f.whatsapp ?? ''} onChange={e => setF({ ...f, whatsapp: e.target.value })} /></div>
           <div><Label>Site</Label><Input value={f.site ?? ''} onChange={e => setF({ ...f, site: e.target.value })} /></div>
           <div><Label>Horário</Label><Input value={f.horario_funcionamento ?? ''} onChange={e => setF({ ...f, horario_funcionamento: e.target.value })} /></div>
-          <div><Label>Latitude</Label><Input type="number" step="any" value={f.latitude ?? ''} onChange={e => setF({ ...f, latitude: e.target.value === '' ? null : Number(e.target.value) })} /></div>
-          <div><Label>Longitude</Label><Input type="number" step="any" value={f.longitude ?? ''} onChange={e => setF({ ...f, longitude: e.target.value === '' ? null : Number(e.target.value) })} /></div>
+          <div className="md:col-span-2"><Label>Link Google Maps</Label>
+            <Input value={f.google_maps_url ?? ''} onChange={e => setF({ ...f, google_maps_url: e.target.value })} placeholder="https://maps.google.com/?q=..." />
+          </div>
           <label className="md:col-span-2 flex items-center gap-2 text-sm text-gray-300">
             <input type="checkbox" checked={f.ativo} onChange={e => setF({ ...f, ativo: e.target.checked })} /> Ativo
           </label>
