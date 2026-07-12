@@ -39,6 +39,7 @@ function LucideIcon({ name, size = 22, className = '' }: { name?: string | null;
 export default function PublicHome() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
   const banner = usePublicBanner();
   const { partners, loading: loadingPartners } = useActivePartners();
   const { items: professionals } = useApprovedProfessionals();
