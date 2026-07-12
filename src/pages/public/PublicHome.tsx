@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import * as Icons from 'lucide-react';
-import { Search, ArrowRight, MapPin } from 'lucide-react';
+import { Search, ArrowRight, MapPin, X } from 'lucide-react';
 import { journalArticles } from '@/data/journalArticles';
 import { usePublicBanner } from '@/data/publicBanner';
 import { useActivePartners } from '@/data/usePartners';
