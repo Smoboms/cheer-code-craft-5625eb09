@@ -351,6 +351,59 @@ export default function PublicHome() {
         <p className="text-white font-semibold text-sm mb-1">Rarques Association · Uruaçu — GO</p>
         <p className="text-gray-500 text-[11px]">© {new Date().getFullYear()} · Conectando empresários e profissionais</p>
       </div>
+
+      {/* Botão flutuante de busca */}
+      <button
+        type="button"
+        onClick={() => setSearchOpen(true)}
+        aria-label="Buscar"
+        className="fixed bottom-24 right-4 lg:bottom-8 lg:right-8 z-40 w-14 h-14 rounded-full bg-yellow-500 hover:bg-yellow-400 text-black shadow-lg flex items-center justify-center transition-colors"
+      >
+        <Search size={22} />
+      </button>
+
+      {/* Modal de busca */}
+      {searchOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 flex items-start justify-center pt-24 px-4"
+          onClick={() => setSearchOpen(false)}
+        >
+          <div
+            className="bg-gray-900 border border-gray-800 w-full max-w-md p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-white font-semibold text-sm">Buscar em Uruaçu</p>
+              <button onClick={() => setSearchOpen(false)} className="text-gray-400 hover:text-white">
+                <X size={18} />
+              </button>
+            </div>
+            <form onSubmit={(e) => { setSearchOpen(false); submitSearch(e); }} className="relative mb-3">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                autoFocus
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Empresas, produtos, profissionais, lugares…"
+                className="w-full bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white text-sm pl-9 pr-3 py-3"
+              />
+            </form>
+            <div className="flex flex-wrap gap-2">
+              {QUICK_CHIPS.map((c) => (
+                <Link
+                  key={c.to}
+                  to={c.to}
+                  onClick={() => setSearchOpen(false)}
+                  className="border border-gray-800 hover:border-yellow-500/60 text-gray-300 hover:text-white text-xs px-3 py-1.5 transition-colors"
+                >
+                  {c.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+
   );
 }
