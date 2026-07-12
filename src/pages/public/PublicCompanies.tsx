@@ -69,7 +69,7 @@ export default function PublicCompanies() {
         {categories.map((c) => (
           <button
             key={c}
-            onClick={() => setCategory(c)}
+            onClick={() => changeCategory(c)}
             className={`whitespace-nowrap px-3 py-1.5 text-xs border transition-colors ${
               category === c
                 ? 'bg-white text-black border-white font-semibold'
