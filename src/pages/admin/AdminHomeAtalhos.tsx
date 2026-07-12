@@ -11,9 +11,13 @@ type Atalho = {
   link: string;
   ordem: number;
   ativo: boolean;
+  categoria: string | null;
 };
 
-const empty: Atalho = { titulo: '', icone: '', link: '', ordem: 0, ativo: true };
+const empty: Atalho = { titulo: '', icone: '', link: '', ordem: 0, ativo: true, categoria: '' };
+
+const ICONES_PADRAO = ['MapPin', 'Hotel', 'Cloud', 'ShoppingBag', 'Wrench', 'Newspaper', 'Building2', 'Utensils', 'Coffee', 'Car', 'Heart', 'Star', 'Home', 'Briefcase', 'Phone', 'Calendar', 'Camera', 'Users'];
+const CATEGORIAS_PADRAO = ['Serviços', 'Turismo', 'Hotelaria', 'Gastronomia', 'Saúde', 'Educação', 'Utilidade Pública', 'Comércio', 'Entretenimento'];
 
 export default function AdminHomeAtalhos() {
   const { data, loading, reload } = useAsync(async () =>
