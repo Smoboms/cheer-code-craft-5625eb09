@@ -115,11 +115,18 @@ export function MinhaEmpresaPage({ onBack }: Props) {
           <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Logo / Foto</label>
           <div className="flex items-center gap-3">
             <div className="w-16 h-16 bg-gray-800 overflow-hidden flex items-center justify-center">
-              {form.avatar_url ? <img src={form.avatar_url} alt="logo" className="w-full h-full object-cover" /> : <span className="text-gray-600 text-xs">Sem logo</span>}
+              {uploading ? (
+                <Loader2 size={20} className="text-gray-400 animate-spin" />
+              ) : form.avatar_url ? (
+                <img src={form.avatar_url} alt="logo" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-gray-600 text-xs">Sem logo</span>
+              )}
             </div>
-            <label className="text-white text-sm underline cursor-pointer">
-              Enviar imagem
-              <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])} />
+            <label className={`text-white text-sm underline cursor-pointer ${uploading ? 'opacity-60 pointer-events-none' : ''}`}>
+              {uploading ? 'Otimizando…' : 'Enviar imagem (WEBP)'}
+              <input type="file" accept="image/*" className="hidden" disabled={uploading}
+                onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])} />
             </label>
           </div>
         </div>
