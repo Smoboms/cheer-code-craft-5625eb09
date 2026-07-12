@@ -95,6 +95,48 @@ export default function CompanyProfile() {
         </div>
       )}
 
+      {/* Botões compactos de ação — padrão Área do Associado */}
+      {(() => {
+        const waNum = (partner.whatsapp || '').replace(/\D/g, '');
+        const waMsg = encodeURIComponent(
+          `Olá! Encontrei a ${partner.name} pelo Portal Rarques Uruaçu e gostaria de mais informações.`
+        );
+        const waHref = waNum ? `https://wa.me/${waNum.startsWith('55') ? waNum : '55' + waNum}?text=${waMsg}` : null;
+        const mapsHref = partner.address
+          ? `https://www.google.com/maps?q=${encodeURIComponent([partner.address, partner.city].filter(Boolean).join(', '))}`
+          : null;
+        const telHref = partner.phone ? `tel:${partner.phone.replace(/\D/g, '')}` : null;
+        const site = partner.website
+          ? (partner.website.startsWith('http') ? partner.website : `https://${partner.website}`)
+          : null;
+        const btn = 'flex-1 min-w-[calc(50%-0.375rem)] md:min-w-0 inline-flex items-center justify-center gap-1.5 border border-gray-700 hover:border-yellow-500 text-white text-xs font-semibold py-2 px-3 transition-colors bg-gray-900';
+        return (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {mapsHref && (
+              <a href={mapsHref} target="_blank" rel="noreferrer" className={btn}>
+                <MapPin size={14} /> Localização
+              </a>
+            )}
+            {waHref && (
+              <a href={waHref} target="_blank" rel="noreferrer" className={`${btn} bg-green-600/10 border-green-600/40 hover:border-green-500 text-green-300`}>
+                <MessageCircle size={14} /> WhatsApp
+              </a>
+            )}
+            {telHref && (
+              <a href={telHref} className={btn}>
+                <Phone size={14} /> Telefone
+              </a>
+            )}
+            {site && (
+              <a href={site} target="_blank" rel="noreferrer" className={btn}>
+                <Globe size={14} /> Site
+              </a>
+            )}
+          </div>
+        );
+      })()}
+
+
       <div className="bg-gray-900 border border-gray-800 p-4 mb-4 space-y-3">
         {(partner.address || partner.city || partner.distance) && (
           <div className="flex items-center gap-3 text-sm">
