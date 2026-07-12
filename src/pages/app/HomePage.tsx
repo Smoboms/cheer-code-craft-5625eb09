@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { CreditCard, Newspaper, LayoutGrid, TrendingUp, Users, Sparkles, Calendar, Gift } from 'lucide-react';
+import { CreditCard, Newspaper, LayoutGrid, TrendingUp, Users, Sparkles, Calendar, Gift, Building2, Scale } from 'lucide-react';
 import type { TabType } from '@/components/app/PremiumBottomNav';
 import type { MoreSection } from '@/pages/app/MorePage';
+import rarquesLogo from '@/assets/rarques-logo.png.asset.json';
 
 interface Props {
   userName: string;
@@ -68,10 +69,16 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
         <h2 className="text-2xl font-bold text-white">{firstName}</h2>
       </div>
 
-      {/* Carrossel de banners */}
+      {/* Carrossel de banners com imagem de fundo */}
       <div className="mb-3 relative overflow-hidden bg-gradient-to-br from-gray-900 to-black border border-gray-800">
         <div
-          className="flex transition-transform duration-500 ease-out"
+          aria-hidden
+          className="absolute inset-0 bg-no-repeat bg-right bg-contain opacity-10 pointer-events-none"
+          style={{ backgroundImage: `url(${rarquesLogo.url})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent pointer-events-none" />
+        <div
+          className="relative flex transition-transform duration-500 ease-out"
           style={{ transform: `translateX(-${slide * 100}%)` }}
         >
           {BANNERS.map((b, i) => {
@@ -93,7 +100,7 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
             );
           })}
         </div>
-        <div className="flex justify-center gap-1.5 pb-2">
+        <div className="relative flex justify-center gap-1.5 pb-2">
           {BANNERS.map((_, i) => (
             <button
               key={i}
@@ -123,10 +130,10 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
 
       {/* Grade compacta */}
       <div className="grid grid-cols-2 gap-2">
-        <button onClick={() => onNavigate('journal')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
-          <Newspaper size={18} className="text-white mb-1.5" />
-          <p className="text-white font-semibold text-xs">R.Journal</p>
-          <p className="text-gray-400 text-[10px]">Novas matérias</p>
+        <button onClick={() => onOpenMore('minhaempresa')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
+          <Building2 size={18} className="text-white mb-1.5" />
+          <p className="text-white font-semibold text-xs">Minha Empresa</p>
+          <p className="text-gray-400 text-[10px]">Perfil e produtos</p>
         </button>
         <button onClick={() => onOpenMore('nexus')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
           <Users size={18} className="text-yellow-400 mb-1.5" />
@@ -138,10 +145,10 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
           <p className="text-white font-semibold text-xs">Crescer</p>
           <p className="text-gray-400 text-[10px]">Diagnóstico</p>
         </button>
-        <button onClick={() => onNavigate('mais')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
-          <LayoutGrid size={18} className="text-white mb-1.5" />
-          <p className="text-white font-semibold text-xs">Explorar</p>
-          <p className="text-gray-400 text-[10px]">Todos os pilares</p>
+        <button onClick={() => onOpenMore('juridico')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
+          <Scale size={18} className="text-yellow-400 mb-1.5" />
+          <p className="text-white font-semibold text-xs">Jurídico Empresarial</p>
+          <p className="text-gray-400 text-[10px]">Assessoria dedicada</p>
         </button>
       </div>
     </div>
