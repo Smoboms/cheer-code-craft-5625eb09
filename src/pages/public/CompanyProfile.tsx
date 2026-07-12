@@ -172,18 +172,26 @@ export default function CompanyProfile() {
         )}
       </div>
 
-      <div className="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/40 p-5 text-center">
-        <p className="text-white font-semibold mb-1">Quer aproveitar os benefícios?</p>
-        <p className="text-gray-400 text-sm mb-4">
-          Torne-se Associado Rarques e acesse descontos, cashback e vantagens exclusivas.
-        </p>
+      {/* Bloco de benefícios exclusivos para membros */}
+      <div className="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/40 p-5">
+        <div className="flex items-center gap-2 mb-2">
+          <Sparkles size={16} className="text-yellow-400" />
+          <p className="text-[10px] uppercase tracking-[0.25em] font-semibold text-yellow-400">Benefícios para Membros</p>
+        </div>
+        <p className="text-white font-semibold mb-2">Associados Rarques têm vantagens aqui</p>
+        <ul className="text-gray-300 text-sm space-y-1 mb-4 list-disc list-inside">
+          <li>Descontos exclusivos e cashback em compras</li>
+          <li>Atendimento prioritário como Membro Rarques</li>
+          <li>Acesso a ofertas antecipadas e cupons</li>
+        </ul>
         <Link
           to="/app"
           className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-4 py-2 text-sm transition-colors"
         >
-          Acessar Área do Associado
+          Quero ser Membro
         </Link>
       </div>
+
     </div>
   );
 }
