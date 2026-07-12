@@ -83,39 +83,25 @@ export default function PublicHome() {
 
   return (
     <div className="animate-fadeUp pb-4">
-      {/* Bloco institucional RARQUES ASSOCIATION — preservado */}
-      <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 p-3 mb-3 flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <div className="inline-block bg-yellow-500/20 border border-yellow-500/40 px-1.5 py-0.5 mb-1">
-            <p className="text-[9px] font-semibold tracking-wider text-yellow-400">RARQUES ASSOCIATION</p>
+      {/* Bloco institucional RARQUES ASSOCIATION — compacto, no topo */}
+      <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 px-3 py-2 mb-3 flex items-center justify-between gap-3">
+        <div className="min-w-0 flex items-center gap-2">
+          <div className="inline-block bg-yellow-500/20 border border-yellow-500/40 px-1.5 py-0.5">
+            <p className="text-[9px] font-semibold tracking-wider text-yellow-400">RARQUES</p>
           </div>
-          <p className="text-white text-xs leading-snug">
-            Conectando empresários e profissionais da região.
+          <p className="text-white text-[11px] leading-snug truncate">
+            Conectando empresários e profissionais.
           </p>
         </div>
         <Link
           to="/app"
-          className="shrink-0 bg-yellow-500 hover:bg-yellow-400 text-black px-2.5 py-1.5 text-[11px] font-semibold inline-flex items-center gap-1"
+          className="shrink-0 bg-yellow-500 hover:bg-yellow-400 text-black px-2 py-1 text-[10px] font-semibold inline-flex items-center gap-1"
         >
-          Associar <ArrowRight size={11} />
+          Ser Membro <ArrowRight size={10} />
         </Link>
       </div>
 
-      {/* Destaque cidade: Uruaçu — GO */}
-      <div className="mb-4">
-        <div className="flex items-center gap-2 text-yellow-400">
-          <MapPin size={16} />
-          <span className="text-[10px] uppercase tracking-[0.25em] font-semibold">Portal da Cidade</span>
-        </div>
-        <h1 className="text-white text-3xl md:text-4xl font-bold mt-1 leading-tight">
-          Uruaçu <span className="text-yellow-500">— GO</span>
-        </h1>
-        <p className="text-gray-400 text-sm mt-1">
-          Tudo o que acontece na cidade em um só lugar — empresas, serviços, notícias e utilidades.
-        </p>
-      </div>
-
-      {/* Banner do Admin (preservado) */}
+      {/* Banner do Admin — entre RARQUES e o título Uruaçu */}
       {banner.active && (banner.imageUrl || banner.title || banner.text) && (
         <a
           href={banner.ctaHref || '#'}
@@ -140,27 +126,20 @@ export default function PublicHome() {
         </a>
       )}
 
-      {/* Busca global + chips */}
-      <form onSubmit={submitSearch} className="relative mb-2">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Busque empresas, produtos, profissionais, lugares…"
-          className="w-full bg-gray-900 border border-gray-800 focus:border-yellow-500 outline-none text-white text-sm pl-9 pr-3 py-3 transition-colors"
-        />
-      </form>
-      <div className="flex gap-2 overflow-x-auto pb-1 mb-5 -mx-1 px-1 scrollbar-hide">
-        {QUICK_CHIPS.map((c) => (
-          <Link
-            key={c.to}
-            to={c.to}
-            className="shrink-0 border border-gray-800 hover:border-yellow-500/60 text-gray-300 hover:text-white text-xs px-3 py-1.5 transition-colors"
-          >
-            {c.label}
-          </Link>
-        ))}
+      {/* Destaque cidade: Uruaçu — GO */}
+      <div className="mb-4">
+        <div className="flex items-center gap-2 text-yellow-400">
+          <MapPin size={16} />
+          <span className="text-[10px] uppercase tracking-[0.25em] font-semibold">Portal da Cidade</span>
+        </div>
+        <h1 className="text-white text-3xl md:text-4xl font-bold mt-1 leading-tight">
+          Uruaçu <span className="text-yellow-500">— GO</span>
+        </h1>
+        <p className="text-gray-400 text-sm mt-1">
+          Tudo o que acontece na cidade em um só lugar — empresas, serviços, notícias e utilidades.
+        </p>
       </div>
+
 
       {/* Clima */}
       <WeatherHomeBlock />
