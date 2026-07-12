@@ -3,6 +3,7 @@ import { Plus, Trash2, Edit3, Loader2, X, ImageIcon, Package } from 'lucide-reac
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMarketCategories } from '@/data/useMarketCategories';
+import { optimizeImage } from '@/lib/imageOptimizer';
 
 type Product = {
   id: string;
@@ -161,13 +162,18 @@ function ProductForm({ partnerId, initial, onClose, onSaved }: {
     if (!user) return;
     if (f.images.length >= 5) { alert('Máximo de 5 fotos.'); return; }
     setUploading(true);
-    const ext = file.name.split('.').pop();
-    const path = `${user.id}/${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from('partner-images').upload(path, file, { upsert: false });
-    if (error) { alert(error.message); setUploading(false); return; }
-    const { data } = supabase.storage.from('partner-images').getPublicUrl(path);
-    setF((s) => ({ ...s, images: [...s.images, data.publicUrl] }));
-    setUploading(false);
+    try {
+      const optimized = await optimizeImage(file, { maxDimension: 1400, quality: 0.85 });
+      const path = `${user.id}/${Date.now()}.webp`;
+      const { error } = await supabase.storage
+        .from('partner-images')
+        .upload(path, optimized, { upsert: false, contentType: 'image/webp' });
+      if (error) { alert(error.message); return; }
+      const { data } = supabase.storage.from('partner-images').getPublicUrl(path);
+      setF((s) => ({ ...s, images: [...s.images, data.publicUrl] }));
+    } finally {
+      setUploading(false);
+    }
   };
 
   const removeImg = (i: number) => setF((s) => ({ ...s, images: s.images.filter((_, idx) => idx !== i) }));
