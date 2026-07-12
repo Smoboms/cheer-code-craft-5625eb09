@@ -16,6 +16,7 @@ import { ElasPage } from '@/pages/app/ElasPage';
 import { MagnaPage } from '@/pages/app/MagnaPage';
 import { PanoramaPage } from '@/pages/app/PanoramaPage';
 import { MinhaEmpresaPage } from '@/pages/app/MinhaEmpresaPage';
+import { JuridicoEmpresarialPage } from '@/pages/app/JuridicoEmpresarialPage';
 
 function formatCardNumber(cardNumber: string): string {
   return cardNumber.match(/.{1,4}/g)?.join(' ') || cardNumber;
@@ -88,6 +89,7 @@ const Index = () => {
       case 'magna': return <MagnaPage onBack={() => setMoreSection(null)} />;
       case 'panorama': return <PanoramaPage onBack={() => setMoreSection(null)} />;
       case 'minhaempresa': return <MinhaEmpresaPage onBack={() => setMoreSection(null)} />;
+      case 'juridico': return <JuridicoEmpresarialPage onBack={() => setMoreSection(null)} />;
       case 'crescer': return (
         <div className="animate-fadeUp">
           <button onClick={() => setMoreSection(null)} className="text-gray-300 hover:text-white text-sm mb-3">← Voltar</button>
