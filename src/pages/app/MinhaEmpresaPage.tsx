@@ -3,6 +3,7 @@ import { ArrowLeft, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { MyProductsSection } from './MyProductsSection';
+import { optimizeImage } from '@/lib/imageOptimizer';
 
 interface Props { onBack: () => void; }
 
@@ -16,6 +17,8 @@ interface Form {
   avatar_url: string;
 }
 
+const AVATAR_SIGNED_TTL = 60 * 60 * 24 * 365;
+
 export function MinhaEmpresaPage({ onBack }: Props) {
   const { user, profile, refreshProfile } = useAuth();
   const [form, setForm] = useState<Form>({
@@ -28,6 +31,7 @@ export function MinhaEmpresaPage({ onBack }: Props) {
     avatar_url: '',
   });
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
   useEffect(() => {
@@ -51,12 +55,24 @@ export function MinhaEmpresaPage({ onBack }: Props) {
 
   const handleUpload = async (file: File) => {
     if (!user) return;
-    const ext = file.name.split('.').pop();
-    const path = `${user.id}/company.${ext}`;
-    const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
-    if (error) { setMsg('Erro ao enviar imagem'); return; }
-    const { data } = supabase.storage.from('avatars').getPublicUrl(path);
-    setForm((f) => ({ ...f, avatar_url: data.publicUrl }));
+    setUploading(true);
+    setMsg(null);
+    try {
+      const optimized = await optimizeImage(file, { maxDimension: 1200, quality: 0.85 });
+      const path = `${user.id}/company-${Date.now()}.webp`;
+      const upload = await supabase.storage
+        .from('avatars')
+        .upload(path, optimized, { upsert: true, contentType: 'image/webp' });
+      if (upload.error) throw upload.error;
+      const signed = await supabase.storage.from('avatars').createSignedUrl(path, AVATAR_SIGNED_TTL);
+      if (signed.error) throw signed.error;
+      setForm((f) => ({ ...f, avatar_url: signed.data.signedUrl }));
+    } catch (err: any) {
+      console.error('Upload empresa erro:', err);
+      setMsg('Erro ao enviar imagem');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSave = async () => {
