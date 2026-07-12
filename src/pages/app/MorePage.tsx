@@ -1,17 +1,18 @@
-import { Users, Heart, Award, Globe, Building2, TrendingUp, Tag, LucideIcon } from 'lucide-react';
+import { Users, Heart, Award, Globe, Building2, TrendingUp, Tag, Scale, LucideIcon } from 'lucide-react';
 
-export type MoreSection = 'nexus' | 'elas' | 'magna' | 'panorama' | 'minhaempresa' | 'crescer' | 'beneficios';
+export type MoreSection = 'nexus' | 'elas' | 'magna' | 'panorama' | 'minhaempresa' | 'crescer' | 'beneficios' | 'juridico';
 
 interface Props {
   onOpen: (section: MoreSection) => void;
 }
 
 const items: { key: MoreSection; label: string; desc: string; icon: LucideIcon; accent: string }[] = [
+  { key: 'minhaempresa', label: 'Minha Empresa', desc: 'Perfil e produtos', icon: Building2, accent: 'text-white' },
+  { key: 'juridico', label: 'Jurídico Empresarial', desc: 'Assessoria jurídica', icon: Scale, accent: 'text-yellow-400' },
   { key: 'nexus', label: 'Nexus', desc: 'Networking e rodadas', icon: Users, accent: 'text-yellow-400' },
   { key: 'elas', label: 'Elas', desc: 'Liderança feminina', icon: Heart, accent: 'text-pink-400' },
   { key: 'magna', label: 'Magna', desc: 'Legado e reconhecimento', icon: Award, accent: 'text-yellow-400' },
   { key: 'panorama', label: 'Panorama', desc: 'Análise econômica', icon: Globe, accent: 'text-blue-400' },
-  { key: 'minhaempresa', label: 'Minha Empresa', desc: 'Perfil no diretório', icon: Building2, accent: 'text-white' },
   { key: 'crescer', label: 'Crescer', desc: 'Termômetro do Negócio', icon: TrendingUp, accent: 'text-green-400' },
   { key: 'beneficios', label: 'Benefícios', desc: 'Parceiros e descontos', icon: Tag, accent: 'text-green-400' },
 ];
