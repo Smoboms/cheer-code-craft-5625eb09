@@ -56,6 +56,19 @@ export default function AdminDashboard() {
       weekMap.set(k, (weekMap.get(k) || 0) + 1);
     });
     const weekSeries = Array.from(weekMap.entries()).map(([k, v]) => ({ label: k, value: v }));
+
+    const rank = (rows: any[]) => {
+      const m = new Map<string, { label: string; n: number }>();
+      rows.forEach((r) => {
+        const k = (r.target_label || r.target_id || '').toString().trim();
+        if (!k) return;
+        const cur = m.get(k.toLowerCase()) || { label: k, n: 0 };
+        cur.n += 1;
+        m.set(k.toLowerCase(), cur);
+      });
+      return Array.from(m.values()).sort((a, b) => b.n - a.n).slice(0, 8);
+    };
+
     return {
       associados: associados.count ?? 0,
       empresas: empresas.count ?? 0,
@@ -66,6 +79,11 @@ export default function AdminDashboard() {
       top,
       monthSeries,
       weekSeries,
+      topSearches: rank(searches.data || []),
+      topProducts: rank(productViews.data || []),
+      topPros: rank(professionalViews.data || []),
+      topCompanies: rank(companyViews.data || []),
+      totalSearches: (searches.data || []).length,
     };
   }, [dr.range.from, dr.range.to]);
 
