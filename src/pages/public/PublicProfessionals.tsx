@@ -23,6 +23,16 @@ export default function PublicProfessionals() {
     [categories, currentSlug],
   );
 
+  useSeo({
+    title: currentCategory
+      ? `${currentCategory.name} em Uruaçu — Profissionais Rarques`
+      : 'Profissionais em Uruaçu — Rarques Association',
+    description: currentCategory
+      ? `Encontre um ${currentCategory.name.toLowerCase()} em Uruaçu. Diretório aberto de profissionais autônomos verificados.`
+      : 'Diretório aberto de profissionais autônomos de Uruaçu — eletricista, encanador, dentista, pintor e muito mais.',
+    canonical: `${window.location.origin}/profissionais${currentSlug ? `/${currentSlug}-uruacu` : ''}`,
+  });
+
   const filtered = items.filter(
     (p) =>
       !query ||
