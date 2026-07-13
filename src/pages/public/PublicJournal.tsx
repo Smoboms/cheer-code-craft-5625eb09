@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { journalArticles, journalCategories, type JournalCategory } from '@/data/journalArticles';
+import { useSeo } from '@/lib/useSeo';
 
 export default function PublicJournal() {
   const [active, setActive] = useState<JournalCategory>('Todas');
   const [slide, setSlide] = useState(0);
+
+  useSeo({
+    title: 'R.Journal — Notícias e conteúdo de Uruaçu',
+    description: 'Editorial Rarques: notícias, negócios, empreendedorismo e cultura em Uruaçu.',
+    canonical: `${window.location.origin}/journal`,
+  });
 
   const list = active === 'Todas' ? journalArticles : journalArticles.filter((a) => a.category === active);
   const featured = journalArticles.filter((a) => a.featured);

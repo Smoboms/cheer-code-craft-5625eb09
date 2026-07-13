@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MapPin, Phone, Globe, Clock, X, Building2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useSeo } from '@/lib/useSeo';
 
 type Lugar = {
   id: string;
