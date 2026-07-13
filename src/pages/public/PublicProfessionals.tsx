@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { MessageCircle, Search, MapPin, Plus } from 'lucide-react';
 import { useApprovedProfessionals, useProfessionalCategories } from '@/data/useProfessionals';
+import { useSeo } from '@/lib/useSeo';
+import { trackEvent } from '@/lib/analytics';
 
 function waLink(phone: string, message: string) {
   const clean = phone.replace(/\D/g, '');

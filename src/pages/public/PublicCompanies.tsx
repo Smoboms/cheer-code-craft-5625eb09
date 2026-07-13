@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { useActivePartners } from '@/data/usePartners';
+import { useSeo } from '@/lib/useSeo';
+
+
 
 export default function PublicCompanies() {
   const [params, setParams] = useSearchParams();
@@ -9,6 +12,14 @@ export default function PublicCompanies() {
   const initialCat = params.get('cat') || 'Todas';
   const [category, setCategory] = useState(initialCat);
   const { partners, loading } = useActivePartners();
+
+  useSeo({
+    title: category && category !== 'Todas'
+      ? `${category} em Uruaçu — Empresas Rarques`
+      : 'Empresas em Uruaçu — Rarques Association',
+    description: 'Diretório de empresas parceiras e associadas da Rarques em Uruaçu. Encontre serviços, comércios e benefícios exclusivos.',
+    canonical: `${window.location.origin}/empresas`,
+  });
 
   useEffect(() => {
     const c = params.get('cat');
