@@ -68,7 +68,7 @@ export default function CompanyProfile() {
         return (
           <div className="aspect-[16/9] bg-gray-800 mb-4 overflow-hidden flex items-center justify-center">
             {img ? (
-              <img src={img} alt={partner.name} className="w-full h-full object-cover" />
+              <img src={img} alt={partner.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
             ) : (
               <img src="/placeholder.svg" alt="" className="w-16 h-16 opacity-40" />
             )}

@@ -3,6 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Building2, Wrench, ShoppingBag, MapPin, Newspaper, Cloud } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { journalArticles } from '@/data/journalArticles';
+import { useSeo } from '@/lib/useSeo';
+import { trackEvent } from '@/lib/analytics';
 
 type Partner = { id: string; name: string; category: string | null; description: string | null };
 type Product = { id: string; name: string; category: string | null; price: number | null; images: string[] | null };
@@ -32,6 +34,22 @@ export default function PublicSearch() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => setQuery(params.get('q') || ''), [params]);
+
+  useSeo({
+    title: q0 ? `Busca: ${q0} — Rarques Uruaçu` : 'Busca — Rarques Uruaçu',
+    description: 'Busca global em empresas, produtos, profissionais, locais e notícias de Uruaçu.',
+    canonical: `${window.location.origin}/buscar`,
+  });
+
+  // Registra o termo pesquisado (debounced pelo próprio q0)
+  useEffect(() => {
+    const term = q0.trim();
+    if (!term) return;
+    const t = setTimeout(() => {
+      trackEvent('search_query', term.toLowerCase().slice(0, 80), term, { type: type || null, cat: cat || null });
+    }, 600);
+    return () => clearTimeout(t);
+  }, [q0, type, cat]);
 
   useEffect(() => {
     const q = q0.trim();
