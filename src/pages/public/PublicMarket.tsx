@@ -164,7 +164,7 @@ export default function PublicMarket() {
           <div className="-mx-4 px-4 overflow-x-auto no-scrollbar">
             <div className="flex gap-2">
               {featured.map((p) => (
-                <ProductCard key={p.id} p={p} onClick={() => { setSelected(p); setImgIdx(0); }} compact />
+                <ProductCard key={p.id} p={p} onClick={() => { setSelected(p); setImgIdx(0); trackEvent('product_view', p.id, p.name, { featured: true }); }} compact />
               ))}
             </div>
           </div>
@@ -184,7 +184,7 @@ export default function PublicMarket() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-3">
               {rest.map((p) => (
-                <ProductCard key={p.id} p={p} onClick={() => { setSelected(p); setImgIdx(0); }} />
+                <ProductCard key={p.id} p={p} onClick={() => { setSelected(p); setImgIdx(0); trackEvent('product_view', p.id, p.name); }} />
               ))}
             </div>
           )}
