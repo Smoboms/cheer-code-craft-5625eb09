@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { MessageCircle, Search, MapPin, Plus } from 'lucide-react';
 import { useApprovedProfessionals, useProfessionalCategories } from '@/data/useProfessionals';
+import { useSeo } from '@/lib/useSeo';
+import { trackEvent } from '@/lib/analytics';
 
 function waLink(phone: string, message: string) {
   const clean = phone.replace(/\D/g, '');
@@ -20,6 +22,16 @@ export default function PublicProfessionals() {
     () => categories.find((c) => c.slug === currentSlug) || null,
     [categories, currentSlug],
   );
+
+  useSeo({
+    title: currentCategory
+      ? `${currentCategory.name} em Uruaçu — Profissionais Rarques`
+      : 'Profissionais em Uruaçu — Rarques Association',
+    description: currentCategory
+      ? `Encontre um ${currentCategory.name.toLowerCase()} em Uruaçu. Diretório aberto de profissionais autônomos verificados.`
+      : 'Diretório aberto de profissionais autônomos de Uruaçu — eletricista, encanador, dentista, pintor e muito mais.',
+    canonical: `${window.location.origin}/profissionais${currentSlug ? `/${currentSlug}-uruacu` : ''}`,
+  });
 
   const filtered = items.filter(
     (p) =>
@@ -153,6 +165,7 @@ function ProGrid({ items }: { items: any[] }) {
               href={waLink(p.whatsapp, `Olá ${p.name}, encontrei seu contato no diretório Rarques.`)}
               target="_blank"
               rel="noreferrer"
+              onClick={() => trackEvent('professional_view', p.id, p.name, { category: p.category, city: p.city })}
               className="mt-2 bg-green-600 hover:bg-green-500 text-white text-[11px] font-semibold px-2 py-1.5 inline-flex items-center justify-center gap-1"
             >
               <MessageCircle size={12} /> Falar no WhatsApp

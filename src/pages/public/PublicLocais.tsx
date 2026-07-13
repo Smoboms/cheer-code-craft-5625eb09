@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MapPin, Phone, Globe, Clock, X, Building2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useSeo } from '@/lib/useSeo';
 
 type Lugar = {
   id: string;
@@ -39,6 +40,13 @@ export default function PublicLocais() {
   const [lugares, setLugares] = useState<Lugar[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Lugar | null>(null);
+
+  useSeo({
+    title: tipo ? `${TIPO_LABEL[tipo] || tipo} em Uruaçu — Locais Rarques` : 'Locais de Uruaçu — Rarques',
+    description: 'Serviços públicos, hotéis, turismo e utilidades de Uruaçu. Guia completo de locais da cidade.',
+    canonical: `${window.location.origin}/locais`,
+  });
+
 
   useEffect(() => {
     (async () => {
@@ -111,7 +119,7 @@ export default function PublicLocais() {
             >
               <div className="flex gap-3">
                 {l.foto ? (
-                  <img src={l.foto} alt={l.nome} className="w-16 h-16 object-cover shrink-0" />
+                  <img src={l.foto} alt={l.nome} className="w-16 h-16 object-cover shrink-0" loading="lazy" decoding="async" />
                 ) : (
                   <div className="w-16 h-16 bg-gray-800 flex items-center justify-center shrink-0">
                     <Building2 size={24} className="text-gray-600" />
@@ -161,7 +169,7 @@ function DetailModal({ lugar, onClose }: { lugar: Lugar; onClose: () => void }) 
       >
         <div className="relative">
           {lugar.foto ? (
-            <img src={lugar.foto} alt={lugar.nome} className="w-full h-48 object-cover" />
+            <img src={lugar.foto} alt={lugar.nome} className="w-full h-48 object-cover" loading="lazy" decoding="async" />
           ) : (
             <div className="w-full h-32 bg-gray-800 flex items-center justify-center">
               <Building2 size={40} className="text-gray-600" />

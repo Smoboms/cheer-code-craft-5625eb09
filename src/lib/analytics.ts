@@ -22,7 +22,15 @@ export type AnalyticsEventType =
   | 'paywall_login_click'
   | 'company_profile_view'
   | 'article_view'
-  | 'article_read_full';
+  | 'article_read_full'
+  | 'search_query'
+  | 'product_view'
+  | 'professional_view'
+  | 'lugar_view'
+  | 'coupon_click'
+  | 'benefit_use'
+  | 'shortcut_click'
+  | 'category_click';
 
 export async function trackEvent(
   event_type: AnalyticsEventType,

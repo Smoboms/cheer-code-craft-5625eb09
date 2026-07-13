@@ -3,6 +3,7 @@ import { Search, X, MessageCircle, Store, ShoppingBag } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent } from '@/lib/analytics';
 import { useMarketCategories, MarketCategory } from '@/data/useMarketCategories';
+import { useSeo } from '@/lib/useSeo';
 
 type Product = {
   id: string;
@@ -41,6 +42,14 @@ export default function PublicMarket() {
   const [imgIdx, setImgIdx] = useState(0);
 
   const { categories, subcategories, loading: catsLoading } = useMarketCategories(true);
+
+  useSeo({
+    title: 'Mercado Rarques — Ofertas em Uruaçu',
+    description: 'Produtos e ofertas exclusivas de Empresas Membro verificadas em Uruaçu. Mercado Rarques.',
+    canonical: `${window.location.origin}/mercado`,
+  });
+
+
 
   useEffect(() => {
     trackEvent('page_view', 'mercado', 'Mercado');
@@ -155,7 +164,7 @@ export default function PublicMarket() {
           <div className="-mx-4 px-4 overflow-x-auto no-scrollbar">
             <div className="flex gap-2">
               {featured.map((p) => (
-                <ProductCard key={p.id} p={p} onClick={() => { setSelected(p); setImgIdx(0); }} compact />
+                <ProductCard key={p.id} p={p} onClick={() => { setSelected(p); setImgIdx(0); trackEvent('product_view', p.id, p.name, { featured: true }); }} compact />
               ))}
             </div>
           </div>
@@ -175,7 +184,7 @@ export default function PublicMarket() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-3">
               {rest.map((p) => (
-                <ProductCard key={p.id} p={p} onClick={() => { setSelected(p); setImgIdx(0); }} />
+                <ProductCard key={p.id} p={p} onClick={() => { setSelected(p); setImgIdx(0); trackEvent('product_view', p.id, p.name); }} />
               ))}
             </div>
           )}
@@ -240,7 +249,7 @@ function ProductCard({ p, onClick, compact }: { p: Product; onClick: () => void;
     >
       <div className="aspect-square bg-black relative overflow-hidden">
         {p.images?.[0] ? (
-          <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover" />
+          <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-700">
             <ShoppingBag size={32} />
@@ -296,7 +305,7 @@ function ProductModal({
             <div className="flex gap-1 p-2 overflow-x-auto no-scrollbar">
               {imgs.map((src, i) => (
                 <button key={i} onClick={() => setImgIdx(i)} className={`shrink-0 w-14 h-14 border ${i === imgIdx ? 'border-yellow-500' : 'border-gray-700'}`}>
-                  <img src={src} alt="" className="w-full h-full object-cover" />
+                  <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 </button>
               ))}
             </div>

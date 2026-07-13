@@ -10,6 +10,7 @@ import { CardCarousel } from '@/components/public/CardCarousel';
 import { trackEvent } from '@/lib/analytics';
 import { WeatherHomeBlock } from '@/components/public/WeatherHomeBlock';
 import { supabase } from '@/integrations/supabase/client';
+import { useSeo } from '@/lib/useSeo';
 
 type Atalho = { id: string; titulo: string; icone: string | null; link: string; ordem: number };
 type Produto = { id: string; name: string; price: number | null; images: string[] | null; category: string | null };
@@ -49,6 +50,13 @@ export default function PublicHome() {
   useEffect(() => {
     trackEvent('page_view', 'home', 'Início');
   }, []);
+
+  useSeo({
+    title: 'Rarques Association — Cidade Inteligente de Uruaçu',
+    description: 'Portal oficial da Rarques em Uruaçu: empresas, profissionais, mercado, R.Journal, locais e clima em um só lugar.',
+    canonical: `${window.location.origin}/`,
+  });
+
 
   useEffect(() => {
     (async () => {
@@ -164,11 +172,11 @@ export default function PublicHome() {
                 </>
               );
               return external ? (
-                <a key={a.id} href={a.link} target="_blank" rel="noreferrer" className="group flex flex-col items-center gap-1.5">
+                <a key={a.id} href={a.link} target="_blank" rel="noreferrer" onClick={() => trackEvent('shortcut_click', a.id, a.titulo, { link: a.link })} className="group flex flex-col items-center gap-1.5">
                   {inner}
                 </a>
               ) : (
-                <Link key={a.id} to={a.link} className="group flex flex-col items-center gap-1.5">
+                <Link key={a.id} to={a.link} onClick={() => trackEvent('shortcut_click', a.id, a.titulo, { link: a.link })} className="group flex flex-col items-center gap-1.5">
                   {inner}
                 </Link>
               );
