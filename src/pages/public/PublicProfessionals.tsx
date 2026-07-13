@@ -165,6 +165,7 @@ function ProGrid({ items }: { items: any[] }) {
               href={waLink(p.whatsapp, `Olá ${p.name}, encontrei seu contato no diretório Rarques.`)}
               target="_blank"
               rel="noreferrer"
+              onClick={() => trackEvent('professional_view', p.id, p.name, { category: p.category, city: p.city })}
               className="mt-2 bg-green-600 hover:bg-green-500 text-white text-[11px] font-semibold px-2 py-1.5 inline-flex items-center justify-center gap-1"
             >
               <MessageCircle size={12} /> Falar no WhatsApp
