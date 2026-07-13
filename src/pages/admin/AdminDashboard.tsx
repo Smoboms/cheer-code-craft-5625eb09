@@ -6,7 +6,7 @@ import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContai
 export default function AdminDashboard() {
   const dr = useDateRange('30d');
   const { data, loading } = useAsync(async () => {
-    const [associados, empresas, empresasMembro, cupons, cuponsPeriodo, coupSum, articleViews, newProfiles, weeklyCoupons] = await Promise.all([
+    const [associados, empresas, empresasMembro, cupons, cuponsPeriodo, coupSum, articleViews, newProfiles, weeklyCoupons, searches, productViews, professionalViews, companyViews] = await Promise.all([
       supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('is_active', true),
       supabase.from('partners').select('id', { count: 'exact', head: true }),
       supabase.from('partners').select('id', { count: 'exact', head: true }).eq('is_member', true),
@@ -16,6 +16,10 @@ export default function AdminDashboard() {
       supabase.from('analytics_events').select('target_id, target_label').eq('event_type', 'article_view').gte('created_at', dr.range.from).lte('created_at', dr.range.to),
       supabase.from('profiles').select('created_at').gte('created_at', new Date(Date.now() - 1000*60*60*24*30*6).toISOString()),
       supabase.from('coupons').select('created_at').gte('created_at', new Date(Date.now() - 1000*60*60*24*7*8).toISOString()),
+      supabase.from('analytics_events').select('target_label').eq('event_type', 'search_query').gte('created_at', dr.range.from).lte('created_at', dr.range.to),
+      supabase.from('analytics_events').select('target_id, target_label').eq('event_type', 'product_view').gte('created_at', dr.range.from).lte('created_at', dr.range.to),
+      supabase.from('analytics_events').select('target_id, target_label').eq('event_type', 'professional_view').gte('created_at', dr.range.from).lte('created_at', dr.range.to),
+      supabase.from('analytics_events').select('target_id, target_label').eq('event_type', 'company_profile_view').gte('created_at', dr.range.from).lte('created_at', dr.range.to),
     ]);
     const savings = (coupSum.data || []).reduce((s, r: any) => s + Number(r.savings || 0), 0);
     // Top article
