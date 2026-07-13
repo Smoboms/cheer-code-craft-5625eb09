@@ -134,8 +134,31 @@ export default function AdminDashboard() {
             <div className="text-white">{data.top?.label ?? 'Sem visualizações ainda'}</div>
             {data.top && <div className="text-xs text-gray-400 mt-1">{data.top.n} visualizações</div>}
           </Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <RankCard title={`Termos mais buscados (${data.totalSearches})`} rows={data.topSearches} color="text-yellow-400" />
+            <RankCard title="Empresas mais visualizadas" rows={data.topCompanies} color="text-blue-400" />
+            <RankCard title="Produtos mais visualizados" rows={data.topProducts} color="text-green-400" />
+            <RankCard title="Profissionais mais acionados" rows={data.topPros} color="text-purple-400" />
+          </div>
         </>
       )}
     </>
+  );
+}
+
+function RankCard({ title, rows, color }: { title: string; rows: { label: string; n: number }[]; color: string }) {
+  return (
+    <Card className="p-4">
+      <div className="text-sm text-gray-300 mb-2">{title}</div>
+      {!rows.length ? <div className="text-gray-500 text-xs">Sem dados no período.</div> : (
+        rows.map((r) => (
+          <div key={r.label} className="flex justify-between text-sm py-1 border-b border-white/5 last:border-b-0">
+            <span className="text-white truncate mr-2">{r.label}</span>
+            <span className={color}>{r.n}</span>
+          </div>
+        ))
+      )}
+    </Card>
   );
 }
