@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, MapPin, Phone, Instagram, Globe, Clock, Loader2, MessageCircle, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useSeo } from '@/lib/useSeo';
 
 interface Partner {
   id: string;
@@ -37,6 +38,12 @@ export default function CompanyProfile() {
       setLoading(false);
     })();
   }, [id]);
+
+  useSeo({
+    title: partner ? `${partner.name}${partner.city ? ' — ' + partner.city : ' — Uruaçu'} · Rarques` : 'Empresa · Rarques',
+    description: partner?.description?.slice(0, 155) || 'Perfil de empresa parceira Rarques em Uruaçu.',
+    canonical: partner ? `${window.location.origin}/empresas/${partner.id}` : undefined,
+  });
 
   if (loading) {
     return (
