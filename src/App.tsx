@@ -60,6 +60,8 @@ const App = () => (
               <Route path="/profissionais/cadastro" element={<PublicProfessionalSubmit />} />
               <Route path="/profissionais/:categoria" element={<PublicProfessionals />} />
               <Route path="/locais" element={<PublicLocais />} />
+              <Route path="/seja-membro" element={<SejaMembro />} />
+              <Route path="/journal-info" element={<JournalInfo />} />
             </Route>
             <Route path="/app" element={<Index />} />
             <Route path="/admin" element={<AdminLayout />}>
