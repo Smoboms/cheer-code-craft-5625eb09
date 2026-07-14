@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMarketCategories } from '@/data/useMarketCategories';
 import { optimizeImage } from '@/lib/imageOptimizer';
+import { formatBRL } from '@/lib/utils';
 
 type Product = {
   id: string;
@@ -19,10 +20,14 @@ type Product = {
   rejection_reason: string | null;
 };
 
-export function MyProductsSection() {
+interface Props {
+  /** True quando o perfil da empresa está preenchido a ponto de liberar o Mercado. */
+  enabled?: boolean;
+}
+
+export function MyProductsSection({ enabled = true }: Props) {
   const { user } = useAuth();
   const [partnerId, setPartnerId] = useState<string | null>(null);
-  const [isMember, setIsMember] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,45 +37,46 @@ export function MyProductsSection() {
   const load = async () => {
     if (!user) return;
     setLoading(true);
-    const { data: partner } = await supabase.from('partners').select('id,is_member').eq('created_by', user.id).maybeSingle();
+    const { data: partner } = await supabase.from('partners').select('id').eq('created_by', user.id).maybeSingle();
     setPartnerId(partner?.id || null);
-    setIsMember(!!partner?.is_member);
     if (partner?.id) {
       const { data } = await supabase.from('marketplace_products').select('*').eq('partner_id', partner.id).order('created_at', { ascending: false });
       setProducts((data as any) || []);
+    } else {
+      setProducts([]);
     }
     const { data: cats } = await supabase.from('partner_categories').select('name').order('name');
     setCategories((cats || []).map((c: any) => c.name));
     setLoading(false);
   };
-  useEffect(() => { load(); }, [user]);
+  useEffect(() => { load(); }, [user, enabled]);
 
   const del = async (p: Product) => { if (confirm('Excluir produto?')) { await supabase.from('marketplace_products').delete().eq('id', p.id); load(); } };
 
   if (loading) return <div className="text-gray-400 text-sm py-4"><Loader2 size={16} className="inline animate-spin" /> Carregando…</div>;
 
-  if (!partnerId) {
+  if (!enabled) {
     return (
       <div className="bg-gray-900 border border-gray-800 p-4">
         <div className="flex items-start gap-3">
           <Package size={20} className="text-gray-500 shrink-0 mt-0.5" />
           <div>
             <p className="text-white text-sm font-semibold">Mercado Rarques</p>
-            <p className="text-gray-400 text-xs mt-1">Complete o cadastro da sua empresa no diretório antes de publicar produtos.</p>
+            <p className="text-gray-400 text-xs mt-1">Preencha todos os campos da sua empresa para liberar o cadastro de produtos.</p>
           </div>
         </div>
       </div>
     );
   }
 
-  if (!isMember) {
+  if (!partnerId) {
     return (
       <div className="bg-gray-900 border border-gray-800 p-4">
         <div className="flex items-start gap-3">
           <Package size={20} className="text-yellow-500 shrink-0 mt-0.5" />
           <div>
             <p className="text-white text-sm font-semibold">Mercado Rarques</p>
-            <p className="text-gray-400 text-xs mt-1">Apenas Empresas Membro podem publicar produtos no Mercado. Fale com a administração para se tornar Membro.</p>
+            <p className="text-gray-400 text-xs mt-1">Salve os dados da sua empresa para liberar o cadastro de produtos.</p>
           </div>
         </div>
       </div>
