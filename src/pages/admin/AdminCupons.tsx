@@ -107,9 +107,9 @@ export default function AdminCupons() {
                         <td className="py-2 text-gray-300">{new Date(c.created_at).toLocaleDateString()}</td>
                         <td className="text-white">{c.profile?.name || c.profile?.email || '—'}</td>
                         <td className="text-white">{c.partner?.name || '—'}</td>
-                        <td className="text-gray-300">R$ {Number(c.purchase_amount).toFixed(2)}</td>
+                        <td className="text-gray-300">{formatBRL(Number(c.purchase_amount))}</td>
                         <td className="text-yellow-400">{Number(c.discount_percent).toFixed(0)}%</td>
-                        <td className="text-green-400">R$ {Number(c.savings).toFixed(2)}</td>
+                        <td className="text-green-400">{formatBRL(Number(c.savings))}</td>
                       </tr>
                     ))}
                   </tbody>
