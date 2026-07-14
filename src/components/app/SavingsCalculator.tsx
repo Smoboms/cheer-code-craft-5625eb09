@@ -1,5 +1,6 @@
 import { Calculator, TrendingUp, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import { formatBRL } from '@/lib/utils';
 
 const categories = [
   { id: 'alimentacao', name: 'Alimentação', discount: 8, emoji: '🍽️' },
