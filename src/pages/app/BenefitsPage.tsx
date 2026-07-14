@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useActivePartners } from '@/data/usePartners';
 import { toast } from 'sonner';
+import { formatBRL } from '@/lib/utils';
 
 interface CouponData {
   code: string;
