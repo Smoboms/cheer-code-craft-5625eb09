@@ -357,10 +357,10 @@ export function BenefitsPage() {
                       {/* Savings Summary */}
                       <div className="bg-gradient-to-br from-green-500 to-green-600 p-4">
                         <p className="text-white/80 text-xs mb-1">VOCÊ ECONOMIZOU</p>
-                        <p className="text-white text-2xl font-bold mb-2">R$ {couponData.savedAmount.toFixed(2)}</p>
+                        <p className="text-white text-2xl font-bold mb-2">{formatBRL(couponData.savedAmount)}</p>
                         <div className="flex justify-between text-sm text-white/90">
                           <span>Valor da compra:</span>
-                          <span>R$ {couponData.purchaseValue.toFixed(2)}</span>
+                          <span>{formatBRL(couponData.purchaseValue)}</span>
                         </div>
                       </div>
 
