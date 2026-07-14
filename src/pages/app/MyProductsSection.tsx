@@ -160,7 +160,7 @@ function ProductForm({ partnerId, initial, onClose, onSaved }: {
 
   const upload = async (file: File) => {
     if (!user) return;
-    if (f.images.length >= 5) { alert('Máximo de 5 fotos.'); return; }
+    if (f.images.length >= 4) { alert('Máximo de 4 fotos.'); return; }
     setUploading(true);
     try {
       const optimized = await optimizeImage(file, { maxDimension: 1400, quality: 0.85 });
@@ -251,15 +251,15 @@ function ProductForm({ partnerId, initial, onClose, onSaved }: {
               className="w-full bg-black border border-gray-700 text-white text-sm px-3 py-2 mt-1 outline-none focus:border-yellow-500 resize-none" />
           </div>
           <div>
-            <label className="text-[11px] uppercase text-gray-400 tracking-wider">Fotos ({f.images.length}/5)</label>
-            <div className="grid grid-cols-5 gap-1 mt-1">
+            <label className="text-[11px] uppercase text-gray-400 tracking-wider">Fotos ({f.images.length}/4)</label>
+            <div className="grid grid-cols-4 gap-1 mt-1">
               {f.images.map((src, i) => (
                 <div key={i} className="relative aspect-square bg-black border border-gray-700">
                   <img src={src} alt="" className="w-full h-full object-cover" />
                   <button onClick={() => removeImg(i)} className="absolute -top-1 -right-1 bg-red-600 text-white p-0.5"><X size={10} /></button>
                 </div>
               ))}
-              {f.images.length < 5 && (
+              {f.images.length < 4 && (
                 <label className="aspect-square bg-black border border-dashed border-gray-600 flex items-center justify-center text-gray-500 cursor-pointer hover:border-yellow-500">
                   {uploading ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
                   <input type="file" accept="image/*" className="hidden" disabled={uploading}
