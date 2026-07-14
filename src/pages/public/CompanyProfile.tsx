@@ -106,7 +106,7 @@ export default function CompanyProfile() {
       {(() => {
         const waNum = (partner.whatsapp || '').replace(/\D/g, '');
         const waMsg = encodeURIComponent(
-          `Olá! Encontrei a ${partner.name} pelo Portal Rarques Uruaçu e gostaria de mais informações.`
+          `Olá! Encontrei sua empresa através da Plataforma Rarques e gostaria de mais informações.`
         );
         const waHref = waNum ? `https://wa.me/${waNum.startsWith('55') ? waNum : '55' + waNum}?text=${waMsg}` : null;
         const mapsHref = partner.address
@@ -116,6 +116,8 @@ export default function CompanyProfile() {
         const site = partner.website
           ? (partner.website.startsWith('http') ? partner.website : `https://${partner.website}`)
           : null;
+        const igHandle = partner.instagram ? partner.instagram.replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/$/, '') : null;
+        const igHref = igHandle ? `https://instagram.com/${igHandle}` : null;
         const btn = 'flex-1 min-w-[calc(50%-0.375rem)] md:min-w-0 inline-flex items-center justify-center gap-1.5 border border-gray-700 hover:border-yellow-500 text-white text-xs font-semibold py-2 px-3 transition-colors bg-gray-900';
         return (
           <div className="flex flex-wrap gap-2 mb-4">
@@ -132,6 +134,11 @@ export default function CompanyProfile() {
             {telHref && (
               <a href={telHref} className={btn}>
                 <Phone size={14} /> Telefone
+              </a>
+            )}
+            {partner.is_member && igHref && (
+              <a href={igHref} target="_blank" rel="noreferrer" className={`${btn} bg-pink-600/10 border-pink-600/40 hover:border-pink-500 text-pink-300`}>
+                <Instagram size={14} /> Instagram
               </a>
             )}
             {site && (
