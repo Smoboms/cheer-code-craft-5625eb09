@@ -151,7 +151,7 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
           <TrendingUp size={24} className="text-white flex-shrink-0" />
           <div className="flex-1">
             <p className="text-white/90 text-xs font-semibold">Economia Total</p>
-            <p className="text-white text-2xl font-bold">R$ {totalSavings.toFixed(2)}</p>
+            <p className="text-white text-2xl font-bold">{formatBRL(totalSavings)}</p>
           </div>
         </div>
         <p className="text-white/95 text-xs mt-2">
