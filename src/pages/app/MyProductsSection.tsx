@@ -123,7 +123,7 @@ export function MyProductsSection({ enabled = true }: Props) {
                   <span className={`text-[9px] px-1.5 py-0.5 uppercase ${p.status==='approved'?'bg-green-500/20 text-green-300':p.status==='rejected'?'bg-red-500/20 text-red-300':'bg-yellow-500/20 text-yellow-300'}`}>
                     {p.status === 'approved' ? 'No ar' : p.status === 'rejected' ? 'Recusado' : 'Em curadoria'}
                   </span>
-                  {p.price != null && <span className="text-gray-400 text-[10px]">R$ {Number(p.price).toFixed(2)}</span>}
+                  {p.price != null && <span className="text-gray-400 text-[10px]">{formatBRL(p.price)}</span>}
                 </div>
               </div>
               <button onClick={() => { setEditing(p); setShowForm(true); }} className="text-gray-400 hover:text-white p-1"><Edit3 size={14} /></button>
