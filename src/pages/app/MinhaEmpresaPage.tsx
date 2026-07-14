@@ -203,7 +203,7 @@ export function MinhaEmpresaPage({ onBack }: Props) {
           Salvar alterações
         </button>
 
-        <MyProductsSection />
+        <MyProductsSection enabled={complete} />
       </div>
     </div>
   );
