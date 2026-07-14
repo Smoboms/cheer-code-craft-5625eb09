@@ -192,17 +192,17 @@ export default function CompanyProfile() {
           <Sparkles size={16} className="text-yellow-400" />
           <p className="text-[10px] uppercase tracking-[0.25em] font-semibold text-yellow-400">Benefícios para Membros</p>
         </div>
-        <p className="text-white font-semibold mb-2">Associados Rarques têm vantagens aqui</p>
+        <p className="text-white font-semibold mb-2">Associados Rarques possuem benefícios exclusivos nesta empresa.</p>
         <ul className="text-gray-300 text-sm space-y-1 mb-4 list-disc list-inside">
           <li>Descontos exclusivos e cashback em compras</li>
           <li>Atendimento prioritário como Membro Rarques</li>
           <li>Acesso a ofertas antecipadas e cupons</li>
         </ul>
         <Link
-          to="/app"
+          to="/seja-membro"
           className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-4 py-2 text-sm transition-colors"
         >
-          Quero ser Membro
+          Conheça os Benefícios
         </Link>
       </div>
 
