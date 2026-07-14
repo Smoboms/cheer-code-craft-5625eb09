@@ -27,7 +27,7 @@ function fmtPrice(v: number | null) {
 function waLink(p: NonNullable<Product['partners']>, productName: string) {
   const raw = (p.whatsapp || p.phone || '').replace(/\D/g, '');
   if (!raw) return null;
-  const msg = encodeURIComponent(`Olá! Vi o produto "${productName}" no Mercado Rarques e gostaria de saber mais.`);
+  const msg = encodeURIComponent(`Olá! Vi este produto (${productName}) na Cidade Inteligente Rarques e gostaria de mais informações.`);
   return `https://wa.me/${raw.startsWith('55') ? raw : '55' + raw}?text=${msg}`;
 }
 
