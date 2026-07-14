@@ -80,8 +80,38 @@ export function MinhaEmpresaPage({ onBack }: Props) {
     setSaving(true);
     setMsg(null);
     const { error } = await supabase.from('profiles').update(form).eq('user_id', user.id);
+    if (error) { setSaving(false); setMsg('Erro ao salvar. Tente novamente.'); return; }
+
+    // Provisiona/atualiza automaticamente o registro na tabela `partners` (diretório público),
+    // liberando o cadastro de produtos no Mercado. Regras de curadoria permanecem no fluxo existente.
+    if (form.company.trim()) {
+      const { data: existing } = await supabase
+        .from('partners')
+        .select('id')
+        .eq('created_by', user.id)
+        .maybeSingle();
+
+      const partnerPayload: any = {
+        name: form.company.trim(),
+        category: form.segment.trim() || 'Geral',
+        description: form.bio || null,
+        phone: form.phone || null,
+        whatsapp: form.phone || null,
+        profile_image_url: form.avatar_url || null,
+        logo_url: form.avatar_url || null,
+        discount: '',
+        is_active: true,
+        status: 'approved',
+      };
+
+      if (existing?.id) {
+        await supabase.from('partners').update(partnerPayload).eq('id', existing.id);
+      } else {
+        await supabase.from('partners').insert({ ...partnerPayload, created_by: user.id });
+      }
+    }
+
     setSaving(false);
-    if (error) { setMsg('Erro ao salvar. Tente novamente.'); return; }
     setMsg('Perfil atualizado com sucesso.');
     await refreshProfile();
   };
