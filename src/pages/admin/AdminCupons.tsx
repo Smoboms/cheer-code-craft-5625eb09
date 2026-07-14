@@ -54,7 +54,7 @@ export default function AdminCupons() {
         <>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
             <StatCard label="Cupons no período" value={data.total} />
-            <StatCard label="Economia gerada" value={`R$ ${data.totalSavings.toFixed(2)}`} positive />
+            <StatCard label="Economia gerada" value={`${formatBRL(data.totalSavings)}`} positive />
           </div>
           <Card className="p-4 mb-4">
             <div className="text-sm text-gray-300 mb-3">Cupons por dia</div>
