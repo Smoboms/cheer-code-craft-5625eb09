@@ -119,7 +119,7 @@ export function BenefitsPage() {
         date: new Date().toISOString(),
       }),
     );
-    toast.success(`Cupom gerado! Você economizou R$ ${savedAmount.toFixed(2)}`);
+    toast.success(`Cupom gerado! Você economizou ${formatBRL(savedAmount)}`);
   };
 
   const handleCopyCoupon = (code: string) => {
