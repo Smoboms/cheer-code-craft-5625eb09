@@ -18,6 +18,8 @@ import PublicWeather from "./pages/public/PublicWeather";
 import PublicProfessionals from "./pages/public/PublicProfessionals";
 import PublicProfessionalSubmit from "./pages/public/PublicProfessionalSubmit";
 import PublicLocais from "./pages/public/PublicLocais";
+import SejaMembro from "./pages/public/SejaMembro";
+import JournalInfo from "./pages/public/JournalInfo";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminMercado from "./pages/admin/AdminMercado";
 import AdminDashboard from "./pages/admin/AdminDashboard";
