@@ -134,7 +134,7 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
           <div className="flex items-end justify-between gap-2">
             <div className="min-w-0">
               <p className="text-[10px] sm:text-xs opacity-70 mb-0.5 sm:mb-1">ECONOMIA TOTAL</p>
-              <p className="text-base sm:text-xl font-bold text-green-400 truncate">R$ {totalSavings.toFixed(2)}</p>
+              <p className="text-base sm:text-xl font-bold text-green-400 truncate">{formatBRL(totalSavings)}</p>
             </div>
             <div className="text-right min-w-0">
               <p className="text-[10px] sm:text-xs opacity-70 mb-0.5 sm:mb-1">BENEFÍCIOS</p>
