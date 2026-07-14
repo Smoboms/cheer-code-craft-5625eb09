@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface PublicBannerConfig {
   active: boolean;
@@ -9,8 +10,6 @@ export interface PublicBannerConfig {
   imageUrl: string;
 }
 
-const STORAGE_KEY = 'rarques.publicHomeBanner.v1';
-
 const DEFAULT_CONFIG: PublicBannerConfig = {
   active: false,
   title: '',
@@ -20,31 +19,55 @@ const DEFAULT_CONFIG: PublicBannerConfig = {
   imageUrl: '',
 };
 
-export function loadBannerConfig(): PublicBannerConfig {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_CONFIG;
-    return { ...DEFAULT_CONFIG, ...JSON.parse(raw) };
-  } catch {
-    return DEFAULT_CONFIG;
-  }
+function fromRow(row: any): PublicBannerConfig {
+  if (!row) return DEFAULT_CONFIG;
+  return {
+    active: !!row.active,
+    title: row.title || '',
+    text: row.text || '',
+    ctaLabel: row.cta_label || 'Saiba mais',
+    ctaHref: row.cta_href || '',
+    imageUrl: row.image_url || '',
+  };
 }
 
-export function saveBannerConfig(cfg: PublicBannerConfig) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
-  window.dispatchEvent(new CustomEvent('rarques:publicBanner:updated'));
+export async function fetchBannerConfig(): Promise<PublicBannerConfig> {
+  const { data } = await supabase
+    .from('public_home_banner')
+    .select('*')
+    .eq('id', 1)
+    .maybeSingle();
+  return fromRow(data);
 }
 
 export function usePublicBanner(): PublicBannerConfig {
-  const [cfg, setCfg] = useState<PublicBannerConfig>(() => loadBannerConfig());
+  const [cfg, setCfg] = useState<PublicBannerConfig>(DEFAULT_CONFIG);
+
   useEffect(() => {
-    const handler = () => setCfg(loadBannerConfig());
-    window.addEventListener('rarques:publicBanner:updated', handler);
-    window.addEventListener('storage', handler);
+    let active = true;
+    fetchBannerConfig().then((c) => { if (active) setCfg(c); });
+
+    const channel = supabase
+      .channel('public_home_banner_changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'public_home_banner' },
+        (payload: any) => {
+          if (!active) return;
+          if (payload.new) setCfg(fromRow(payload.new));
+        },
+      )
+      .subscribe();
+
+    const onCustom = () => { fetchBannerConfig().then((c) => active && setCfg(c)); };
+    window.addEventListener('rarques:publicBanner:updated', onCustom);
+
     return () => {
-      window.removeEventListener('rarques:publicBanner:updated', handler);
-      window.removeEventListener('storage', handler);
+      active = false;
+      supabase.removeChannel(channel);
+      window.removeEventListener('rarques:publicBanner:updated', onCustom);
     };
   }, []);
+
   return cfg;
 }
