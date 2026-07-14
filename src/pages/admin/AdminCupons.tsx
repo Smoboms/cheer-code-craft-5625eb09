@@ -2,6 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, EmptyState, PageHeader, StatCard } from './ui';
 import { PeriodPicker, useAsync, useDateRange } from './hooks';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { formatBRL } from '@/lib/utils';
 
 export default function AdminCupons() {
   const dr = useDateRange('30d');
