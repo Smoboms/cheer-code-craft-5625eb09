@@ -86,7 +86,7 @@ export default function AdminCupons() {
               {!data.users.length ? <div className="text-gray-500 text-xs">Sem dados.</div> : data.users.map(u => (
                 <div key={u.name} className="flex justify-between text-sm py-1 border-b border-white/5">
                   <span className="text-white truncate">{u.name}</span>
-                  <span className="text-green-400">R$ {u.sum.toFixed(2)}</span>
+                  <span className="text-green-400">{formatBRL(u.sum)}</span>
                 </div>
               ))}
             </Card>
