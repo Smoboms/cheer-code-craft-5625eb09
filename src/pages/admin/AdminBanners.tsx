@@ -1,13 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Btn, Card, EmptyState, Input, Label, PageHeader, Textarea } from './ui';
 import { useAsync } from './hooks';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Upload, Loader2 } from 'lucide-react';
+import { optimizeImage } from '@/lib/imageOptimizer';
 
 function BannerEditor() {
   const [f, setF] = useState({ active: false, title: '', text: '', cta_label: 'Saiba mais', cta_href: '', image_url: '' });
   const [loaded, setLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     supabase.from('public_home_banner').select('*').eq('id', 1).maybeSingle().then(({ data }) => {
@@ -16,11 +19,32 @@ function BannerEditor() {
     });
   }, []);
 
+  const upload = async (file: File) => {
+    setUploading(true);
+    try {
+      const optimized = await optimizeImage(file, { maxDimension: 1920, quality: 0.85 });
+      const path = `banner/home-${Date.now()}.webp`;
+      const { error } = await supabase.storage.from('partner-images').upload(path, optimized, {
+        upsert: true, contentType: 'image/webp',
+      });
+      if (error) { alert(error.message); return; }
+      const { data } = supabase.storage.from('partner-images').getPublicUrl(path);
+      setF((s) => ({ ...s, image_url: data.publicUrl }));
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const save = async () => {
     setSaving(true);
-    const { error } = await supabase.from('public_home_banner').update({ ...f, updated_at: new Date().toISOString() }).eq('id', 1);
+    // Upsert guarantees row 1 exists even if the seed migration didn't run yet.
+    const { error } = await supabase
+      .from('public_home_banner')
+      .upsert({ id: 1, ...f, updated_at: new Date().toISOString() }, { onConflict: 'id' });
     setSaving(false);
-    if (error) alert(error.message); else alert('Banner salvo.');
+    if (error) { alert(error.message); return; }
+    window.dispatchEvent(new CustomEvent('rarques:publicBanner:updated'));
+    alert('Banner salvo.');
   };
 
   if (!loaded) return <Card className="p-4"><div className="text-gray-400 text-sm">Carregando…</div></Card>;
@@ -34,7 +58,18 @@ function BannerEditor() {
       </label>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div><Label>Título</Label><Input value={f.title} onChange={e => setF({ ...f, title: e.target.value })} /></div>
-        <div><Label>URL da imagem</Label><Input value={f.image_url} onChange={e => setF({ ...f, image_url: e.target.value })} /></div>
+        <div>
+          <Label>Imagem do banner</Label>
+          <div className="flex gap-2">
+            <Input value={f.image_url} onChange={e => setF({ ...f, image_url: e.target.value })} placeholder="URL ou envie um arquivo" />
+            <Btn variant="ghost" onClick={() => fileRef.current?.click()} disabled={uploading}>
+              {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+            </Btn>
+            <input ref={fileRef} type="file" accept="image/*" className="hidden"
+              onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
+          </div>
+          {f.image_url && <img src={f.image_url} alt="preview" className="mt-2 max-h-32 object-cover border border-white/10" />}
+        </div>
         <div className="md:col-span-2"><Label>Texto</Label><Textarea rows={2} value={f.text} onChange={e => setF({ ...f, text: e.target.value })} /></div>
         <div><Label>Texto do botão</Label><Input value={f.cta_label} onChange={e => setF({ ...f, cta_label: e.target.value })} /></div>
         <div><Label>Link do botão</Label><Input value={f.cta_href} onChange={e => setF({ ...f, cta_href: e.target.value })} /></div>

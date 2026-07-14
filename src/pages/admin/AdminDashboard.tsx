@@ -97,7 +97,7 @@ export default function AdminDashboard() {
             <StatCard label="Associados ativos" value={data.associados} />
             <StatCard label="Empresas" value={data.empresas} sub={`${data.empresasMembro} Empresa Membro`} />
             <StatCard label="Cupons totais" value={data.cupons} sub={`${data.cuponsPeriodo} no período`} />
-            <StatCard label="Economia gerada" value={`R$ ${data.savings.toFixed(2)}`} positive />
+            <StatCard label="Economia gerada" value={new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.savings)} positive />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card className="p-4">

@@ -4,6 +4,7 @@ import { DigitalCardModal } from '@/components/app/DigitalCardModal';
 import { SavingsCalculator } from '@/components/app/SavingsCalculator';
 import { getTotalBenefitsCount } from '@/data/partnersData';
 import { supabase } from '@/integrations/supabase/client';
+import { formatBRL } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import logoRCard from '@/assets/e88c6454816224d16b0c3ab8438f10bfae44646a.png';
 
@@ -133,7 +134,7 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
           <div className="flex items-end justify-between gap-2">
             <div className="min-w-0">
               <p className="text-[10px] sm:text-xs opacity-70 mb-0.5 sm:mb-1">ECONOMIA TOTAL</p>
-              <p className="text-base sm:text-xl font-bold text-green-400 truncate">R$ {totalSavings.toFixed(2)}</p>
+              <p className="text-base sm:text-xl font-bold text-green-400 truncate">{formatBRL(totalSavings)}</p>
             </div>
             <div className="text-right min-w-0">
               <p className="text-[10px] sm:text-xs opacity-70 mb-0.5 sm:mb-1">BENEFÍCIOS</p>
@@ -150,7 +151,7 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
           <TrendingUp size={24} className="text-white flex-shrink-0" />
           <div className="flex-1">
             <p className="text-white/90 text-xs font-semibold">Economia Total</p>
-            <p className="text-white text-2xl font-bold">R$ {totalSavings.toFixed(2)}</p>
+            <p className="text-white text-2xl font-bold">{formatBRL(totalSavings)}</p>
           </div>
         </div>
         <p className="text-white/95 text-xs mt-2">

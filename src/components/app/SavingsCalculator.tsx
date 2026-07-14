@@ -1,5 +1,6 @@
 import { Calculator, TrendingUp, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import { formatBRL } from '@/lib/utils';
 
 const categories = [
   { id: 'alimentacao', name: 'Alimentação', discount: 8, emoji: '🍽️' },
@@ -141,22 +142,22 @@ export function SavingsCalculator() {
 
           <div className="bg-white/20 backdrop-blur p-4 mb-4">
             <p className="text-sm opacity-90 mb-2">Você economizaria</p>
-            <p className="text-3xl font-bold">R$ {savings.toFixed(2)}</p>
+            <p className="text-3xl font-bold">{formatBRL(savings)}</p>
           </div>
 
           <div className="space-y-2 text-sm">
             <div className="flex justify-between p-3 bg-white/10 backdrop-blur">
               <span>Valor da compra:</span>
-              <span className="font-bold">R$ {parseFloat(purchaseValue.replace(',', '.')).toFixed(2)}</span>
+              <span className="font-bold">{formatBRL(parseFloat(purchaseValue.replace(',', '.')))}</span>
             </div>
             <div className="flex justify-between p-3 bg-white/10 backdrop-blur">
               <span>Desconto ({selectedCategory.discount}%):</span>
-              <span className="font-bold">- R$ {savings.toFixed(2)}</span>
+              <span className="font-bold">- {formatBRL(savings)}</span>
             </div>
             <div className="flex justify-between p-3 bg-white/20 backdrop-blur">
               <span className="font-bold">Você pagaria:</span>
               <span className="font-bold">
-                R$ {(parseFloat(purchaseValue.replace(',', '.')) - savings).toFixed(2)}
+                {formatBRL(parseFloat(purchaseValue.replace(',', '.')) - savings)}
               </span>
             </div>
           </div>

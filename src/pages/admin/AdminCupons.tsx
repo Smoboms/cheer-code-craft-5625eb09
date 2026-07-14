@@ -2,6 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, EmptyState, PageHeader, StatCard } from './ui';
 import { PeriodPicker, useAsync, useDateRange } from './hooks';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { formatBRL } from '@/lib/utils';
 
 export default function AdminCupons() {
   const dr = useDateRange('30d');
@@ -54,7 +55,7 @@ export default function AdminCupons() {
         <>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
             <StatCard label="Cupons no período" value={data.total} />
-            <StatCard label="Economia gerada" value={`R$ ${data.totalSavings.toFixed(2)}`} positive />
+            <StatCard label="Economia gerada" value={`${formatBRL(data.totalSavings)}`} positive />
           </div>
           <Card className="p-4 mb-4">
             <div className="text-sm text-gray-300 mb-3">Cupons por dia</div>
@@ -85,7 +86,7 @@ export default function AdminCupons() {
               {!data.users.length ? <div className="text-gray-500 text-xs">Sem dados.</div> : data.users.map(u => (
                 <div key={u.name} className="flex justify-between text-sm py-1 border-b border-white/5">
                   <span className="text-white truncate">{u.name}</span>
-                  <span className="text-green-400">R$ {u.sum.toFixed(2)}</span>
+                  <span className="text-green-400">{formatBRL(u.sum)}</span>
                 </div>
               ))}
             </Card>
@@ -106,9 +107,9 @@ export default function AdminCupons() {
                         <td className="py-2 text-gray-300">{new Date(c.created_at).toLocaleDateString()}</td>
                         <td className="text-white">{c.profile?.name || c.profile?.email || '—'}</td>
                         <td className="text-white">{c.partner?.name || '—'}</td>
-                        <td className="text-gray-300">R$ {Number(c.purchase_amount).toFixed(2)}</td>
+                        <td className="text-gray-300">{formatBRL(Number(c.purchase_amount))}</td>
                         <td className="text-yellow-400">{Number(c.discount_percent).toFixed(0)}%</td>
-                        <td className="text-green-400">R$ {Number(c.savings).toFixed(2)}</td>
+                        <td className="text-green-400">{formatBRL(Number(c.savings))}</td>
                       </tr>
                     ))}
                   </tbody>
