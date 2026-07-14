@@ -102,7 +102,7 @@ export default function PublicHome() {
           </p>
         </div>
         <Link
-          to="/app"
+          to="/seja-membro"
           className="shrink-0 bg-yellow-500 hover:bg-yellow-400 text-black px-2 py-1 text-[10px] font-semibold inline-flex items-center gap-1"
         >
           Ser Membro <ArrowRight size={10} />
