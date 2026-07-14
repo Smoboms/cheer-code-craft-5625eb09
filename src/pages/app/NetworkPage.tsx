@@ -4,6 +4,7 @@ import { DigitalCardModal } from '@/components/app/DigitalCardModal';
 import { SavingsCalculator } from '@/components/app/SavingsCalculator';
 import { getTotalBenefitsCount } from '@/data/partnersData';
 import { supabase } from '@/integrations/supabase/client';
+import { formatBRL } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import logoRCard from '@/assets/e88c6454816224d16b0c3ab8438f10bfae44646a.png';
 
