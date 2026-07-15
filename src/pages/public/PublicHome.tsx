@@ -109,44 +109,23 @@ export default function PublicHome() {
         </Link>
       </div>
 
-      {/* Banner do Admin — entre RARQUES e o título Uruaçu */}
-      {banner.active && (banner.imageUrl || banner.title || banner.text) && (
-        <a
-          href={banner.ctaHref || '#'}
-          target={banner.ctaHref?.startsWith('http') ? '_blank' : undefined}
-          rel="noreferrer"
-          className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors mb-4 aspect-[32/9] lg:aspect-[48/9] bg-[#0b1a3a]"
-        >
-          {banner.imageUrl && (
-            <img src={banner.imageUrl} alt={banner.title || ''} className="absolute inset-0 w-full h-full object-cover" />
-          )}
-          {(banner.title || banner.text || banner.ctaLabel) && (
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-1.5">
-              {banner.title && <p className="text-white text-[11px] font-semibold leading-tight">{banner.title}</p>}
-              {banner.text && <p className="text-gray-200 text-[10px] leading-snug mt-0.5 line-clamp-1">{banner.text}</p>}
-              {banner.ctaLabel && banner.ctaHref && (
-                <span className="mt-1 bg-yellow-500 text-black text-[10px] font-semibold px-2 py-0.5 inline-flex items-center gap-1">
-                  {banner.ctaLabel} <ArrowRight size={9} />
-                </span>
-              )}
-            </div>
-          )}
-        </a>
-      )}
-
-      {/* Destaque cidade: Uruaçu — GO */}
-      <div className="mb-4">
-        <div className="flex items-center gap-2 text-yellow-400">
-          <MapPin size={16} />
-          <span className="text-[10px] uppercase tracking-[0.25em] font-semibold">Portal da Cidade</span>
+      {/* Destaque cidade: Uruaçu — GO (agora acima do banner) */}
+      <div className="mb-3">
+        <div className="flex items-center gap-1.5 text-yellow-400">
+          <MapPin size={12} />
+          <span className="text-white text-base md:text-lg font-bold leading-tight">
+            Uruaçu <span className="text-yellow-500">— GO</span>
+          </span>
         </div>
-        <h1 className="text-white text-3xl md:text-4xl font-bold mt-1 leading-tight">
-          Uruaçu <span className="text-yellow-500">— GO</span>
-        </h1>
-        <p className="text-gray-400 text-sm mt-1">
+        <p className="text-gray-400 text-xs mt-1">
           Tudo o que acontece na cidade em um só lugar — empresas, serviços, notícias e utilidades.
         </p>
       </div>
+
+      {/* Banner(s) do Admin — abaixo do título da cidade */}
+      <PublicBannerBlock banner={banner} />
+
+
 
 
       {/* Clima */}
