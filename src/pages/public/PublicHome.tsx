@@ -394,3 +394,65 @@ export default function PublicHome() {
 
   );
 }
+
+function PublicBannerBlock({ banner }: { banner: ReturnType<typeof usePublicBanner> }) {
+  const slides = filterSlidesFor(banner, 'public');
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    if (slides.length < 2) return;
+    const id = window.setInterval(() => setIdx((i) => (i + 1) % slides.length), 4500);
+    return () => window.clearInterval(id);
+  }, [slides.length]);
+
+  if (slides.length > 0) {
+    const current = slides[Math.min(idx, slides.length - 1)];
+    const external = current.ctaHref?.startsWith('http');
+    return (
+      <div className="mb-4">
+        <a
+          href={current.ctaHref || '#'}
+          target={external ? '_blank' : undefined}
+          rel="noreferrer"
+          className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors aspect-[32/9] lg:aspect-[48/9] bg-[#0b1a3a]"
+        >
+          <img src={current.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        </a>
+        {slides.length > 1 && (
+          <div className="flex justify-center gap-1.5 mt-2">
+            {slides.map((_, i) => (
+              <span key={i} className={`h-1.5 transition-all ${i === idx ? 'w-4 bg-yellow-400' : 'w-1.5 bg-gray-600'}`} />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Legacy single-banner fallback (não altera lógica existente).
+  if (!banner.active || !(banner.imageUrl || banner.title || banner.text)) return null;
+  return (
+    <a
+      href={banner.ctaHref || '#'}
+      target={banner.ctaHref?.startsWith('http') ? '_blank' : undefined}
+      rel="noreferrer"
+      className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors mb-4 aspect-[32/9] lg:aspect-[48/9] bg-[#0b1a3a]"
+    >
+      {banner.imageUrl && (
+        <img src={banner.imageUrl} alt={banner.title || ''} className="absolute inset-0 w-full h-full object-cover" />
+      )}
+      {(banner.title || banner.text || banner.ctaLabel) && (
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-1.5">
+          {banner.title && <p className="text-white text-[11px] font-semibold leading-tight">{banner.title}</p>}
+          {banner.text && <p className="text-gray-200 text-[10px] leading-snug mt-0.5 line-clamp-1">{banner.text}</p>}
+          {banner.ctaLabel && banner.ctaHref && (
+            <span className="mt-1 bg-yellow-500 text-black text-[10px] font-semibold px-2 py-0.5 inline-flex items-center gap-1">
+              {banner.ctaLabel} <ArrowRight size={9} />
+            </span>
+          )}
+        </div>
+      )}
+    </a>
+  );
+}
+
