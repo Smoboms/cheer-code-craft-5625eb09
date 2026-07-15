@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import * as Icons from 'lucide-react';
 import { Search, ArrowRight, MapPin, X } from 'lucide-react';
 import { journalArticles } from '@/data/journalArticles';
-import { usePublicBanner } from '@/data/publicBanner';
+import { usePublicBanner, filterSlidesFor } from '@/data/publicBanner';
 import { useActivePartners } from '@/data/usePartners';
 import { useApprovedProfessionals } from '@/data/useProfessionals';
 import { CardCarousel } from '@/components/public/CardCarousel';
