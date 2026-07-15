@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { CreditCard, TrendingUp, Users, Sparkles, Calendar, Gift, Building2, Scale } from 'lucide-react';
+import { CreditCard, TrendingUp, Users, Sparkles, Calendar, Gift, Building2, Scale, Image as ImageIcon } from 'lucide-react';
 import type { TabType } from '@/components/app/PremiumBottomNav';
 import type { MoreSection } from '@/pages/app/MorePage';
 import rarquesLogo from '@/assets/rarques-logo.png.asset.json';
+import { usePublicBanner, filterSlidesFor } from '@/data/publicBanner';
 
 interface Props {
   userName: string;
