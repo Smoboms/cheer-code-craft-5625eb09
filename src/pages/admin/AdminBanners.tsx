@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Btn, Card, EmptyState, Input, Label, PageHeader, Textarea } from './ui';
+import { Btn, Card, EmptyState, Input, Label, PageHeader, Select, Textarea } from './ui';
 import { useAsync } from './hooks';
 import { Trash2, Upload, Loader2 } from 'lucide-react';
 import { optimizeImage } from '@/lib/imageOptimizer';
 
+type SlotTarget = 'public' | 'associate' | 'both';
+type BannerSlot = { imageUrl: string; ctaHref: string; target: SlotTarget };
+const EMPTY_SLOT: BannerSlot = { imageUrl: '', ctaHref: '', target: 'public' };
+const EMPTY_SLOTS: BannerSlot[] = [EMPTY_SLOT, EMPTY_SLOT, EMPTY_SLOT, EMPTY_SLOT];
+
 function BannerEditor() {
   const [f, setF] = useState({ active: false, title: '', text: '', cta_label: 'Saiba mais', cta_href: '', image_url: '' });
+  const [slots, setSlots] = useState<BannerSlot[]>(EMPTY_SLOTS);
   const [loaded, setLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
