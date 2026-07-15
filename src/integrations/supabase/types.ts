@@ -1021,6 +1021,7 @@ export type Database = {
           cta_label: string
           id: number
           image_url: string
+          slides: Json
           text: string
           title: string
           updated_at: string
@@ -1032,6 +1033,7 @@ export type Database = {
           cta_label?: string
           id?: number
           image_url?: string
+          slides?: Json
           text?: string
           title?: string
           updated_at?: string
@@ -1043,6 +1045,7 @@ export type Database = {
           cta_label?: string
           id?: number
           image_url?: string
+          slides?: Json
           text?: string
           title?: string
           updated_at?: string

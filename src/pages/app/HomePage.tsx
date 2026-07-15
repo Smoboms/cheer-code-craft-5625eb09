@@ -3,6 +3,7 @@ import { CreditCard, TrendingUp, Users, Sparkles, Calendar, Gift, Building2, Sca
 import type { TabType } from '@/components/app/PremiumBottomNav';
 import type { MoreSection } from '@/pages/app/MorePage';
 import rarquesLogo from '@/assets/rarques-logo.png.asset.json';
+import { usePublicBanner, filterSlidesFor } from '@/data/publicBanner';
 
 interface Props {
   userName: string;
@@ -48,18 +49,36 @@ const BANNERS: Banner[] = [
   },
 ];
 
+type SlideItem =
+  | { kind: 'info'; banner: Banner }
+  | { kind: 'image'; imageUrl: string; ctaHref: string };
+
 export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
   const firstName = userName.split(' ')[0] || 'Associado';
   const [slide, setSlide] = useState(0);
+  const bannerCfg = usePublicBanner();
+
+  const adminSlides = filterSlidesFor(bannerCfg, 'associate');
+  const slides: SlideItem[] = [
+    ...adminSlides.map((s) => ({ kind: 'image' as const, imageUrl: s.imageUrl, ctaHref: s.ctaHref })),
+    ...BANNERS.map((b) => ({ kind: 'info' as const, banner: b })),
+  ];
 
   useEffect(() => {
-    const id = setInterval(() => setSlide((s) => (s + 1) % BANNERS.length), 4500);
+    if (slides.length < 2) return;
+    const id = setInterval(() => setSlide((s) => (s + 1) % slides.length), 4500);
     return () => clearInterval(id);
-  }, []);
+  }, [slides.length]);
 
   const handleBanner = (action: BannerAction) => {
     if (action.type === 'tab') onNavigate(action.value);
     else onOpenMore(action.value);
+  };
+
+  const openHref = (href: string) => {
+    if (!href) return;
+    if (href.startsWith('http')) window.open(href, '_blank');
+    else window.location.href = href;
   };
 
   return (
@@ -81,10 +100,23 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
           className="relative flex transition-transform duration-500 ease-out"
           style={{ transform: `translateX(-${slide * 100}%)` }}
         >
-          {BANNERS.map((b, i) => {
+          {slides.map((s, i) => {
+            if (s.kind === 'image') {
+              return (
+                <button
+                  key={`img-${i}`}
+                  onClick={() => openHref(s.ctaHref)}
+                  className="min-w-full aspect-[32/9] block"
+                  aria-label={`Banner ${i + 1}`}
+                >
+                  <img src={s.imageUrl} alt="" className="w-full h-full object-cover" />
+                </button>
+              );
+            }
+            const b = s.banner;
             const Icon = b.icon;
             return (
-              <div key={i} className="min-w-full p-3">
+              <div key={`info-${i}`} className="min-w-full p-3">
                 <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 border ${b.accent} mb-2`}>
                   <Icon size={11} />
                   <p className="text-[10px] font-semibold tracking-wider">{b.title}</p>
@@ -101,7 +133,7 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
           })}
         </div>
         <div className="relative flex justify-center gap-1.5 pb-2">
-          {BANNERS.map((_, i) => (
+          {slides.map((_, i) => (
             <button
               key={i}
               onClick={() => setSlide(i)}
