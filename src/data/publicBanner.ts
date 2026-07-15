@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
+export type BannerTarget = 'public' | 'associate' | 'both';
+
+export interface BannerSlide {
+  imageUrl: string;
+  ctaHref: string;
+  target: BannerTarget;
+}
+
 export interface PublicBannerConfig {
   active: boolean;
   title: string;
@@ -8,6 +16,7 @@ export interface PublicBannerConfig {
   ctaLabel: string;
   ctaHref: string;
   imageUrl: string;
+  slides: BannerSlide[];
 }
 
 const DEFAULT_CONFIG: PublicBannerConfig = {
@@ -17,7 +26,20 @@ const DEFAULT_CONFIG: PublicBannerConfig = {
   ctaLabel: 'Saiba mais',
   ctaHref: '',
   imageUrl: '',
+  slides: [],
 };
+
+function normalizeSlides(raw: any): BannerSlide[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((s: any) => ({
+      imageUrl: String(s?.imageUrl || s?.image_url || '').trim(),
+      ctaHref: String(s?.ctaHref || s?.cta_href || '').trim(),
+      target: (['public', 'associate', 'both'].includes(s?.target) ? s.target : 'public') as BannerTarget,
+    }))
+    .filter((s) => !!s.imageUrl)
+    .slice(0, 4);
+}
 
 function fromRow(row: any): PublicBannerConfig {
   if (!row) return DEFAULT_CONFIG;
@@ -28,6 +50,7 @@ function fromRow(row: any): PublicBannerConfig {
     ctaLabel: row.cta_label || 'Saiba mais',
     ctaHref: row.cta_href || '',
     imageUrl: row.image_url || '',
+    slides: normalizeSlides(row.slides),
   };
 }
 
@@ -70,4 +93,9 @@ export function usePublicBanner(): PublicBannerConfig {
   }, []);
 
   return cfg;
+}
+
+export function filterSlidesFor(cfg: PublicBannerConfig, audience: 'public' | 'associate'): BannerSlide[] {
+  if (!cfg.active) return [];
+  return cfg.slides.filter((s) => s.target === audience || s.target === 'both');
 }
