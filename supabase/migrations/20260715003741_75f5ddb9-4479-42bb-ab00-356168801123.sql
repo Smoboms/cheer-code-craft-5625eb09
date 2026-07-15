@@ -1,0 +1,1 @@
+ALTER TABLE public.public_home_banner ADD COLUMN IF NOT EXISTS slides jsonb NOT NULL DEFAULT '[]'::jsonb;
