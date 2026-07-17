@@ -62,20 +62,21 @@ export async function updateProfile(userId: string, updates: {
 export async function uploadAvatar(userId: string, file: File) {
   const fileExt = (file.name.split('.').pop() || 'jpg').toLowerCase();
   // Cache-bust the filename so the browser reloads a new avatar immediately.
-  const filePath = `avatars/${userId}/${Date.now()}.${fileExt}`;
+  const filePath = `${userId}/${Date.now()}.${fileExt}`;
 
-  // Use the public partner-images bucket — the workspace blocks public buckets,
-  // so we reuse the existing public bucket to serve avatars.
+  // Upload to the PRIVATE `avatars` bucket (same as ProfilePage / MinhaEmpresaPage)
+  // and return a long-lived signed URL — avoids public exposure of personal photos.
   const { error: uploadError } = await supabase.storage
-    .from('partner-images')
+    .from('avatars')
     .upload(filePath, file, { upsert: true, contentType: file.type });
   if (uploadError) throw uploadError;
 
-  const { data } = supabase.storage
-    .from('partner-images')
-    .getPublicUrl(filePath);
+  const { data, error: signedError } = await supabase.storage
+    .from('avatars')
+    .createSignedUrl(filePath, 60 * 60 * 24 * 365);
+  if (signedError) throw signedError;
 
-  return data.publicUrl;
+  return data.signedUrl;
 }
 
 export async function checkIsAdmin(userId: string): Promise<boolean> {
