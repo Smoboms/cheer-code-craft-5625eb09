@@ -51,7 +51,12 @@ export function MinhaEmpresaPage({ onBack }: Props) {
   const filledCount = Object.values(form).filter((v) => v.trim().length > 0).length;
   const total = Object.keys(form).length;
   const percent = Math.round((filledCount / total) * 100);
+  // Requisitos mínimos para liberar o cadastro de produtos no Mercado:
+  // empresa, segmento, contato e descrição preenchidos. Campos "o que ofereço/busco"
+  // permanecem opcionais para não bloquear o fluxo comercial.
+  const requiredOk = !!(form.company.trim() && form.segment.trim() && form.phone.trim() && form.bio.trim());
   const complete = percent === 100;
+  const productsUnlocked = requiredOk;
 
   const handleUpload = async (file: File) => {
     if (!user) return;
