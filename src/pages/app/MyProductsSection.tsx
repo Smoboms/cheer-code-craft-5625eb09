@@ -92,7 +92,10 @@ export function MyProductsSection({ profileComplete = true, partnerSeed = null, 
     setPartner(foundPartner);
     console.log('Partner encontrado', foundPartner);
     console.log('Partner ID', foundPartner?.id || null);
+    console.log('partnerId', foundPartner?.id || null);
+    console.log('partner', foundPartner);
     console.log('Products unlocked', hasMinimumCompanyData(foundPartner));
+    console.log('productsUnlocked', hasMinimumCompanyData(foundPartner));
     console.log('profileComplete', profileComplete);
     console.log('canCreateProducts', !!foundPartner && hasMinimumCompanyData(foundPartner));
 
