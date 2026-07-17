@@ -51,7 +51,7 @@ export function MyProductsSection({ enabled = true, reloadKey = 0 }: Props) {
     setCategories((cats || []).map((c: any) => c.name));
     setLoading(false);
   };
-  useEffect(() => { load(); }, [user, enabled]);
+  useEffect(() => { load(); }, [user, enabled, reloadKey]);
 
   const del = async (p: Product) => { if (confirm('Excluir produto?')) { await supabase.from('marketplace_products').delete().eq('id', p.id); load(); } };
 
