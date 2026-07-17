@@ -109,7 +109,7 @@ export function MyProductsSection({ profileComplete = true, partnerSeed = null, 
     setCategories((cats || []).map((c: any) => c.name));
     setLoading(false);
   };
-  useEffect(() => { load(); }, [user, reloadKey]);
+  useEffect(() => { load(); }, [user, reloadKey, profileComplete]);
 
   const del = async (p: Product) => { if (confirm('Excluir produto?')) { await supabase.from('marketplace_products').delete().eq('id', p.id); load(); } };
 
