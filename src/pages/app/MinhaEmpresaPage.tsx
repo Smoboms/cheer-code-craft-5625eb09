@@ -210,7 +210,7 @@ export function MinhaEmpresaPage({ onBack }: Props) {
           Salvar alterações
         </button>
 
-        <MyProductsSection enabled={complete} />
+        <MyProductsSection enabled={productsUnlocked} reloadKey={savedTick} />
       </div>
     </div>
   );
