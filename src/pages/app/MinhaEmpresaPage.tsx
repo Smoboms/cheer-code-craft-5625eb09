@@ -33,6 +33,7 @@ export function MinhaEmpresaPage({ onBack }: Props) {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [savedTick, setSavedTick] = useState(0);
 
   useEffect(() => {
     if (profile) {
