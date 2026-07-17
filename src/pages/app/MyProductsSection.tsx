@@ -20,29 +20,84 @@ type Product = {
   rejection_reason: string | null;
 };
 
+type PartnerSummary = {
+  id: string;
+  name: string;
+  category: string;
+  phone: string | null;
+  description: string | null;
+  created_by: string | null;
+  status: string;
+  is_active: boolean | null;
+};
+
+const PARTNER_SELECT = 'id, name, category, phone, description, created_by, status, is_active';
+
+const hasMinimumCompanyData = (partner: PartnerSummary | null) => !!(
+  partner?.id &&
+  partner.name?.trim() &&
+  partner.category?.trim() &&
+  partner.phone?.trim() &&
+  partner.description?.trim()
+);
+
 interface Props {
-  /** True quando o perfil da empresa atende aos requisitos mínimos para liberar o Mercado. */
-  enabled?: boolean;
+  /** True quando os campos mínimos do perfil da empresa estão preenchidos. */
+  profileComplete?: boolean;
+  /** Partner salvo pela tela pai; evita estado antigo após o primeiro Save. */
+  partnerSeed?: PartnerSummary | null;
   /** Incrementado externamente após salvar o perfil, força recarregar produtos/partner. */
   reloadKey?: number;
 }
 
-export function MyProductsSection({ enabled = true, reloadKey = 0 }: Props) {
+export function MyProductsSection({ profileComplete = true, partnerSeed = null, reloadKey = 0 }: Props) {
   const { user } = useAuth();
-  const [partnerId, setPartnerId] = useState<string | null>(null);
+  const [partner, setPartner] = useState<PartnerSummary | null>(partnerSeed);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Product | null>(null);
   const [showForm, setShowForm] = useState(false);
 
+  const partnerId = partner?.id || null;
+  const productsUnlocked = hasMinimumCompanyData(partner);
+  const canCreateProducts = !!partner && productsUnlocked;
+
+  useEffect(() => {
+    if (!partnerSeed) return;
+    console.log('Partner encontrado', partnerSeed);
+    console.log('Partner ID', partnerSeed.id);
+    setPartner(partnerSeed);
+  }, [partnerSeed]);
+
   const load = async () => {
-    if (!user) return;
+    console.log('Rendering MyProductsSection');
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
-    const { data: partner } = await supabase.from('partners').select('id').eq('created_by', user.id).maybeSingle();
-    setPartnerId(partner?.id || null);
-    if (partner?.id) {
-      const { data } = await supabase.from('marketplace_products').select('*').eq('partner_id', partner.id).order('created_at', { ascending: false });
+    const { data: partnerRows, error: partnerError } = await supabase
+      .from('partners')
+      .select(PARTNER_SELECT)
+      .eq('created_by', user.id)
+      .order('updated_at', { ascending: false })
+      .limit(1);
+    const foundPartner = (partnerRows?.[0] as PartnerSummary | undefined) || partnerSeed || null;
+
+    if (partnerError) {
+      console.error('Erro ao buscar partner da empresa:', partnerError);
+    }
+
+    setPartner(foundPartner);
+    console.log('Partner encontrado', foundPartner);
+    console.log('Partner ID', foundPartner?.id || null);
+    console.log('Products unlocked', hasMinimumCompanyData(foundPartner));
+    console.log('profileComplete', profileComplete);
+    console.log('canCreateProducts', !!foundPartner && hasMinimumCompanyData(foundPartner));
+
+    if (foundPartner?.id) {
+      const { data } = await supabase.from('marketplace_products').select('*').eq('partner_id', foundPartner.id).order('created_at', { ascending: false });
       setProducts((data as any) || []);
     } else {
       setProducts([]);
@@ -51,13 +106,14 @@ export function MyProductsSection({ enabled = true, reloadKey = 0 }: Props) {
     setCategories((cats || []).map((c: any) => c.name));
     setLoading(false);
   };
-  useEffect(() => { load(); }, [user, enabled, reloadKey]);
+  useEffect(() => { load(); }, [user, reloadKey]);
 
   const del = async (p: Product) => { if (confirm('Excluir produto?')) { await supabase.from('marketplace_products').delete().eq('id', p.id); load(); } };
 
   if (loading) return <div className="text-gray-400 text-sm py-4"><Loader2 size={16} className="inline animate-spin" /> Carregando…</div>;
 
-  if (!enabled) {
+  if (!profileComplete) {
+    console.log('Rendering LockedState');
     return (
       <div className="bg-gray-900 border border-gray-800 p-4">
         <div className="flex items-start gap-3">
@@ -71,7 +127,8 @@ export function MyProductsSection({ enabled = true, reloadKey = 0 }: Props) {
     );
   }
 
-  if (!partnerId) {
+  if (!canCreateProducts) {
+    console.log('Rendering LockedState');
     return (
       <div className="bg-gray-900 border border-gray-800 p-4">
         <div className="flex items-start gap-3">
