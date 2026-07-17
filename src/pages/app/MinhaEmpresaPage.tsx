@@ -17,6 +17,19 @@ interface Form {
   avatar_url: string;
 }
 
+type PartnerSummary = {
+  id: string;
+  name: string;
+  category: string;
+  phone: string | null;
+  description: string | null;
+  created_by: string | null;
+  status: string;
+  is_active: boolean | null;
+};
+
+const PARTNER_SELECT = 'id, name, category, phone, description, created_by, status, is_active';
+
 const AVATAR_SIGNED_TTL = 60 * 60 * 24 * 365;
 
 export function MinhaEmpresaPage({ onBack }: Props) {
@@ -34,6 +47,7 @@ export function MinhaEmpresaPage({ onBack }: Props) {
   const [uploading, setUploading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [savedTick, setSavedTick] = useState(0);
+  const [savedPartner, setSavedPartner] = useState<PartnerSummary | null>(null);
 
   useEffect(() => {
     if (profile) {
@@ -57,7 +71,7 @@ export function MinhaEmpresaPage({ onBack }: Props) {
   // permanecem opcionais para não bloquear o fluxo comercial.
   const requiredOk = !!(form.company.trim() && form.segment.trim() && form.phone.trim() && form.bio.trim());
   const complete = percent === 100;
-  const productsUnlocked = requiredOk;
+  const profileComplete = requiredOk;
 
   const handleUpload = async (file: File) => {
     if (!user) return;
@@ -90,12 +104,22 @@ export function MinhaEmpresaPage({ onBack }: Props) {
 
     // Provisiona/atualiza automaticamente o registro na tabela `partners` (diretório público),
     // liberando o cadastro de produtos no Mercado. Regras de curadoria permanecem no fluxo existente.
-    if (form.company.trim()) {
-      const { data: existing } = await supabase
+    if (profileComplete) {
+      const { data: existingRows, error: partnerLookupError } = await supabase
         .from('partners')
-        .select('id')
+        .select(PARTNER_SELECT)
         .eq('created_by', user.id)
-        .maybeSingle();
+        .order('updated_at', { ascending: false })
+        .limit(1);
+
+      if (partnerLookupError) {
+        console.error('Erro ao buscar partner da empresa:', partnerLookupError);
+        setSaving(false);
+        setMsg('Erro ao liberar o Mercado. Tente novamente.');
+        return;
+      }
+
+      const existing = existingRows?.[0] as PartnerSummary | undefined;
 
       const partnerPayload: any = {
         name: form.company.trim(),
@@ -110,11 +134,21 @@ export function MinhaEmpresaPage({ onBack }: Props) {
         status: 'approved',
       };
 
-      if (existing?.id) {
-        await supabase.from('partners').update(partnerPayload).eq('id', existing.id);
-      } else {
-        await supabase.from('partners').insert({ ...partnerPayload, created_by: user.id });
+      const partnerMutation = existing?.id
+        ? await supabase.from('partners').update(partnerPayload).eq('id', existing.id).select(PARTNER_SELECT).single()
+        : await supabase.from('partners').insert({ ...partnerPayload, created_by: user.id }).select(PARTNER_SELECT).single();
+
+      if (partnerMutation.error) {
+        console.error('Erro ao salvar partner da empresa:', partnerMutation.error);
+        setSaving(false);
+        setMsg('Erro ao liberar o Mercado. Tente novamente.');
+        return;
       }
+
+      const partner = partnerMutation.data as PartnerSummary;
+      console.log('Partner encontrado', partner);
+      console.log('Partner ID', partner.id);
+      setSavedPartner(partner);
     }
 
     setSaving(false);
@@ -210,7 +244,7 @@ export function MinhaEmpresaPage({ onBack }: Props) {
           Salvar alterações
         </button>
 
-        <MyProductsSection enabled={productsUnlocked} reloadKey={savedTick} />
+        <MyProductsSection profileComplete={profileComplete} partnerSeed={savedPartner} reloadKey={savedTick} />
       </div>
     </div>
   );
