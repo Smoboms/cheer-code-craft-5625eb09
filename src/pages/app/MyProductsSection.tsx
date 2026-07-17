@@ -115,21 +115,6 @@ export function MyProductsSection({ profileComplete = true, partnerSeed = null, 
 
   if (loading) return <div className="text-gray-400 text-sm py-4"><Loader2 size={16} className="inline animate-spin" /> Carregando…</div>;
 
-  if (!profileComplete) {
-    console.log('Rendering LockedState');
-    return (
-      <div className="bg-gray-900 border border-gray-800 p-4">
-        <div className="flex items-start gap-3">
-          <Package size={20} className="text-gray-500 shrink-0 mt-0.5" />
-          <div>
-            <p className="text-white text-sm font-semibold">Mercado Rarques</p>
-            <p className="text-gray-400 text-xs mt-1">Preencha todos os campos da sua empresa para liberar o cadastro de produtos.</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (!canCreateProducts) {
     console.log('Rendering LockedState');
     return (
