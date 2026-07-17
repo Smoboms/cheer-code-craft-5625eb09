@@ -21,11 +21,13 @@ type Product = {
 };
 
 interface Props {
-  /** True quando o perfil da empresa está preenchido a ponto de liberar o Mercado. */
+  /** True quando o perfil da empresa atende aos requisitos mínimos para liberar o Mercado. */
   enabled?: boolean;
+  /** Incrementado externamente após salvar o perfil, força recarregar produtos/partner. */
+  reloadKey?: number;
 }
 
-export function MyProductsSection({ enabled = true }: Props) {
+export function MyProductsSection({ enabled = true, reloadKey = 0 }: Props) {
   const { user } = useAuth();
   const [partnerId, setPartnerId] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
