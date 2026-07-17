@@ -119,6 +119,7 @@ export function MinhaEmpresaPage({ onBack }: Props) {
 
     setSaving(false);
     setMsg('Perfil atualizado com sucesso.');
+    setSavedTick((t) => t + 1);
     await refreshProfile();
   };
 
