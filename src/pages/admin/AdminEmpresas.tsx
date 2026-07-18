@@ -99,14 +99,14 @@ export default function AdminEmpresas() {
                     <Btn
                       variant={p.cashback_feature_unlocked ? 'primary' : 'ghost'}
                       onClick={() => toggleCashbackUnlock(p)}
-                      title="Liberar Cashback"
+
                     >
                       💸 {p.cashback_feature_unlocked ? 'Cashback ON' : 'Liberar Cashback'}
                     </Btn>
                     <Btn
                       variant={p.products_feature_unlocked ? 'primary' : 'ghost'}
                       onClick={() => toggleProductsUnlock(p)}
-                      title="Liberar Vitrine de Produtos"
+
                     >
                       🛍️ {p.products_feature_unlocked ? 'Vitrine ON' : 'Liberar Vitrine'}
                     </Btn>
