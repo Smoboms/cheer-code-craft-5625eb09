@@ -80,8 +80,9 @@ export default function PublicHome() {
     })();
   }, []);
 
+  const { articles: allArticles } = useJournalArticles();
   const featuredCompanies = partners.slice(0, 8);
-  const featuredArticles = journalArticles.filter((a) => a.featured);
+  const featuredArticles = allArticles.filter((a) => a.featured);
   const featuredProfs = professionals.slice(0, 8);
 
   const submitSearch = (e: React.FormEvent) => {
