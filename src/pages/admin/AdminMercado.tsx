@@ -27,6 +27,11 @@ export default function AdminMercado() {
   const [fPartner, setFPartner] = useState<string>('');
   const [fCat, setFCat] = useState<string>('');
   const [editing, setEditing] = useState<Row | null>(null);
+  const [params] = useSearchParams();
+  useEffect(() => {
+    const s = params.get('status');
+    if (s === 'pending_curation' || s === 'approved' || s === 'rejected') setFStatus(s);
+  }, [params]);
 
   const load = async () => {
     setLoading(true);
