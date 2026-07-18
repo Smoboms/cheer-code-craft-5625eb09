@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, CheckCircle2, AlertCircle, Loader2, Clock, XCircle } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, AlertCircle, Loader2, Clock, XCircle, Settings, Package, Ticket, LucideIcon } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { MyProductsSection } from './MyProductsSection';
 import { CouponIssuer } from './CouponIssuer';
+import { MyProductsPage } from './MyProductsPage';
 import { optimizeImage } from '@/lib/imageOptimizer';
 
 
@@ -25,8 +25,6 @@ interface PartnerConfig {
   cashback_percent: string;
 }
 
-
-
 type PartnerSummary = {
   id: string;
   name: string;
@@ -43,10 +41,59 @@ type PartnerSummary = {
 };
 
 const PARTNER_SELECT = 'id, name, category, phone, description, created_by, status, is_active, discount_percent, cashback_enabled, cashback_percent, rejection_reason';
-
 const AVATAR_SIGNED_TTL = 60 * 60 * 24 * 365;
 
+type View = 'hub' | 'config' | 'products' | 'coupon';
+
 export function MinhaEmpresaPage({ onBack }: Props) {
+  const [view, setView] = useState<View>('hub');
+
+  if (view === 'products') return <MyProductsPage onBack={() => setView('hub')} />;
+  if (view === 'config' || view === 'coupon') {
+    return <MinhaEmpresaHubDetail view={view} onBack={() => setView('hub')} />;
+  }
+  return <MinhaEmpresaHub onBack={onBack} onOpen={(v) => setView(v)} />;
+}
+
+const HUB_ITEMS: { key: Exclude<View, 'hub'>; label: string; desc: string; icon: LucideIcon; accent: string }[] = [
+  { key: 'config', label: 'Configurar Minha Empresa', desc: 'Perfil, desconto e cashback', icon: Settings, accent: 'text-white' },
+  { key: 'products', label: 'Meus Produtos', desc: 'Cadastro e curadoria', icon: Package, accent: 'text-yellow-400' },
+  { key: 'coupon', label: 'Emitir Cupom', desc: 'Descontos para clientes', icon: Ticket, accent: 'text-green-400' },
+];
+
+function MinhaEmpresaHub({ onBack, onOpen }: { onBack: () => void; onOpen: (v: Exclude<View, 'hub'>) => void }) {
+  return (
+    <div className="animate-fadeUp pb-4">
+      <button onClick={onBack} className="flex items-center gap-2 text-gray-300 mb-4 hover:text-white">
+        <ArrowLeft size={18} /> Voltar
+      </button>
+      <div className="mb-4">
+        <h2 className="text-2xl font-bold text-white mb-1">Minha Empresa</h2>
+        <p className="text-gray-400 text-sm">Gestão da sua conta empresarial na Rarques</p>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        {HUB_ITEMS.map((it) => {
+          const Icon = it.icon;
+          return (
+            <button
+              key={it.key}
+              onClick={() => onOpen(it.key)}
+              className="bg-gray-900 border border-gray-800 hover:border-gray-600 transition-colors p-3 text-left flex flex-col gap-2 aspect-square"
+            >
+              <Icon size={20} className={it.accent} />
+              <div className="mt-auto">
+                <p className="text-white font-semibold text-sm">{it.label}</p>
+                <p className="text-gray-400 text-[11px] mt-0.5 leading-tight">{it.desc}</p>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; onBack: () => void }) {
   const { user, profile, refreshProfile } = useAuth();
   const [form, setForm] = useState<Form>({
     company: '',
@@ -67,8 +114,6 @@ export function MinhaEmpresaPage({ onBack }: Props) {
   const [uploading, setUploading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [savedTick, setSavedTick] = useState(0);
-  const [savedPartner, setSavedPartner] = useState<PartnerSummary | null>(null);
-
 
   useEffect(() => {
     if (profile) {
@@ -105,13 +150,9 @@ export function MinhaEmpresaPage({ onBack }: Props) {
     })();
   }, [user, savedTick]);
 
-
   const filledCount = Object.values(form).filter((v) => v.trim().length > 0).length;
   const total = Object.keys(form).length;
   const percent = Math.round((filledCount / total) * 100);
-  // Requisitos mínimos para liberar o cadastro de produtos no Mercado:
-  // empresa, segmento, contato e descrição preenchidos. Campos "o que ofereço/busco"
-  // permanecem opcionais para não bloquear o fluxo comercial.
   const requiredOk = !!(form.company.trim() && form.segment.trim() && form.phone.trim() && form.bio.trim());
   const complete = percent === 100;
   const profileComplete = requiredOk;
@@ -145,8 +186,6 @@ export function MinhaEmpresaPage({ onBack }: Props) {
     const { error } = await supabase.from('profiles').update(form).eq('user_id', user.id);
     if (error) { setSaving(false); setMsg('Erro ao salvar. Tente novamente.'); return; }
 
-    // Provisiona/atualiza automaticamente o registro na tabela `partners` (diretório público),
-    // liberando o cadastro de produtos no Mercado. Regras de curadoria permanecem no fluxo existente.
     if (profileComplete) {
       const { data: existingRows, error: partnerLookupError } = await supabase
         .from('partners')
@@ -163,7 +202,6 @@ export function MinhaEmpresaPage({ onBack }: Props) {
       }
 
       const existing = existingRows?.[0] as PartnerSummary | undefined;
-
       const isCompanyAccount = profile?.account_type === 'company';
       const partnerPayload: any = {
         name: form.company.trim(),
@@ -196,9 +234,7 @@ export function MinhaEmpresaPage({ onBack }: Props) {
 
       const partnerRow = partnerMutation.data as PartnerSummary;
       setPartner(partnerRow);
-      setSavedPartner(partnerRow);
     }
-
 
     setSaving(false);
     setMsg('Perfil atualizado com sucesso.');
@@ -206,6 +242,55 @@ export function MinhaEmpresaPage({ onBack }: Props) {
     await refreshProfile();
   };
 
+  if (view === 'coupon') {
+    return (
+      <div className="animate-fadeUp pb-4">
+        <button onClick={onBack} className="flex items-center gap-2 text-gray-300 mb-4 hover:text-white">
+          <ArrowLeft size={18} /> Voltar
+        </button>
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold text-white mb-1">Emitir Cupom</h2>
+          <p className="text-gray-400 text-sm">Gere cupons de desconto e cashback para seus clientes</p>
+        </div>
+        {!partner ? (
+          <div className="bg-gray-900 border border-gray-800 p-4 flex items-start gap-3">
+            <AlertCircle size={20} className="text-yellow-400 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-white text-sm font-semibold">Empresa ainda não configurada</p>
+              <p className="text-gray-400 text-xs mt-1">Preencha e salve os dados em "Configurar Minha Empresa" primeiro.</p>
+            </div>
+          </div>
+        ) : partner.status !== 'approved' ? (
+          <div className={`p-3 border flex items-start gap-3 ${
+            partner.status === 'rejected' ? 'bg-red-500/10 border-red-500/40' : 'bg-yellow-500/10 border-yellow-500/40'
+          }`}>
+            {partner.status === 'rejected'
+              ? <XCircle size={20} className="text-red-400 mt-0.5" />
+              : <Clock size={20} className="text-yellow-400 mt-0.5" />}
+            <div className="text-sm">
+              <p className={`font-semibold ${partner.status === 'rejected' ? 'text-red-300' : 'text-yellow-300'}`}>
+                {partner.status === 'rejected' ? 'Empresa recusada' : 'Empresa em curadoria'}
+              </p>
+              <p className="text-gray-300 text-xs mt-0.5">
+                {partner.status === 'rejected'
+                  ? (partner.rejection_reason || 'Entre em contato com a administração para mais informações.')
+                  : 'Seu perfil está sendo avaliado. Você poderá emitir cupons após a aprovação.'}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <CouponIssuer
+            partnerId={partner.id}
+            discountPercent={Number(partnerConfig.discount_percent) || 0}
+            cashbackEnabled={partnerConfig.cashback_enabled}
+            cashbackPercent={Number(partnerConfig.cashback_percent) || 0}
+          />
+        )}
+      </div>
+    );
+  }
+
+  // view === 'config'
   return (
     <div className="animate-fadeUp pb-4">
       <button onClick={onBack} className="flex items-center gap-2 text-gray-300 mb-4 hover:text-white">
@@ -213,7 +298,7 @@ export function MinhaEmpresaPage({ onBack }: Props) {
       </button>
 
       <div className="mb-4">
-        <h2 className="text-2xl font-bold text-white mb-1">Minha Empresa</h2>
+        <h2 className="text-2xl font-bold text-white mb-1">Configurar Minha Empresa</h2>
         <p className="text-gray-400 text-sm">Edite seu perfil no diretório público de Associados</p>
       </div>
 
@@ -282,7 +367,6 @@ export function MinhaEmpresaPage({ onBack }: Props) {
           </div>
         ))}
 
-        {/* Desconto e cashback (só faz sentido para empresas) */}
         {profile?.account_type === 'company' && (
           <div className="bg-gray-900 border border-gray-800 p-4 space-y-4">
             <p className="text-xs text-gray-400 uppercase tracking-wider">Regras do cupom</p>
@@ -310,7 +394,6 @@ export function MinhaEmpresaPage({ onBack }: Props) {
           </div>
         )}
 
-        {/* Banner de status para conta empresa */}
         {profile?.account_type === 'company' && partner && partner.status !== 'approved' && (
           <div className={`p-3 border flex items-start gap-3 ${
             partner.status === 'rejected' ? 'bg-red-500/10 border-red-500/40' : 'bg-yellow-500/10 border-yellow-500/40'
@@ -341,21 +424,7 @@ export function MinhaEmpresaPage({ onBack }: Props) {
           {saving && <Loader2 size={16} className="animate-spin" />}
           Salvar alterações
         </button>
-
-        {/* Emissão de cupom — só quando aprovado */}
-        {partner && partner.status === 'approved' && (
-          <CouponIssuer
-            partnerId={partner.id}
-            discountPercent={Number(partnerConfig.discount_percent) || 0}
-            cashbackEnabled={partnerConfig.cashback_enabled}
-            cashbackPercent={Number(partnerConfig.cashback_percent) || 0}
-          />
-        )}
-
-        <MyProductsSection profileComplete={profileComplete} partnerSeed={savedPartner} reloadKey={savedTick} />
       </div>
     </div>
   );
 }
-
-
