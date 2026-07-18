@@ -39,8 +39,11 @@ async function fetchHtml(url: string): Promise<string> {
   const r = await fetch(url, {
     headers: {
       'User-Agent':
-        'Mozilla/5.0 (compatible; RarquesAgroSync/1.0; +https://cheer-code-craft.lovable.app)',
-      Accept: 'text/html,application/xhtml+xml',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      Accept:
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
+      'Cache-Control': 'no-cache',
     },
   });
   if (!r.ok) throw new Error(`Falha ao buscar ${url}: HTTP ${r.status}`);
