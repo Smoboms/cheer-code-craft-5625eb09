@@ -177,6 +177,8 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
 
       if (partnerMutation.error) throw partnerMutation.error;
       if (partnerMutation.data) setPartner(partnerMutation.data as PartnerSummary);
+      qc.invalidateQueries({ queryKey: ['partners', 'active'] });
+      qc.invalidateQueries({ queryKey: ['my-products', user.id] });
       setMsg({ kind: 'ok', text: 'Alterações salvas com sucesso.' });
     } catch (err: any) {
       console.error('Salvar empresa erro:', err);
