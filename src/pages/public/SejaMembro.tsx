@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { trackEvent } from '@/lib/analytics';
 import {
   CreditCard, Gift, Percent, Users, Sparkles, Crown, Award, Building2,
   ShoppingBag, Newspaper, Wrench, Scale, TrendingUp, ArrowRight, CheckCircle2,
