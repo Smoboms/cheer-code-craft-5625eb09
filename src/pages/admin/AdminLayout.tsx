@@ -11,6 +11,7 @@ const NAV = [
   { to: '/admin/mercado-categorias', label: 'Categorias do Mercado', icon: Layers },
   { to: '/admin/pilares', label: 'Pilares', icon: Columns3 },
   { to: '/admin/journal', label: 'R.Journal', icon: Newspaper },
+  { to: '/admin/panorama', label: 'Panorama', icon: Globe },
   { to: '/admin/categorias', label: 'Categorias', icon: Tags },
   { to: '/admin/associados', label: 'Associados', icon: Users },
   { to: '/admin/cupons', label: 'Cupons', icon: Ticket },
