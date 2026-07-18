@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { MapPin, Phone, Globe, Clock, X, Building2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { CACHE } from '@/lib/queryConfig';
 import { useSeo } from '@/lib/useSeo';
 
 type Lugar = {
@@ -37,8 +39,6 @@ export default function PublicLocais() {
   const tipo = params.get('tipo') || '';
   const cat = params.get('cat') || '';
 
-  const [lugares, setLugares] = useState<Lugar[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Lugar | null>(null);
 
   useSeo({
@@ -47,18 +47,17 @@ export default function PublicLocais() {
     canonical: `${window.location.origin}/locais`,
   });
 
-
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
+  const { data: lugares = [], isLoading: loading } = useQuery({
+    queryKey: ['lugares', 'public', tipo || null, cat || null],
+    queryFn: async (): Promise<Lugar[]> => {
       let q: any = supabase.from('lugares').select('*').eq('ativo', true).order('nome');
       if (tipo) q = q.eq('tipo', tipo);
       if (cat) q = q.ilike('categoria', `%${cat}%`);
       const { data } = await q;
-      setLugares((data as Lugar[]) || []);
-      setLoading(false);
-    })();
-  }, [tipo, cat]);
+      return (data as Lugar[]) || [];
+    },
+    ...CACHE.PUBLIC,
+  });
 
   const categorias = useMemo(
     () => Array.from(new Set(lugares.map((l) => l.categoria).filter(Boolean))) as string[],

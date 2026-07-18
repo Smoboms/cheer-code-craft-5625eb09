@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { CACHE } from '@/lib/queryConfig';
 
 export type MarketCategory = {
   id: string;
@@ -16,31 +17,35 @@ export type MarketSubcategory = {
   is_active: boolean;
 };
 
+type MarketCategoriesData = {
+  categories: MarketCategory[];
+  subcategories: MarketSubcategory[];
+};
+
 export function useMarketCategories(onlyActive = true) {
-  const [categories, setCategories] = useState<MarketCategory[]>([]);
-  const [subcategories, setSubcategories] = useState<MarketSubcategory[]>([]);
-  const [loading, setLoading] = useState(true);
+  const qc = useQueryClient();
+  const { data, isLoading } = useQuery({
+    queryKey: ['market-categories', onlyActive],
+    queryFn: async (): Promise<MarketCategoriesData> => {
+      const [{ data: cats }, { data: subs }] = await Promise.all([
+        supabase.from('market_categories' as any).select('*').order('sort_order').order('name'),
+        supabase.from('market_subcategories' as any).select('*').order('sort_order').order('name'),
+      ]);
+      let c = (cats as any as MarketCategory[]) || [];
+      let s = (subs as any as MarketSubcategory[]) || [];
+      if (onlyActive) {
+        c = c.filter((x) => x.is_active);
+        s = s.filter((x) => x.is_active);
+      }
+      return { categories: c, subcategories: s };
+    },
+    ...CACHE.PUBLIC,
+  });
 
-  const load = async () => {
-    setLoading(true);
-    const [{ data: cats }, { data: subs }] = await Promise.all([
-      supabase.from('market_categories' as any).select('*').order('sort_order').order('name'),
-      supabase.from('market_subcategories' as any).select('*').order('sort_order').order('name'),
-    ]);
-    let c = (cats as any as MarketCategory[]) || [];
-    let s = (subs as any as MarketSubcategory[]) || [];
-    if (onlyActive) {
-      c = c.filter((x) => x.is_active);
-      s = s.filter((x) => x.is_active);
-    }
-    setCategories(c);
-    setSubcategories(s);
-    setLoading(false);
+  return {
+    categories: data?.categories ?? [],
+    subcategories: data?.subcategories ?? [],
+    loading: isLoading,
+    reload: () => qc.invalidateQueries({ queryKey: ['market-categories'] }),
   };
-
-  useEffect(() => {
-    load();
-  }, [onlyActive]);
-
-  return { categories, subcategories, loading, reload: load };
 }

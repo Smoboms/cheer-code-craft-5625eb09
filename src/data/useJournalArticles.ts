@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { CACHE } from '@/lib/queryConfig';
 
 export interface JournalArticle {
   id: string;
@@ -12,44 +14,56 @@ export interface JournalArticle {
   published_at: string;
 }
 
+type JournalData = {
+  articles: JournalArticle[];
+  categories: string[];
+};
+
+const QUERY_KEY = ['journal-articles', 'public'] as const;
+
 export function useJournalArticles() {
-  const [articles, setArticles] = useState<JournalArticle[]>([]);
-  const [categories, setCategories] = useState<string[]>(['Todas']);
-  const [loading, setLoading] = useState(true);
+  const qc = useQueryClient();
 
-  const load = async () => {
-    const [artsRes, catsRes] = await Promise.all([
-      supabase
-        .from('journal_articles')
-        .select('id,title,category,excerpt,body,cover_url,featured,published_at')
-        .order('published_at', { ascending: false }),
-      supabase.from('article_categories').select('name').order('name'),
-    ]);
-    const arts = ((artsRes.data as any) || []).map((a: any) => ({
-      ...a,
-      category: a.category || 'Geral',
-      excerpt: a.excerpt || '',
-      body: a.body || '',
-    })) as JournalArticle[];
-    setArticles(arts);
-    const catNames = ((catsRes.data as any) || []).map((c: any) => c.name as string);
-    // fallback: also include any category actually used
-    const fromArts = Array.from(new Set(arts.map((a) => a.category).filter(Boolean)));
-    const merged = Array.from(new Set([...catNames, ...fromArts]));
-    setCategories(['Todas', ...merged]);
-    setLoading(false);
-  };
+  const { data, isLoading } = useQuery({
+    queryKey: QUERY_KEY,
+    queryFn: async (): Promise<JournalData> => {
+      const [artsRes, catsRes] = await Promise.all([
+        supabase
+          .from('journal_articles')
+          .select('id,title,category,excerpt,body,cover_url,featured,published_at')
+          .order('published_at', { ascending: false }),
+        supabase.from('article_categories').select('name').order('name'),
+      ]);
+      const arts = ((artsRes.data as any) || []).map((a: any) => ({
+        ...a,
+        category: a.category || 'Geral',
+        excerpt: a.excerpt || '',
+        body: a.body || '',
+      })) as JournalArticle[];
+      const catNames = ((catsRes.data as any) || []).map((c: any) => c.name as string);
+      const fromArts = Array.from(new Set(arts.map((a) => a.category).filter(Boolean)));
+      const merged = Array.from(new Set([...catNames, ...fromArts]));
+      return { articles: arts, categories: ['Todas', ...merged] };
+    },
+    ...CACHE.PUBLIC,
+  });
 
+  // Preserve realtime: invalidate cache when article table changes.
   useEffect(() => {
-    load();
     const ch = supabase
       .channel('journal_articles_public')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'journal_articles' }, () => load())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'journal_articles' }, () => {
+        qc.invalidateQueries({ queryKey: QUERY_KEY });
+      })
       .subscribe();
     return () => {
       supabase.removeChannel(ch);
     };
-  }, []);
+  }, [qc]);
 
-  return { articles, categories, loading };
+  return {
+    articles: data?.articles ?? [],
+    categories: data?.categories ?? ['Todas'],
+    loading: isLoading,
+  };
 }

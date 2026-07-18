@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
 import { ArrowLeft, Globe } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { CACHE } from '@/lib/queryConfig';
 
 interface Props { onBack: () => void; }
 
@@ -14,20 +15,18 @@ interface Post {
 }
 
 export function PanoramaPage({ onBack }: Props) {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    (async () => {
+  const { data: posts = [], isLoading: loading } = useQuery({
+    queryKey: ['journal-articles', 'panorama'],
+    queryFn: async (): Promise<Post[]> => {
       const { data } = await supabase
         .from('journal_articles')
         .select('id,title,excerpt,body,cover_url,published_at')
         .eq('category', 'Panorama')
         .order('published_at', { ascending: false });
-      setPosts((data || []) as Post[]);
-      setLoading(false);
-    })();
-  }, []);
+      return (data || []) as Post[];
+    },
+    ...CACHE.PUBLIC,
+  });
 
   return (
     <div className="animate-fadeUp pb-4">
