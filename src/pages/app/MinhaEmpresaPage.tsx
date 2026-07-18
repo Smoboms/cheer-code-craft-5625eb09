@@ -92,6 +92,7 @@ function MinhaEmpresaHub({ onBack, onOpen }: { onBack: () => void; onOpen: (v: E
 
 function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; onBack: () => void }) {
   const { user, profile, refreshProfile } = useAuth();
+  const qc = useQueryClient();
   const [form, setForm] = useState<Form>({
     company: '',
     segment: '',
