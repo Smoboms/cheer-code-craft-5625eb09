@@ -38,6 +38,7 @@ const NAV_GROUPS: { title: string; items: { to: string; label: string; icon: any
       { to: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
       { to: '/admin/cupons', label: 'Cupons', icon: Ticket },
       { to: '/admin/metas', label: 'Metas', icon: Target },
+      { to: '/admin/financeiro', label: 'Financeiro', icon: DollarSign },
     ],
   },
 ];
