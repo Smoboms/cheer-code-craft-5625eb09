@@ -31,12 +31,17 @@ export default function CompanyProfile() {
   const [partner, setPartner] = useState<Partner | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const trackedRef = useRef<string | null>(null);
   useEffect(() => {
     (async () => {
       if (!id) return;
       const { data } = await supabase.from('partners').select('*').eq('id', id).maybeSingle();
       setPartner((data as any) || null);
       setLoading(false);
+      if (data && trackedRef.current !== (data as any).id) {
+        trackedRef.current = (data as any).id;
+        trackEvent('company_profile_view', (data as any).id, (data as any).name);
+      }
     })();
   }, [id]);
 
