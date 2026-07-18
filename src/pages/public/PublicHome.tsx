@@ -9,6 +9,7 @@ import { useApprovedProfessionals } from '@/data/useProfessionals';
 import { CardCarousel } from '@/components/public/CardCarousel';
 import { trackEvent } from '@/lib/analytics';
 import { WeatherHomeBlock } from '@/components/public/WeatherHomeBlock';
+import { AgroHomeBlock } from '@/components/public/AgroHomeBlock';
 import { supabase } from '@/integrations/supabase/client';
 import { useSeo } from '@/lib/useSeo';
 
