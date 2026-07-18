@@ -288,13 +288,13 @@ function ProductModal({
   const imgs = product.images?.length ? product.images : [];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 flex items-end md:items-center justify-center" onClick={onClose}>
-      <div className="bg-gray-900 border border-gray-800 w-full max-w-md max-h-[92vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-gray-900 border border-gray-800 w-full max-w-sm md:max-w-md max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="relative">
           <button onClick={onClose} className="absolute top-2 right-2 z-10 bg-black/70 border border-white/20 p-1.5 text-white">
             <X size={16} />
           </button>
-          <div className="aspect-square bg-black">
+          <div className="aspect-video bg-black">
             {imgs[imgIdx] ? (
               <img src={imgs[imgIdx]} alt={product.name} className="w-full h-full object-cover" />
             ) : (

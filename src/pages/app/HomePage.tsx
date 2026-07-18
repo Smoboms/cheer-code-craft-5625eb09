@@ -84,12 +84,13 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
   return (
     <div className="animate-fadeUp pb-4">
       <div className="mb-4">
-        <p className="text-gray-400 text-sm">Bem-vindo,</p>
-        <h2 className="text-2xl font-bold text-white">{firstName}</h2>
+        <h2 className="text-2xl font-bold text-white">
+          <span className="text-gray-400 font-normal text-base">Bem-vindo,</span> {firstName}
+        </h2>
       </div>
 
       {/* Carrossel de banners */}
-      <div className="mb-3 relative overflow-hidden bg-gradient-to-br from-gray-900 to-black border border-gray-800 aspect-[32/9]">
+      <div className="mb-3 relative overflow-hidden bg-gradient-to-br from-gray-900 to-black border border-gray-800 aspect-[16/9] md:aspect-[21/9]">
         <div
           aria-hidden
           className="absolute inset-0 bg-no-repeat bg-right bg-contain opacity-10 pointer-events-none"

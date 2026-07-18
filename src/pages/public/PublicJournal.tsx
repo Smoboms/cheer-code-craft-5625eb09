@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { journalArticles, journalCategories, type JournalCategory } from '@/data/journalArticles';
+import { useJournalArticles } from '@/data/useJournalArticles';
 import { useSeo } from '@/lib/useSeo';
 
 export default function PublicJournal() {
-  const [active, setActive] = useState<JournalCategory>('Todas');
+  const [active, setActive] = useState<string>('Todas');
   const [slide, setSlide] = useState(0);
+  const { articles, categories, loading } = useJournalArticles();
 
   useSeo({
     title: 'R.Journal — Notícias e conteúdo de Uruaçu',
@@ -13,8 +14,8 @@ export default function PublicJournal() {
     canonical: `${window.location.origin}/journal`,
   });
 
-  const list = active === 'Todas' ? journalArticles : journalArticles.filter((a) => a.category === active);
-  const featured = journalArticles.filter((a) => a.featured);
+  const list = active === 'Todas' ? articles : articles.filter((a) => a.category === active);
+  const featured = articles.filter((a) => a.featured);
 
   useEffect(() => {
     if (featured.length < 2) return;
@@ -30,7 +31,7 @@ export default function PublicJournal() {
       </div>
 
       <div className="flex gap-2 overflow-x-auto no-scrollbar mb-5 pb-1">
-        {journalCategories.map((c) => (
+        {categories.map((c) => (
           <button
             key={c}
             onClick={() => setActive(c)}
@@ -53,7 +54,11 @@ export default function PublicJournal() {
           >
             {featured.map((a) => (
               <Link key={a.id} to={`/journal/${a.id}`} className="min-w-full text-left">
-                <div className="aspect-[16/9] bg-gradient-to-br from-gray-800 to-gray-950" />
+                <div className="aspect-[16/9] bg-gradient-to-br from-gray-800 to-gray-950 overflow-hidden">
+                  {a.cover_url && (
+                    <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" />
+                  )}
+                </div>
                 <div className="p-4">
                   <p className="text-[10px] font-semibold tracking-wider text-yellow-400 mb-1">
                     {a.category.toUpperCase()} · DESTAQUE
@@ -79,22 +84,32 @@ export default function PublicJournal() {
         </div>
       )}
 
-      <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3 items-stretch">
-        {list.map((a) => (
-          <Link
-            key={a.id}
-            to={`/journal/${a.id}`}
-            className="h-full flex flex-col w-full text-left bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors overflow-hidden"
-          >
-            <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 shrink-0" />
-            <div className="p-3 flex-1 flex flex-col">
-              <p className="text-[10px] font-semibold tracking-wider text-yellow-400 mb-1">{a.category.toUpperCase()}</p>
-              <p className="text-white text-sm font-semibold mb-1 line-clamp-2">{a.title}</p>
-              <p className="text-gray-400 text-xs line-clamp-2">{a.excerpt}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
+      {loading ? (
+        <p className="text-gray-500 text-sm">Carregando…</p>
+      ) : list.length === 0 ? (
+        <p className="text-gray-500 text-sm">Nenhuma matéria publicada ainda.</p>
+      ) : (
+        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3 items-stretch">
+          {list.map((a) => (
+            <Link
+              key={a.id}
+              to={`/journal/${a.id}`}
+              className="h-full flex flex-col w-full text-left bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors overflow-hidden"
+            >
+              <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 shrink-0 overflow-hidden">
+                {a.cover_url && (
+                  <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" />
+                )}
+              </div>
+              <div className="p-3 flex-1 flex flex-col">
+                <p className="text-[10px] font-semibold tracking-wider text-yellow-400 mb-1">{a.category.toUpperCase()}</p>
+                <p className="text-white text-sm font-semibold mb-1 line-clamp-2">{a.title}</p>
+                <p className="text-gray-400 text-xs line-clamp-2">{a.excerpt}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

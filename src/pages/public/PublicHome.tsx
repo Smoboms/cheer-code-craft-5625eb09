@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import * as Icons from 'lucide-react';
 import { Search, ArrowRight, MapPin, X } from 'lucide-react';
-import { journalArticles } from '@/data/journalArticles';
+import { useJournalArticles } from '@/data/useJournalArticles';
 import { usePublicBanner, filterSlidesFor } from '@/data/publicBanner';
 import { useActivePartners } from '@/data/usePartners';
 import { useApprovedProfessionals } from '@/data/useProfessionals';
@@ -80,8 +80,9 @@ export default function PublicHome() {
     })();
   }, []);
 
+  const { articles: allArticles } = useJournalArticles();
   const featuredCompanies = partners.slice(0, 8);
-  const featuredArticles = journalArticles.filter((a) => a.featured);
+  const featuredArticles = allArticles.filter((a) => a.featured);
   const featuredProfs = professionals.slice(0, 8);
 
   const submitSearch = (e: React.FormEvent) => {
@@ -91,7 +92,28 @@ export default function PublicHome() {
 
   return (
     <div className="animate-fadeUp pb-4">
-      {/* Bloco institucional RARQUES ASSOCIATION — compacto, no topo */}
+      {/* 1º — Cidade */}
+      <div className="mb-2">
+        <div className="flex items-center gap-1.5 text-yellow-400">
+          <MapPin size={14} />
+          <span className="text-white text-lg md:text-xl font-bold leading-tight">
+            Uruaçu <span className="text-yellow-500">— GO</span>
+          </span>
+        </div>
+      </div>
+
+      {/* 2º — Texto institucional R. Cidade Inteligente */}
+      <div className="mb-4">
+        <h1 className="text-white text-xl md:text-2xl font-bold leading-tight">R. Cidade Inteligente</h1>
+        <p className="text-gray-400 text-xs md:text-sm mt-1">
+          Empresas, serviços, notícias e utilidades.
+        </p>
+      </div>
+
+      {/* 3º — Banner Principal */}
+      <PublicBannerBlock banner={banner} />
+
+      {/* 4º — Card institucional RARQUES */}
       <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 px-3 py-2 mb-3 flex items-center justify-between gap-3">
         <div className="min-w-0 flex items-center gap-2">
           <div className="inline-block bg-yellow-500/20 border border-yellow-500/40 px-1.5 py-0.5">
@@ -109,27 +131,9 @@ export default function PublicHome() {
         </Link>
       </div>
 
-      {/* Destaque cidade: Uruaçu — GO (agora acima do banner) */}
-      <div className="mb-3">
-        <div className="flex items-center gap-1.5 text-yellow-400">
-          <MapPin size={12} />
-          <span className="text-white text-base md:text-lg font-bold leading-tight">
-            Uruaçu <span className="text-yellow-500">— GO</span>
-          </span>
-        </div>
-        <p className="text-gray-400 text-xs mt-1">
-          Tudo o que acontece na cidade em um só lugar — empresas, serviços, notícias e utilidades.
-        </p>
-      </div>
-
-      {/* Banner(s) do Admin — abaixo do título da cidade */}
-      <PublicBannerBlock banner={banner} />
-
-
-
-
-      {/* Clima */}
+      {/* 5º — Widget do Clima */}
       <WeatherHomeBlock />
+
 
       {/* Serviços Mais Procurados — ícones circulares dos atalhos_da_casa */}
       {atalhos.length > 0 && (
@@ -320,7 +324,11 @@ export default function PublicHome() {
               to={`/journal/${a.id}`}
               className="block w-full h-full bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors overflow-hidden flex flex-col"
             >
-              <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 shrink-0" />
+              <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 shrink-0 overflow-hidden">
+                {a.cover_url && (
+                  <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" />
+                )}
+              </div>
               <div className="p-3 flex-1 flex flex-col">
                 <p className="text-[10px] font-semibold tracking-wider text-yellow-400 mb-1">
                   {a.category.toUpperCase()} · DESTAQUE
@@ -414,7 +422,7 @@ function PublicBannerBlock({ banner }: { banner: ReturnType<typeof usePublicBann
           href={current.ctaHref || '#'}
           target={external ? '_blank' : undefined}
           rel="noreferrer"
-          className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors aspect-[32/9] lg:aspect-[48/9] bg-[#0b1a3a]"
+          className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors aspect-[16/9] lg:aspect-[32/9] bg-[#0b1a3a]"
         >
           <img src={current.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
         </a>
@@ -436,7 +444,7 @@ function PublicBannerBlock({ banner }: { banner: ReturnType<typeof usePublicBann
       href={banner.ctaHref || '#'}
       target={banner.ctaHref?.startsWith('http') ? '_blank' : undefined}
       rel="noreferrer"
-      className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors mb-4 aspect-[32/9] lg:aspect-[48/9] bg-[#0b1a3a]"
+      className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors mb-4 aspect-[16/9] lg:aspect-[32/9] bg-[#0b1a3a]"
     >
       {banner.imageUrl && (
         <img src={banner.imageUrl} alt={banner.title || ''} className="absolute inset-0 w-full h-full object-cover" />

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Building2, Wrench, ShoppingBag, MapPin, Newspaper, Cloud } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { journalArticles } from '@/data/journalArticles';
+import { useJournalArticles } from '@/data/useJournalArticles';
 import { useSeo } from '@/lib/useSeo';
 import { trackEvent } from '@/lib/analytics';
 
@@ -32,6 +32,7 @@ export default function PublicSearch() {
   const [profs, setProfs] = useState<Professional[]>([]);
   const [lugares, setLugares] = useState<Lugar[]>([]);
   const [loading, setLoading] = useState(false);
+  const { articles: allArticles } = useJournalArticles();
 
   useEffect(() => setQuery(params.get('q') || ''), [params]);
 
@@ -117,11 +118,11 @@ export default function PublicSearch() {
   }, [q0, type, cat]);
 
   const articles = q0.trim() && (!type || type === 'materia')
-    ? journalArticles.filter(
+    ? allArticles.filter(
         (a) =>
           a.title.toLowerCase().includes(q0.toLowerCase()) ||
           a.category.toLowerCase().includes(q0.toLowerCase()) ||
-          a.excerpt.toLowerCase().includes(q0.toLowerCase())
+          (a.excerpt || '').toLowerCase().includes(q0.toLowerCase())
       )
     : [];
 
