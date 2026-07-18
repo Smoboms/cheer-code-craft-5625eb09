@@ -34,6 +34,14 @@ export default function AdminEmpresas() {
     await supabase.from('partners').update({ is_member: !p.is_member }).eq('id', p.id);
     reload();
   };
+  const toggleCashbackUnlock = async (p: Partner) => {
+    await supabase.from('partners').update({ cashback_feature_unlocked: !p.cashback_feature_unlocked }).eq('id', p.id);
+    reload();
+  };
+  const toggleProductsUnlock = async (p: Partner) => {
+    await supabase.from('partners').update({ products_feature_unlocked: !p.products_feature_unlocked }).eq('id', p.id);
+    reload();
+  };
   const setStatusOf = async (p: Partner, s: string) => {
     await supabase.from('partners').update({ status: s }).eq('id', p.id);
     reload();
