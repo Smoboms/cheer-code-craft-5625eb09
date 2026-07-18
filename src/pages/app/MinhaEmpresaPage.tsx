@@ -17,7 +17,11 @@ interface Form {
   what_i_offer: string;
   what_i_seek: string;
   avatar_url: string;
+  discount_percent: string;
+  cashback_enabled: boolean;
+  cashback_percent: string;
 }
+
 
 type PartnerSummary = {
   id: string;
