@@ -36,25 +36,40 @@ export default function AdminFinanceiro() {
     return (data ?? []) as Stream[];
   }, [reloadTick]);
 
-  const payments = useAsync(async () => {
+  const allPayments = useAsync(async () => {
     const { data } = await (supabase as any)
       .from('payments')
       .select('*')
-      .gte('payment_date', dr.range.from.slice(0, 10))
-      .lte('payment_date', dr.range.to.slice(0, 10))
       .order('payment_date', { ascending: false });
     return (data ?? []) as Payment[];
-  }, [dr.range.from, dr.range.to, reloadTick]);
+  }, [reloadTick]);
+
+  const payments = useMemo(() => {
+    const from = dr.range.from.slice(0, 10);
+    const to = dr.range.to.slice(0, 10);
+    return (allPayments.data ?? []).filter(p => p.payment_date >= from && p.payment_date <= to);
+  }, [allPayments.data, dr.range.from, dr.range.to]);
 
   const partners = useAsync(async () => {
     const { data } = await supabase.from('partners').select('id, name').order('name');
     return (data ?? []) as { id: string; name: string }[];
   }, []);
 
-  // aggregates per stream
+  // aggregates per stream (lifetime — independentes do filtro de período)
   const agg = useMemo(() => {
     const m = new Map<string, { total: number; payers: Set<string>; overdue: number }>();
-    (payments.data ?? []).forEach(p => {
+    (allPayments.data ?? []).forEach(p => {
+      const cur = m.get(p.revenue_stream_id) ?? { total: 0, payers: new Set<string>(), overdue: 0 };
+      if (p.status === 'pago') {
+        cur.total += Number(p.amount);
+        if (p.partner_id) cur.payers.add(p.partner_id);
+      }
+      if (p.status === 'atrasado') cur.overdue += 1;
+      m.set(p.revenue_stream_id, cur);
+    });
+    return m;
+  }, [allPayments.data]);
+
       const cur = m.get(p.revenue_stream_id) ?? { total: 0, payers: new Set<string>(), overdue: 0 };
       if (p.status === 'pago') {
         cur.total += Number(p.amount);
