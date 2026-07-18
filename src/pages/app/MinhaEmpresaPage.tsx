@@ -282,6 +282,55 @@ export function MinhaEmpresaPage({ onBack }: Props) {
           </div>
         ))}
 
+        {/* Desconto e cashback (só faz sentido para empresas) */}
+        {profile?.account_type === 'company' && (
+          <div className="bg-gray-900 border border-gray-800 p-4 space-y-4">
+            <p className="text-xs text-gray-400 uppercase tracking-wider">Regras do cupom</p>
+            <div>
+              <label className="block text-xs text-gray-400 mb-2">Desconto padrão (%)</label>
+              <input value={partnerConfig.discount_percent}
+                onChange={(e) => setPartnerConfig((s) => ({ ...s, discount_percent: e.target.value }))}
+                inputMode="decimal" placeholder="Ex: 10"
+                className="w-full bg-black border border-gray-700 text-white px-3 py-2 text-sm outline-none focus:border-white" />
+            </div>
+            <label className="flex items-center gap-2 text-sm text-gray-300">
+              <input type="checkbox" checked={partnerConfig.cashback_enabled}
+                onChange={(e) => setPartnerConfig((s) => ({ ...s, cashback_enabled: e.target.checked }))} />
+              Habilitar cashback
+            </label>
+            {partnerConfig.cashback_enabled && (
+              <div>
+                <label className="block text-xs text-gray-400 mb-2">Cashback (%)</label>
+                <input value={partnerConfig.cashback_percent}
+                  onChange={(e) => setPartnerConfig((s) => ({ ...s, cashback_percent: e.target.value }))}
+                  inputMode="decimal" placeholder="Ex: 5"
+                  className="w-full bg-black border border-gray-700 text-white px-3 py-2 text-sm outline-none focus:border-white" />
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Banner de status para conta empresa */}
+        {profile?.account_type === 'company' && partner && partner.status !== 'approved' && (
+          <div className={`p-3 border flex items-start gap-3 ${
+            partner.status === 'rejected' ? 'bg-red-500/10 border-red-500/40' : 'bg-yellow-500/10 border-yellow-500/40'
+          }`}>
+            {partner.status === 'rejected'
+              ? <XCircle size={20} className="text-red-400 mt-0.5" />
+              : <Clock size={20} className="text-yellow-400 mt-0.5" />}
+            <div className="text-sm">
+              <p className={`font-semibold ${partner.status === 'rejected' ? 'text-red-300' : 'text-yellow-300'}`}>
+                {partner.status === 'rejected' ? 'Empresa recusada' : 'Empresa em curadoria'}
+              </p>
+              <p className="text-gray-300 text-xs mt-0.5">
+                {partner.status === 'rejected'
+                  ? (partner.rejection_reason || 'Entre em contato com a administração para mais informações.')
+                  : 'Seu perfil está sendo avaliado. Você poderá emitir cupons após a aprovação.'}
+              </p>
+            </div>
+          </div>
+        )}
+
         {msg && <p className={`text-sm text-center ${msg.includes('sucesso') ? 'text-green-400' : 'text-red-400'}`}>{msg}</p>}
 
         <button
@@ -293,9 +342,20 @@ export function MinhaEmpresaPage({ onBack }: Props) {
           Salvar alterações
         </button>
 
+        {/* Emissão de cupom — só quando aprovado */}
+        {partner && partner.status === 'approved' && (
+          <CouponIssuer
+            partnerId={partner.id}
+            discountPercent={Number(partnerConfig.discount_percent) || 0}
+            cashbackEnabled={partnerConfig.cashback_enabled}
+            cashbackPercent={Number(partnerConfig.cashback_percent) || 0}
+          />
+        )}
+
         <MyProductsSection profileComplete={profileComplete} partnerSeed={savedPartner} reloadKey={savedTick} />
       </div>
     </div>
   );
 }
+
 
