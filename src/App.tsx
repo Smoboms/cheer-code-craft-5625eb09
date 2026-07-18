@@ -36,6 +36,7 @@ import AdminLocals from "./pages/admin/AdminLocals";
 import AdminHomeAtalhos from "./pages/admin/AdminHomeAtalhos";
 import AdminPilares from "./pages/admin/AdminPilares";
 import AdminCidades from "./pages/admin/AdminCidades";
+import AdminPanorama from "./pages/admin/AdminPanorama";
 
 const queryClient = new QueryClient();
 
