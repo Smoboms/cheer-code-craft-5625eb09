@@ -118,11 +118,11 @@ export default function PublicSearch() {
   }, [q0, type, cat]);
 
   const articles = q0.trim() && (!type || type === 'materia')
-    ? journalArticles.filter(
+    ? allArticles.filter(
         (a) =>
           a.title.toLowerCase().includes(q0.toLowerCase()) ||
           a.category.toLowerCase().includes(q0.toLowerCase()) ||
-          a.excerpt.toLowerCase().includes(q0.toLowerCase())
+          (a.excerpt || '').toLowerCase().includes(q0.toLowerCase())
       )
     : [];
 
