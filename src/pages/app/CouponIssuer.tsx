@@ -17,6 +17,7 @@ interface Props {
   discountPercent: number;
   cashbackEnabled: boolean;
   cashbackPercent: number;
+  cashbackFeatureUnlocked?: boolean;
 }
 
 const onlyDigits = (v: string) => v.replace(/\D/g, '');
