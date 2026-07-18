@@ -93,7 +93,7 @@ export default function AdminFinanceiro() {
             <div className="text-2xl font-semibold text-green-400 mt-1">{brl(grandTotal)}</div>
           </div>
           <div className="text-xs text-gray-400">
-            {(payments.data ?? []).filter(p => p.status === 'pago').length} pagamentos no período
+            {payments.filter(p => p.status === 'pago').length} pagamentos no período
           </div>
         </div>
       </Card>
