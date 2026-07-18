@@ -24,13 +24,14 @@ export default function AdminCidades() {
   const save = async () => {
     if (!f.name.trim() || !f.uf.trim()) return alert('Nome e UF obrigatórios');
     setSaving(true);
-    const payload = { ...f, slug: f.slug?.trim() || slugify(f.name), uf: f.uf.toUpperCase() };
-    const { error } = f.id
-      ? await supabase.from('cities').update(payload).eq('id', f.id)
-      : await supabase.from('cities').insert(payload);
+    const base = { name: f.name.trim(), slug: (f.slug?.trim() || slugify(f.name)), uf: f.uf.toUpperCase(), is_active: f.is_active };
+    const res = f.id
+      ? await supabase.from('cities').update(base).eq('id', f.id).select().single()
+      : await supabase.from('cities').insert(base).select().single();
     setSaving(false);
-    if (error) return alert(error.message);
-    setOpen(false); reload();
+    if (res.error) { console.error('city save', res.error); return alert(res.error.message); }
+    setOpen(false);
+    reload();
   };
 
   const toggle = async (c: any) => {
