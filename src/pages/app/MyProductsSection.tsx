@@ -136,7 +136,7 @@ export function ProductForm({ partnerId, initial, onClose, onSaved }: {
             <div className="grid grid-cols-4 gap-1 mt-1">
               {f.images.map((src, i) => (
                 <div key={i} className="relative aspect-square bg-black border border-gray-700">
-                  <img src={src} alt="" className="w-full h-full object-cover" />
+                  <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   <button onClick={() => removeImg(i)} className="absolute -top-1 -right-1 bg-red-600 text-white p-0.5"><X size={10} /></button>
                 </div>
               ))}
