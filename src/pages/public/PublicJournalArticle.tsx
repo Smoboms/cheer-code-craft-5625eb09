@@ -90,10 +90,14 @@ export default function PublicJournalArticle() {
             Torne-se um Associado Rarques e leia todas as matérias completas do R.Journal.
           </p>
           <Link
-            to="/app"
+            to="/seja-membro"
+            onClick={() => {
+              trackEvent('paywall_login_click', article.id, article.title, { source: 'journal_article' });
+              trackEvent('seja_associado_click', 'paywall_journal', article.title, { origin: 'paywall_journal' });
+            }}
             className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-4 py-2 text-sm transition-colors"
           >
-            Acessar Área do Associado
+            Assine para continuar lendo
           </Link>
         </div>
       </div>
