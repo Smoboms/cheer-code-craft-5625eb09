@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { CACHE } from '@/lib/queryConfig';
 
 export interface DirectoryPartner {
   id: string;
@@ -33,12 +34,9 @@ export interface DirectoryPartner {
  * - Painel ADM
  */
 export function useActivePartners() {
-  const [partners, setPartners] = useState<DirectoryPartner[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
+  const { data, isLoading } = useQuery({
+    queryKey: ['partners', 'active'],
+    queryFn: async (): Promise<DirectoryPartner[]> => {
       const { data, error } = await supabase
         .from('partners')
         .select('*')
@@ -46,14 +44,14 @@ export function useActivePartners() {
         .order('display_order', { ascending: true })
         .order('is_member', { ascending: false })
         .order('created_at', { ascending: false });
-      if (cancelled) return;
-      if (error) console.error('partners fetch error', error);
-      const rows = (data || []).filter((p: any) => !p.status || p.status === 'approved');
-      setPartners(rows as any);
-      setLoading(false);
-    })();
-    return () => { cancelled = true; };
-  }, []);
+      if (error) {
+        console.error('partners fetch error', error);
+        return [];
+      }
+      return ((data || []) as any[]).filter((p: any) => !p.status || p.status === 'approved') as any;
+    },
+    ...CACHE.PUBLIC,
+  });
 
-  return { partners, loading };
+  return { partners: data ?? [], loading: isLoading };
 }
