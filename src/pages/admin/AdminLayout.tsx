@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid, Columns3, Building, Target } from 'lucide-react';
+import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid, Columns3, Building, Target, DollarSign } from 'lucide-react';
 import { useState } from 'react';
 
 const NAV_GROUPS: { title: string; items: { to: string; label: string; icon: any; end?: boolean }[] }[] = [
@@ -38,6 +38,7 @@ const NAV_GROUPS: { title: string; items: { to: string; label: string; icon: any
       { to: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
       { to: '/admin/cupons', label: 'Cupons', icon: Ticket },
       { to: '/admin/metas', label: 'Metas', icon: Target },
+      { to: '/admin/financeiro', label: 'Financeiro', icon: DollarSign },
     ],
   },
 ];

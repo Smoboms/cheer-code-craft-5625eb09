@@ -873,6 +873,63 @@ export type Database = {
           },
         ]
       }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          next_due_date: string | null
+          notes: string | null
+          partner_id: string | null
+          payer_user_id: string | null
+          payment_date: string
+          revenue_stream_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          next_due_date?: string | null
+          notes?: string | null
+          partner_id?: string | null
+          payer_user_id?: string | null
+          payment_date: string
+          revenue_stream_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          next_due_date?: string | null
+          notes?: string | null
+          partner_id?: string | null
+          payer_user_id?: string | null
+          payment_date?: string
+          revenue_stream_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_revenue_stream_id_fkey"
+            columns: ["revenue_stream_id"]
+            isOneToOne: false
+            referencedRelation: "revenue_streams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pilar_conteudos: {
         Row: {
           ativo: boolean
@@ -1451,6 +1508,39 @@ export type Database = {
           referred_id?: string | null
           referrer_id?: string
           used_at?: string | null
+        }
+        Relationships: []
+      }
+      revenue_streams: {
+        Row: {
+          billing_type: string
+          created_at: string
+          default_amount: number | null
+          id: string
+          name: string
+          sort_order: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          billing_type?: string
+          created_at?: string
+          default_amount?: number | null
+          id?: string
+          name: string
+          sort_order?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          billing_type?: string
+          created_at?: string
+          default_amount?: number | null
+          id?: string
+          name?: string
+          sort_order?: number
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }
