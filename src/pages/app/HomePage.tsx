@@ -88,8 +88,8 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
         <h2 className="text-2xl font-bold text-white">{firstName}</h2>
       </div>
 
-      {/* Carrossel de banners com imagem de fundo */}
-      <div className="mb-3 relative overflow-hidden bg-gradient-to-br from-gray-900 to-black border border-gray-800">
+      {/* Carrossel de banners */}
+      <div className="mb-3 relative overflow-hidden bg-gradient-to-br from-gray-900 to-black border border-gray-800 aspect-[32/9]">
         <div
           aria-hidden
           className="absolute inset-0 bg-no-repeat bg-right bg-contain opacity-10 pointer-events-none"
@@ -97,7 +97,7 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent pointer-events-none" />
         <div
-          className="relative flex transition-transform duration-500 ease-out"
+          className="relative flex h-full transition-transform duration-500 ease-out"
           style={{ transform: `translateX(-${slide * 100}%)` }}
         >
           {slides.map((s, i) => {
@@ -106,25 +106,25 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
                 <button
                   key={`img-${i}`}
                   onClick={() => openHref(s.ctaHref)}
-                  className="min-w-full aspect-[32/9] block"
+                  className="min-w-full h-full block"
                   aria-label={`Banner ${i + 1}`}
                 >
-                  <img src={s.imageUrl} alt="" className="w-full h-full object-cover" />
+                  <img src={s.imageUrl} alt="" className="w-full h-full object-cover block" loading="lazy" decoding="async" />
                 </button>
               );
             }
             const b = s.banner;
             const Icon = b.icon;
             return (
-              <div key={`info-${i}`} className="min-w-full p-3">
-                <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 border ${b.accent} mb-2`}>
+              <div key={`info-${i}`} className="min-w-full h-full p-3 flex flex-col justify-center">
+                <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 border ${b.accent} mb-2 w-fit`}>
                   <Icon size={11} />
                   <p className="text-[10px] font-semibold tracking-wider">{b.title}</p>
                 </div>
                 <p className="text-white text-sm mb-2 leading-snug">{b.text}</p>
                 <button
                   onClick={() => handleBanner(b.action)}
-                  className="text-yellow-400 hover:text-yellow-300 text-xs font-semibold inline-flex items-center gap-1"
+                  className="text-yellow-400 hover:text-yellow-300 text-xs font-semibold inline-flex items-center gap-1 w-fit"
                 >
                   {b.cta} →
                 </button>
@@ -132,17 +132,20 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
             );
           })}
         </div>
-        <div className="relative flex justify-center gap-1.5 pb-2">
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setSlide(i)}
-              aria-label={`Slide ${i + 1}`}
-              className={`h-1.5 transition-all ${i === slide ? 'w-4 bg-yellow-400' : 'w-1.5 bg-gray-600'}`}
-            />
-          ))}
-        </div>
+        {slides.length > 1 && (
+          <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-1.5">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setSlide(i)}
+                aria-label={`Slide ${i + 1}`}
+                className={`h-1.5 transition-all ${i === slide ? 'w-4 bg-yellow-400' : 'w-1.5 bg-gray-600'}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
+
 
       {/* Card MEMBRO ATIVO compacto */}
       <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 p-3 mb-3 flex items-center justify-between gap-3">
