@@ -35,7 +35,8 @@ export default defineConfig(({ mode }) => ({
           if (id.includes("@supabase")) return "supabase";
           if (id.includes("@radix-ui")) return "radix";
           if (id.includes("recharts") || id.includes("d3-")) return "charts";
-          if (id.includes("lucide-react")) return "icons";
+          // NOTE: lucide-react is intentionally NOT grouped so Vite can
+          // tree-shake per-route and split icon usage across chunks.
           if (id.includes("framer-motion")) return "motion";
           if (id.includes("react-hook-form") || id.includes("zod") || id.includes("@hookform")) return "forms";
           if (id.includes("date-fns")) return "date";
