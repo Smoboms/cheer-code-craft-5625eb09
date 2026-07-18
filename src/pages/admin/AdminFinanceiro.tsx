@@ -79,6 +79,24 @@ export default function AdminFinanceiro() {
 
   const [openStream, setOpenStream] = useState<Stream | null>(null);
   const [editStream, setEditStream] = useState<Stream | null>(null);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  // Último pagamento por (stream, partner) — usado para listar pagantes e vencimentos
+  const payersByStream = useMemo(() => {
+    const m = new Map<string, Map<string, Payment>>();
+    (allPayments.data ?? []).forEach(p => {
+      if (!p.partner_id) return;
+      const inner = m.get(p.revenue_stream_id) ?? new Map<string, Payment>();
+      const cur = inner.get(p.partner_id);
+      if (!cur || p.payment_date > cur.payment_date) inner.set(p.partner_id, p);
+      m.set(p.revenue_stream_id, inner);
+    });
+    return m;
+  }, [allPayments.data]);
+
+  const partnerName = (id: string) => (partners.data ?? []).find(p => p.id === id)?.name ?? '—';
+  const today = new Date().toISOString().slice(0, 10);
+
 
   return (
     <>
