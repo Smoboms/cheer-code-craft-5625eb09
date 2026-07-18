@@ -448,7 +448,7 @@ function PublicBannerBlock({ banner }: { banner: ReturnType<typeof usePublicBann
       className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors mb-4 aspect-[16/9] lg:aspect-[32/9] bg-[#0b1a3a]"
     >
       {banner.imageUrl && (
-        <img src={banner.imageUrl} alt={banner.title || ''} className="absolute inset-0 w-full h-full object-cover" />
+        <img src={banner.imageUrl} alt={banner.title || ''} className="absolute inset-0 w-full h-full object-cover" fetchPriority="high" decoding="async" />
       )}
       {(banner.title || banner.text || banner.ctaLabel) && (
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-1.5">
