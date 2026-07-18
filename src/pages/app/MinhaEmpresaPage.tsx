@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, AlertCircle, Loader2, Clock, XCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { MyProductsSection } from './MyProductsSection';
+import { CouponIssuer } from './CouponIssuer';
 import { optimizeImage } from '@/lib/imageOptimizer';
+
 
 interface Props { onBack: () => void; }
 
