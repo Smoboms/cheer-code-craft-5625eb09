@@ -92,7 +92,28 @@ export default function PublicHome() {
 
   return (
     <div className="animate-fadeUp pb-4">
-      {/* Bloco institucional RARQUES ASSOCIATION — compacto, no topo */}
+      {/* 1º — Cidade */}
+      <div className="mb-2">
+        <div className="flex items-center gap-1.5 text-yellow-400">
+          <MapPin size={14} />
+          <span className="text-white text-lg md:text-xl font-bold leading-tight">
+            Uruaçu <span className="text-yellow-500">— GO</span>
+          </span>
+        </div>
+      </div>
+
+      {/* 2º — Texto institucional R. Cidade Inteligente */}
+      <div className="mb-4">
+        <h1 className="text-white text-xl md:text-2xl font-bold leading-tight">R. Cidade Inteligente</h1>
+        <p className="text-gray-400 text-xs md:text-sm mt-1">
+          Empresas, serviços, notícias e utilidades.
+        </p>
+      </div>
+
+      {/* 3º — Banner Principal */}
+      <PublicBannerBlock banner={banner} />
+
+      {/* 4º — Card institucional RARQUES */}
       <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 px-3 py-2 mb-3 flex items-center justify-between gap-3">
         <div className="min-w-0 flex items-center gap-2">
           <div className="inline-block bg-yellow-500/20 border border-yellow-500/40 px-1.5 py-0.5">
@@ -110,27 +131,9 @@ export default function PublicHome() {
         </Link>
       </div>
 
-      {/* Destaque cidade: Uruaçu — GO (agora acima do banner) */}
-      <div className="mb-3">
-        <div className="flex items-center gap-1.5 text-yellow-400">
-          <MapPin size={12} />
-          <span className="text-white text-base md:text-lg font-bold leading-tight">
-            Uruaçu <span className="text-yellow-500">— GO</span>
-          </span>
-        </div>
-        <p className="text-gray-400 text-xs mt-1">
-          Tudo o que acontece na cidade em um só lugar — empresas, serviços, notícias e utilidades.
-        </p>
-      </div>
-
-      {/* Banner(s) do Admin — abaixo do título da cidade */}
-      <PublicBannerBlock banner={banner} />
-
-
-
-
-      {/* Clima */}
+      {/* 5º — Widget do Clima */}
       <WeatherHomeBlock />
+
 
       {/* Serviços Mais Procurados — ícones circulares dos atalhos_da_casa */}
       {atalhos.length > 0 && (
