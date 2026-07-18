@@ -86,7 +86,17 @@ export default function AdminEmpresas() {
             <option value="pending_curation">Pendentes de curadoria</option>
             <option value="rejected">Recusadas</option>
           </Select>
+          <Select value={extraFilter} onChange={e => setExtraFilter(e.target.value as any)}>
+            <option value="none">Sem filtro extra</option>
+            <option value="no_photo">Sem foto cadastrada</option>
+            <option value="incomplete">Cadastro incompleto</option>
+          </Select>
         </div>
+        {(extraFilter !== 'none' || status !== 'all') && (
+          <div className="mt-2 text-xs text-gray-400">
+            Filtros ativos <button onClick={clearFilter} className="ml-2 underline text-yellow-400">limpar</button>
+          </div>
+        )}
       </Card>
 
       {loading ? <EmptyState>Carregando…</EmptyState> :
