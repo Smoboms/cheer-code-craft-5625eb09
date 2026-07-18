@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, MapPin, Phone, Instagram, Globe, Clock, Loader2, MessageCircle, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSeo } from '@/lib/useSeo';
+import { trackEvent } from '@/lib/analytics';
 
 interface Partner {
   id: string;
@@ -30,12 +31,17 @@ export default function CompanyProfile() {
   const [partner, setPartner] = useState<Partner | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const trackedRef = useRef<string | null>(null);
   useEffect(() => {
     (async () => {
       if (!id) return;
       const { data } = await supabase.from('partners').select('*').eq('id', id).maybeSingle();
       setPartner((data as any) || null);
       setLoading(false);
+      if (data && trackedRef.current !== (data as any).id) {
+        trackedRef.current = (data as any).id;
+        trackEvent('company_profile_view', (data as any).id, (data as any).name);
+      }
     })();
   }, [id]);
 
