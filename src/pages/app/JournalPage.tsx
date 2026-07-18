@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { journalArticles as articles, journalCategories as categories, type JournalCategory } from '@/data/journalArticles';
+import { useJournalArticles } from '@/data/useJournalArticles';
 
 interface Props { onBack: () => void; }
 
 export function JournalPage({ onBack }: Props) {
-  const [active, setActive] = useState<JournalCategory>('Todas');
-
-  const [openId, setOpenId] = useState<number | null>(null);
+  const { articles, categories, loading } = useJournalArticles();
+  const [active, setActive] = useState<string>('Todas');
+  const [openId, setOpenId] = useState<string | null>(null);
   const [slide, setSlide] = useState(0);
 
   const list = active === 'Todas' ? articles : articles.filter((a) => a.category === active);
@@ -20,7 +20,6 @@ export function JournalPage({ onBack }: Props) {
     return () => clearInterval(id);
   }, [featured.length]);
 
-
   if (openArticle) {
     return (
       <div className="animate-fadeUp pb-4">
@@ -31,8 +30,13 @@ export function JournalPage({ onBack }: Props) {
           <p className="text-[10px] font-semibold tracking-wider text-yellow-400">{openArticle.category.toUpperCase()}</p>
         </div>
         <h2 className="text-2xl font-bold text-white mb-4 leading-tight">{openArticle.title}</h2>
-        <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 mb-4" />
-        <p className="text-gray-200 leading-relaxed text-[15px]">{openArticle.body}</p>
+        <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 mb-4 overflow-hidden">
+          {openArticle.cover_url && (
+            <img src={openArticle.cover_url} alt={openArticle.title} className="w-full h-full object-cover" loading="lazy" />
+          )}
+        </div>
+        {openArticle.excerpt && <p className="text-gray-300 leading-relaxed text-[15px] mb-3 italic">{openArticle.excerpt}</p>}
+        <p className="text-gray-200 leading-relaxed text-[15px] whitespace-pre-wrap">{openArticle.body}</p>
       </div>
     );
   }
@@ -78,7 +82,11 @@ export function JournalPage({ onBack }: Props) {
                 onClick={() => setOpenId(a.id)}
                 className="min-w-full text-left"
               >
-                <div className="aspect-[16/9] bg-gradient-to-br from-gray-800 to-gray-950" />
+                <div className="aspect-[16/9] bg-gradient-to-br from-gray-800 to-gray-950 overflow-hidden">
+                  {a.cover_url && (
+                    <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" />
+                  )}
+                </div>
                 <div className="p-4">
                   <p className="text-[10px] font-semibold tracking-wider text-yellow-400 mb-1">
                     {a.category.toUpperCase()} · DESTAQUE
@@ -104,23 +112,32 @@ export function JournalPage({ onBack }: Props) {
         </div>
       )}
 
-
-      <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3 items-stretch">
-        {list.map((a) => (
-          <button
-            key={a.id}
-            onClick={() => setOpenId(a.id)}
-            className="h-full flex flex-col w-full text-left bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors overflow-hidden"
-          >
-            <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 shrink-0" />
-            <div className="p-3 flex-1 flex flex-col">
-              <p className="text-[10px] font-semibold tracking-wider text-yellow-400 mb-1">{a.category.toUpperCase()}</p>
-              <p className="text-white text-sm font-semibold mb-1 line-clamp-2">{a.title}</p>
-              <p className="text-gray-400 text-xs line-clamp-2">{a.excerpt}</p>
-            </div>
-          </button>
-        ))}
-      </div>
+      {loading ? (
+        <p className="text-gray-500 text-sm">Carregando…</p>
+      ) : list.length === 0 ? (
+        <p className="text-gray-500 text-sm">Nenhuma matéria publicada ainda.</p>
+      ) : (
+        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3 items-stretch">
+          {list.map((a) => (
+            <button
+              key={a.id}
+              onClick={() => setOpenId(a.id)}
+              className="h-full flex flex-col w-full text-left bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors overflow-hidden"
+            >
+              <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 shrink-0 overflow-hidden">
+                {a.cover_url && (
+                  <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" />
+                )}
+              </div>
+              <div className="p-3 flex-1 flex flex-col">
+                <p className="text-[10px] font-semibold tracking-wider text-yellow-400 mb-1">{a.category.toUpperCase()}</p>
+                <p className="text-white text-sm font-semibold mb-1 line-clamp-2">{a.title}</p>
+                <p className="text-gray-400 text-xs line-clamp-2">{a.excerpt}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
