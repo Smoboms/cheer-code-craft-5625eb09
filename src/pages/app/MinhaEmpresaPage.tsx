@@ -100,19 +100,15 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
     what_i_seek: '',
     avatar_url: '',
   });
-  const [partnerConfig, setPartnerConfig] = useState<PartnerConfig>({
-    discount_percent: '0',
-    cashback_enabled: false,
-    cashback_percent: '0',
-  });
   const [partner, setPartner] = useState<PartnerSummary | null>(null);
-  const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [autoSaving, setAutoSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
-  const [savedTick, setSavedTick] = useState(0);
+  const initialLoadedRef = useState({ done: false })[0];
+  const saveTimer = useState<{ t: any }>({ t: null })[0];
 
   useEffect(() => {
-    if (profile) {
+    if (profile && !initialLoadedRef.done) {
       setForm({
         company: profile.company || '',
         segment: profile.segment || '',
@@ -122,8 +118,9 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
         what_i_seek: profile.what_i_seek || '',
         avatar_url: profile.avatar_url || '',
       });
+      initialLoadedRef.done = true;
     }
-  }, [profile]);
+  }, [profile, initialLoadedRef]);
 
   useEffect(() => {
     if (!user) return;
@@ -135,23 +132,64 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
         .order('updated_at', { ascending: false })
         .limit(1)
         .maybeSingle();
-      if (data) {
-        setPartner(data as PartnerSummary);
-        setPartnerConfig({
-          discount_percent: String(data.discount_percent ?? 0),
-          cashback_enabled: !!data.cashback_enabled,
-          cashback_percent: String(data.cashback_percent ?? 0),
-        });
-      }
+      if (data) setPartner(data as PartnerSummary);
     })();
-  }, [user, savedTick]);
+  }, [user]);
 
-  const filledCount = Object.values(form).filter((v) => v.trim().length > 0).length;
-  const total = Object.keys(form).length;
-  const percent = Math.round((filledCount / total) * 100);
-  const requiredOk = !!(form.company.trim() && form.segment.trim() && form.phone.trim() && form.bio.trim());
-  const complete = percent === 100;
-  const profileComplete = requiredOk;
+  const requiredOk = !!(form.company.trim() && form.phone.trim() && form.bio.trim());
+
+  const persist = async (next: Form) => {
+    if (!user) return;
+    setAutoSaving(true);
+    setMsg(null);
+    const { error } = await supabase.from('profiles').update(next).eq('user_id', user.id);
+    if (error) { setAutoSaving(false); setMsg('Erro ao salvar. Tente novamente.'); return; }
+
+    if (requiredOk) {
+      const { data: existingRows } = await supabase
+        .from('partners')
+        .select(PARTNER_SELECT)
+        .eq('created_by', user.id)
+        .order('updated_at', { ascending: false })
+        .limit(1);
+      const existing = existingRows?.[0] as PartnerSummary | undefined;
+      const isCompanyAccount = profile?.account_type === 'company';
+      const partnerPayload: any = {
+        name: next.company.trim(),
+        category: next.segment.trim() || existing?.category || 'Geral',
+        description: next.bio || null,
+        phone: next.phone || null,
+        whatsapp: next.phone || null,
+        profile_image_url: next.avatar_url || null,
+        logo_url: next.avatar_url || null,
+        is_active: true,
+      };
+      if (!existing) {
+        partnerPayload.status = isCompanyAccount ? 'pending_curation' : 'approved';
+      }
+      const partnerMutation = existing?.id
+        ? await supabase.from('partners').update(partnerPayload).eq('id', existing.id).select(PARTNER_SELECT).single()
+        : await supabase.from('partners').insert({ ...partnerPayload, created_by: user.id }).select(PARTNER_SELECT).single();
+      if (partnerMutation.data) setPartner(partnerMutation.data as PartnerSummary);
+    }
+
+    setAutoSaving(false);
+    setMsg('Salvo automaticamente.');
+    await refreshProfile();
+  };
+
+  const scheduleSave = (next: Form) => {
+    if (saveTimer.t) clearTimeout(saveTimer.t);
+    saveTimer.t = setTimeout(() => persist(next), 700);
+  };
+
+  const updateField = (key: keyof Form, value: string) => {
+    setForm((s) => {
+      const next = { ...s, [key]: value };
+      scheduleSave(next);
+      return next;
+    });
+  };
 
   const handleUpload = async (file: File) => {
     if (!user) return;
@@ -166,76 +204,15 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
       if (upload.error) throw upload.error;
       const signed = await supabase.storage.from('avatars').createSignedUrl(path, AVATAR_SIGNED_TTL);
       if (signed.error) throw signed.error;
-      setForm((f) => ({ ...f, avatar_url: signed.data.signedUrl }));
+      const nextForm = { ...form, avatar_url: signed.data.signedUrl };
+      setForm(nextForm);
+      await persist(nextForm);
     } catch (err: any) {
       console.error('Upload empresa erro:', err);
       setMsg('Erro ao enviar imagem');
     } finally {
       setUploading(false);
     }
-  };
-
-  const handleSave = async () => {
-    if (!user) return;
-    setSaving(true);
-    setMsg(null);
-    const { error } = await supabase.from('profiles').update(form).eq('user_id', user.id);
-    if (error) { setSaving(false); setMsg('Erro ao salvar. Tente novamente.'); return; }
-
-    if (profileComplete) {
-      const { data: existingRows, error: partnerLookupError } = await supabase
-        .from('partners')
-        .select(PARTNER_SELECT)
-        .eq('created_by', user.id)
-        .order('updated_at', { ascending: false })
-        .limit(1);
-
-      if (partnerLookupError) {
-        console.error('Erro ao buscar partner da empresa:', partnerLookupError);
-        setSaving(false);
-        setMsg('Erro ao liberar o Mercado. Tente novamente.');
-        return;
-      }
-
-      const existing = existingRows?.[0] as PartnerSummary | undefined;
-      const isCompanyAccount = profile?.account_type === 'company';
-      const partnerPayload: any = {
-        name: form.company.trim(),
-        category: form.segment.trim() || 'Geral',
-        description: form.bio || null,
-        phone: form.phone || null,
-        whatsapp: form.phone || null,
-        profile_image_url: form.avatar_url || null,
-        logo_url: form.avatar_url || null,
-        discount: partnerConfig.discount_percent ? `${partnerConfig.discount_percent}%` : '',
-        discount_percent: Number(partnerConfig.discount_percent) || 0,
-        cashback_enabled: partnerConfig.cashback_enabled,
-        cashback_percent: Number(partnerConfig.cashback_percent) || 0,
-        is_active: true,
-      };
-      if (!existing) {
-        partnerPayload.status = isCompanyAccount ? 'pending_curation' : 'approved';
-      }
-
-      const partnerMutation = existing?.id
-        ? await supabase.from('partners').update(partnerPayload).eq('id', existing.id).select(PARTNER_SELECT).single()
-        : await supabase.from('partners').insert({ ...partnerPayload, created_by: user.id }).select(PARTNER_SELECT).single();
-
-      if (partnerMutation.error) {
-        console.error('Erro ao salvar partner da empresa:', partnerMutation.error);
-        setSaving(false);
-        setMsg('Erro ao liberar o Mercado. Tente novamente.');
-        return;
-      }
-
-      const partnerRow = partnerMutation.data as PartnerSummary;
-      setPartner(partnerRow);
-    }
-
-    setSaving(false);
-    setMsg('Perfil atualizado com sucesso.');
-    setSavedTick((t) => t + 1);
-    await refreshProfile();
   };
 
   if (view === 'coupon') {
@@ -246,14 +223,14 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
         </button>
         <div className="mb-4">
           <h2 className="text-2xl font-bold text-white mb-1">Emitir Cupom</h2>
-          <p className="text-gray-400 text-sm">Gere cupons de desconto e cashback para seus clientes</p>
+          <p className="text-gray-400 text-sm">Gere cupons de desconto para seus clientes</p>
         </div>
         {!partner ? (
           <div className="bg-gray-900 border border-gray-800 p-4 flex items-start gap-3">
             <AlertCircle size={20} className="text-yellow-400 shrink-0 mt-0.5" />
             <div>
               <p className="text-white text-sm font-semibold">Empresa ainda não configurada</p>
-              <p className="text-gray-400 text-xs mt-1">Preencha e salve os dados em "Configurar Minha Empresa" primeiro.</p>
+              <p className="text-gray-400 text-xs mt-1">Preencha os dados em "Configurar Minha Empresa" primeiro.</p>
             </div>
           </div>
         ) : partner.status !== 'approved' ? (
@@ -277,9 +254,10 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
         ) : (
           <CouponIssuer
             partnerId={partner.id}
-            discountPercent={Number(partnerConfig.discount_percent) || 0}
-            cashbackEnabled={partnerConfig.cashback_enabled}
-            cashbackPercent={Number(partnerConfig.cashback_percent) || 0}
+            discountPercent={Number(partner.discount_percent) || 0}
+            cashbackEnabled={!!partner.cashback_enabled}
+            cashbackPercent={Number(partner.cashback_percent) || 0}
+            cashbackFeatureUnlocked={!!partner.cashback_feature_unlocked}
           />
         )}
       </div>
@@ -295,25 +273,12 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
 
       <div className="mb-4">
         <h2 className="text-2xl font-bold text-white mb-1">Configurar Minha Empresa</h2>
-        <p className="text-gray-400 text-sm">Edite seu perfil no diretório público de Associados</p>
-      </div>
-
-      <div className={`p-3 border mb-5 flex items-center gap-3 ${complete ? 'bg-green-500/10 border-green-500/40' : 'bg-yellow-500/10 border-yellow-500/40'}`}>
-        {complete ? <CheckCircle2 size={20} className="text-green-400" /> : <AlertCircle size={20} className="text-yellow-400" />}
-        <div className="flex-1">
-          <p className={`text-sm font-semibold ${complete ? 'text-green-300' : 'text-yellow-300'}`}>
-            {complete ? 'Perfil completo' : 'Perfil incompleto'}
-          </p>
-          <div className="mt-1 h-1.5 bg-black/40 overflow-hidden">
-            <div className={`h-full ${complete ? 'bg-green-400' : 'bg-yellow-400'}`} style={{ width: `${percent}%` }} />
-          </div>
-        </div>
-        <p className="text-white text-sm font-bold">{percent}%</p>
+        <p className="text-gray-400 text-sm">As alterações são salvas automaticamente</p>
       </div>
 
       <div className="space-y-4">
         <div className="bg-gray-900 border border-gray-800 p-4">
-          <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Logo / Foto</label>
+          <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Foto de perfil</label>
           <div className="flex items-center gap-3">
             <div className="w-16 h-16 bg-gray-800 overflow-hidden flex items-center justify-center">
               {uploading ? (
@@ -321,76 +286,46 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
               ) : form.avatar_url ? (
                 <img src={form.avatar_url} alt="logo" className="w-full h-full object-cover" />
               ) : (
-                <span className="text-gray-600 text-xs">Sem logo</span>
+                <span className="text-gray-600 text-xs">Sem foto</span>
               )}
             </div>
             <label className={`text-white text-sm underline cursor-pointer ${uploading ? 'opacity-60 pointer-events-none' : ''}`}>
-              {uploading ? 'Otimizando…' : 'Enviar imagem (WEBP)'}
+              {uploading ? 'Otimizando…' : 'Enviar imagem'}
               <input type="file" accept="image/*" className="hidden" disabled={uploading}
                 onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])} />
             </label>
           </div>
         </div>
 
-        {[
-          { key: 'company', label: 'Nome da empresa' },
-          { key: 'segment', label: 'Segmento' },
-          { key: 'phone', label: 'Contato / WhatsApp' },
-        ].map((f) => (
-          <div key={f.key} className="bg-gray-900 border border-gray-800 p-4">
-            <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">{f.label}</label>
-            <input
-              value={(form as any)[f.key]}
-              onChange={(e) => setForm((s) => ({ ...s, [f.key]: e.target.value }))}
-              className="w-full bg-black border border-gray-700 text-white px-3 py-2 text-sm outline-none focus:border-white"
-            />
-          </div>
-        ))}
+        <div className="bg-gray-900 border border-gray-800 p-4">
+          <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Nome da empresa</label>
+          <input
+            value={form.company}
+            onChange={(e) => updateField('company', e.target.value)}
+            className="w-full bg-black border border-gray-700 text-white px-3 py-2 text-sm outline-none focus:border-white"
+          />
+        </div>
 
-        {[
-          { key: 'bio', label: 'Descrição da empresa' },
-          { key: 'what_i_offer', label: 'O que ofereço' },
-          { key: 'what_i_seek', label: 'O que busco' },
-        ].map((f) => (
-          <div key={f.key} className="bg-gray-900 border border-gray-800 p-4">
-            <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">{f.label}</label>
-            <textarea
-              value={(form as any)[f.key]}
-              onChange={(e) => setForm((s) => ({ ...s, [f.key]: e.target.value }))}
-              rows={3}
-              className="w-full bg-black border border-gray-700 text-white px-3 py-2 text-sm outline-none focus:border-white resize-none"
-            />
-          </div>
-        ))}
+        <div className="bg-gray-900 border border-gray-800 p-4">
+          <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Contato / WhatsApp</label>
+          <input
+            value={form.phone}
+            onChange={(e) => updateField('phone', e.target.value)}
+            className="w-full bg-black border border-gray-700 text-white px-3 py-2 text-sm outline-none focus:border-white"
+          />
+        </div>
 
-        {profile?.account_type === 'company' && (
-          <div className="bg-gray-900 border border-gray-800 p-4 space-y-4">
-            <p className="text-xs text-gray-400 uppercase tracking-wider">Regras do cupom</p>
-            <div>
-              <label className="block text-xs text-gray-400 mb-2">Desconto padrão (%)</label>
-              <input value={partnerConfig.discount_percent}
-                onChange={(e) => setPartnerConfig((s) => ({ ...s, discount_percent: e.target.value }))}
-                inputMode="decimal" placeholder="Ex: 10"
-                className="w-full bg-black border border-gray-700 text-white px-3 py-2 text-sm outline-none focus:border-white" />
-            </div>
-            <label className="flex items-center gap-2 text-sm text-gray-300">
-              <input type="checkbox" checked={partnerConfig.cashback_enabled}
-                onChange={(e) => setPartnerConfig((s) => ({ ...s, cashback_enabled: e.target.checked }))} />
-              Habilitar cashback
-            </label>
-            {partnerConfig.cashback_enabled && (
-              <div>
-                <label className="block text-xs text-gray-400 mb-2">Cashback (%)</label>
-                <input value={partnerConfig.cashback_percent}
-                  onChange={(e) => setPartnerConfig((s) => ({ ...s, cashback_percent: e.target.value }))}
-                  inputMode="decimal" placeholder="Ex: 5"
-                  className="w-full bg-black border border-gray-700 text-white px-3 py-2 text-sm outline-none focus:border-white" />
-              </div>
-            )}
-          </div>
-        )}
+        <div className="bg-gray-900 border border-gray-800 p-4">
+          <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Descrição da empresa</label>
+          <textarea
+            value={form.bio}
+            onChange={(e) => updateField('bio', e.target.value)}
+            rows={4}
+            className="w-full bg-black border border-gray-700 text-white px-3 py-2 text-sm outline-none focus:border-white resize-none"
+          />
+        </div>
 
-        {profile?.account_type === 'company' && partner && partner.status !== 'approved' && (
+        {partner && partner.status !== 'approved' && (
           <div className={`p-3 border flex items-start gap-3 ${
             partner.status === 'rejected' ? 'bg-red-500/10 border-red-500/40' : 'bg-yellow-500/10 border-yellow-500/40'
           }`}>
@@ -404,22 +339,21 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
               <p className="text-gray-300 text-xs mt-0.5">
                 {partner.status === 'rejected'
                   ? (partner.rejection_reason || 'Entre em contato com a administração para mais informações.')
-                  : 'Seu perfil está sendo avaliado. Você poderá emitir cupons após a aprovação.'}
+                  : 'Seu perfil está sendo avaliado.'}
               </p>
             </div>
           </div>
         )}
 
-        {msg && <p className={`text-sm text-center ${msg.includes('sucesso') ? 'text-green-400' : 'text-red-400'}`}>{msg}</p>}
-
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="w-full bg-white text-black font-semibold py-3 hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
-        >
-          {saving && <Loader2 size={16} className="animate-spin" />}
-          Salvar alterações
-        </button>
+        <div className="flex items-center justify-center gap-2 text-xs text-gray-500 h-5">
+          {autoSaving ? (
+            <><Loader2 size={12} className="animate-spin" /> Salvando…</>
+          ) : msg ? (
+            <span className={msg.includes('Erro') ? 'text-red-400' : 'text-green-400'}>
+              {msg.includes('Erro') ? msg : <><CheckCircle2 size={12} className="inline mr-1" /> {msg}</>}
+            </span>
+          ) : null}
+        </div>
       </div>
     </div>
   );
