@@ -56,7 +56,7 @@ export default function PublicJournal() {
               <Link key={a.id} to={`/journal/${a.id}`} className="min-w-full text-left">
                 <div className="aspect-[16/9] bg-gradient-to-br from-gray-800 to-gray-950 overflow-hidden">
                   {a.cover_url && (
-                    <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" />
+                    <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   )}
                 </div>
                 <div className="p-4">
@@ -98,7 +98,7 @@ export default function PublicJournal() {
             >
               <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 shrink-0 overflow-hidden">
                 {a.cover_url && (
-                  <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" />
+                  <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 )}
               </div>
               <div className="p-3 flex-1 flex flex-col">

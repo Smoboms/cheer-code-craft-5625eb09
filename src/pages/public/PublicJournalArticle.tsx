@@ -73,7 +73,7 @@ export default function PublicJournalArticle() {
       <h2 className="text-2xl font-bold text-white mb-4 leading-tight">{article.title}</h2>
       <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 mb-4 overflow-hidden">
         {article.cover_url && (
-          <img src={article.cover_url} alt={article.title} className="w-full h-full object-cover" loading="lazy" />
+          <img src={article.cover_url} alt={article.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
         )}
       </div>
       {article.excerpt && <p className="text-gray-300 leading-relaxed text-[15px] mb-3 italic">{article.excerpt}</p>}

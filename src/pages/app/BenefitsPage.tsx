@@ -257,7 +257,7 @@ export function BenefitsPage() {
                                 src={photo}
                                 alt={`${benefit.company} - foto ${idx + 1}`}
                                 className="w-full h-full object-cover"
-                                loading="lazy"
+                                loading="lazy" decoding="async"
                               />
                             </div>
                           ))}

@@ -342,7 +342,7 @@ function GaleriaTab({ conteudoId }: { conteudoId: string }) {
           : !rows.length ? <div className="text-gray-500 text-sm">Galeria vazia.</div>
           : rows.map(r => (
             <div key={r.id} className="relative border border-white/10">
-              <img src={r.imagem_url} alt={r.legenda ?? ''} className="w-full aspect-video object-cover" loading="lazy" />
+              <img src={r.imagem_url} alt={r.legenda ?? ''} className="w-full aspect-video object-cover" loading="lazy" decoding="async" />
               <button onClick={() => del(r.id)} className="absolute top-1 right-1 bg-red-600 text-white p-1"><Trash2 size={12} /></button>
               {r.legenda && <div className="p-1 text-[10px] text-gray-300 truncate">{r.legenda}</div>}
             </div>

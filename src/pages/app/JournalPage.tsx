@@ -32,7 +32,7 @@ export function JournalPage({ onBack }: Props) {
         <h2 className="text-2xl font-bold text-white mb-4 leading-tight">{openArticle.title}</h2>
         <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 mb-4 overflow-hidden">
           {openArticle.cover_url && (
-            <img src={openArticle.cover_url} alt={openArticle.title} className="w-full h-full object-cover" loading="lazy" />
+            <img src={openArticle.cover_url} alt={openArticle.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
           )}
         </div>
         {openArticle.excerpt && <p className="text-gray-300 leading-relaxed text-[15px] mb-3 italic">{openArticle.excerpt}</p>}
@@ -84,7 +84,7 @@ export function JournalPage({ onBack }: Props) {
               >
                 <div className="aspect-[16/9] bg-gradient-to-br from-gray-800 to-gray-950 overflow-hidden">
                   {a.cover_url && (
-                    <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" />
+                    <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   )}
                 </div>
                 <div className="p-4">
@@ -126,7 +126,7 @@ export function JournalPage({ onBack }: Props) {
             >
               <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 shrink-0 overflow-hidden">
                 {a.cover_url && (
-                  <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" />
+                  <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 )}
               </div>
               <div className="p-3 flex-1 flex flex-col">

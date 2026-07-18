@@ -216,7 +216,7 @@ export default function PublicHome() {
                 >
                   <div className="aspect-video bg-gray-800 shrink-0 flex items-center justify-center overflow-hidden">
                     {img ? (
-                      <img src={img} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                      <img src={img} alt={p.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                     ) : (
                       <Icons.Building2 className="w-10 h-10 opacity-30 text-gray-500" />
                     )}
@@ -256,7 +256,7 @@ export default function PublicHome() {
               >
                 <div className="aspect-video bg-gray-800 shrink-0 flex items-center justify-center overflow-hidden">
                   {p.photo_url ? (
-                    <img src={p.photo_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                    <img src={p.photo_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   ) : (
                     <Icons.Wrench className="w-10 h-10 opacity-30 text-gray-500" />
                   )}
@@ -291,7 +291,7 @@ export default function PublicHome() {
                 >
                   <div className="aspect-video bg-gray-800 shrink-0 flex items-center justify-center overflow-hidden">
                     {img ? (
-                      <img src={img} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                      <img src={img} alt={p.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                     ) : (
                       <Icons.ShoppingBag className="w-10 h-10 opacity-30 text-gray-500" />
                     )}
@@ -327,7 +327,7 @@ export default function PublicHome() {
             >
               <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 shrink-0 overflow-hidden">
                 {a.cover_url && (
-                  <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" />
+                  <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 )}
               </div>
               <div className="p-3 flex-1 flex flex-col">

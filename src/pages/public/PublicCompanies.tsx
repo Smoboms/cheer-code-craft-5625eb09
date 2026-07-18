@@ -107,7 +107,7 @@ export default function PublicCompanies() {
               >
                 <div className="aspect-video bg-gray-800 shrink-0 flex items-center justify-center overflow-hidden">
                   {logo ? (
-                    <img src={logo} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                    <img src={logo} alt={p.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   ) : (
                     <img src="/placeholder.svg" alt="" className="w-12 h-12 opacity-40" />
                   )}
