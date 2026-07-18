@@ -141,7 +141,7 @@ export default function AdminFinanceiro() {
         </div>
       )}
 
-      <PaymentsTable payments={payments.data ?? []} streams={streams.data ?? []} partners={partners.data ?? []} onChanged={bump} />
+      <PaymentsTable payments={payments} streams={streams.data ?? []} partners={partners.data ?? []} onChanged={bump} />
 
       {openStream && (
         <PaymentModal
