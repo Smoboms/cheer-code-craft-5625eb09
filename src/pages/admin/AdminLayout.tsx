@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid, Columns3, Building } from 'lucide-react';
+import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid, Columns3, Building, Globe } from 'lucide-react';
 import { useState } from 'react';
 
 const NAV = [
