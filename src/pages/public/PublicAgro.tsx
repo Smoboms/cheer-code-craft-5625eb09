@@ -67,18 +67,18 @@ export default function PublicAgro() {
           <div className="bg-gradient-to-br from-[#0b1a3a] to-black border border-yellow-500/30 p-5 mb-5">
             <div className="flex items-start justify-between gap-3 mb-4">
               <div>
-                <p className="text-yellow-400 text-[11px] font-semibold tracking-widest mb-1">BOI GORDO</p>
-                <p className="text-gray-300 text-xs">Valores em R$ por arroba (@)</p>
+                <p className="text-yellow-400 text-[11px] font-semibold tracking-widest mb-1">BOI GORDO · INDICADOR CEPEA/ESALQ</p>
+                <p className="text-gray-300 text-xs">Referência nacional — R$ por arroba (@)</p>
               </div>
               <Beef size={44} className="text-yellow-400 opacity-80" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <AgroValor label="À vista" value={data?.boi_gordo_avista} />
-              <AgroValor label="A prazo (30d)" value={data?.boi_gordo_aprazo} />
-              <AgroValor label="Vaca Gorda · À vista" value={data?.vaca_gorda_avista} />
+              <AgroValor label="À vista (Indicador)" value={data?.boi_gordo_avista} />
+              <AgroValor label="A prazo — Média SP" value={data?.boi_gordo_aprazo} />
+              <AgroValor label="Vaca Gorda · Regional" value={data?.vaca_gorda_avista} />
             </div>
             <p className="text-[11px] text-gray-400 mt-4">
-              Fonte: {data?.boi_source?.trim() || '—'} · Atualizado em {formatDate(data?.boi_updated_at ?? null)}
+              Fonte: {data?.boi_source?.trim() || 'CEPEA/ESALQ'} · Atualizado em {formatDate(data?.boi_updated_at ?? null)}
             </p>
           </div>
 
@@ -86,26 +86,29 @@ export default function PublicAgro() {
           <div className="bg-gradient-to-br from-[#0b1a3a] to-black border border-yellow-500/30 p-5 mb-5">
             <div className="flex items-start justify-between gap-3 mb-4">
               <div>
-                <p className="text-yellow-400 text-[11px] font-semibold tracking-widest mb-1">SOJA</p>
-                <p className="text-gray-300 text-xs">Faixa de preço — R$ por saca de 60kg</p>
+                <p className="text-yellow-400 text-[11px] font-semibold tracking-widest mb-1">SOJA · INDICADOR CEPEA/ESALQ</p>
+                <p className="text-gray-300 text-xs">Referência nacional — R$ por saca de 60kg (Paranaguá)</p>
               </div>
               <Wheat size={44} className="text-yellow-400 opacity-80" />
             </div>
             <div className="bg-black/30 border border-white/10 px-3 py-3">
-              <div className="text-gray-400 text-[10px] tracking-wide mb-1">Faixa regional</div>
+              <div className="text-gray-400 text-[10px] tracking-wide mb-1">Indicador CEPEA/ESALQ — Paranaguá</div>
               <div className="text-white text-xl font-semibold">
-                {data?.soja_min != null && data?.soja_max != null
+                {data?.soja_min != null && data?.soja_max != null && data.soja_min !== data.soja_max
                   ? `${formatBRL(data.soja_min)} – ${formatBRL(data.soja_max)}`
+                  : data?.soja_min != null
+                  ? formatBRL(data.soja_min)
                   : '—'}
               </div>
             </div>
             <p className="text-[11px] text-gray-400 mt-4">
-              Fonte: {data?.soja_source?.trim() || '—'} · Atualizado em {formatDate(data?.soja_updated_at ?? null)}
+              Fonte: {data?.soja_source?.trim() || 'CEPEA/ESALQ'} · Atualizado em {formatDate(data?.soja_updated_at ?? null)}
             </p>
           </div>
 
           <p className="text-[10px] text-gray-500 mt-2 text-center">
-            Valores manuais informados pela equipe Rarques. Uso apenas como referência regional.
+            Valores-base do Indicador CEPEA/ESALQ (referência nacional), atualizados automaticamente.
+            Não representam preço fechado exclusivo da região de Uruaçu.
           </p>
         </>
       )}
