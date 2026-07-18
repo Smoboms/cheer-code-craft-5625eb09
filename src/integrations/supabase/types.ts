@@ -660,6 +660,45 @@ export type Database = {
           },
         ]
       }
+      panorama_publicacoes: {
+        Row: {
+          conteudo: string | null
+          created_at: string
+          data_publicacao: string
+          id: string
+          imagem_url: string | null
+          ordem: number
+          resumo: string | null
+          status: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          conteudo?: string | null
+          created_at?: string
+          data_publicacao?: string
+          id?: string
+          imagem_url?: string | null
+          ordem?: number
+          resumo?: string | null
+          status?: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          conteudo?: string | null
+          created_at?: string
+          data_publicacao?: string
+          id?: string
+          imagem_url?: string | null
+          ordem?: number
+          resumo?: string | null
+          status?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       partner_benefits: {
         Row: {
           created_at: string

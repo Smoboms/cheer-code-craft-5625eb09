@@ -36,6 +36,7 @@ import AdminLocals from "./pages/admin/AdminLocals";
 import AdminHomeAtalhos from "./pages/admin/AdminHomeAtalhos";
 import AdminPilares from "./pages/admin/AdminPilares";
 import AdminCidades from "./pages/admin/AdminCidades";
+import AdminPanorama from "./pages/admin/AdminPanorama";
 
 const queryClient = new QueryClient();
 
@@ -80,6 +81,7 @@ const App = () => (
               <Route path="atalhos" element={<AdminHomeAtalhos />} />
               <Route path="pilares" element={<AdminPilares />} />
               <Route path="cidades" element={<AdminCidades />} />
+              <Route path="panorama" element={<AdminPanorama />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

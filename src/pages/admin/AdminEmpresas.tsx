@@ -35,12 +35,14 @@ export default function AdminEmpresas() {
     reload();
   };
   const toggleCashbackUnlock = async (p: Partner) => {
-    await supabase.from('partners').update({ cashback_feature_unlocked: !p.cashback_feature_unlocked }).eq('id', p.id);
-    reload();
+    const { error } = await supabase.from('partners').update({ cashback_feature_unlocked: !p.cashback_feature_unlocked }).eq('id', p.id);
+    if (error) { alert('Erro ao liberar Cashback: ' + error.message); return; }
+    await reload();
   };
   const toggleProductsUnlock = async (p: Partner) => {
-    await supabase.from('partners').update({ products_feature_unlocked: !p.products_feature_unlocked }).eq('id', p.id);
-    reload();
+    const { error } = await supabase.from('partners').update({ products_feature_unlocked: !p.products_feature_unlocked }).eq('id', p.id);
+    if (error) { alert('Erro ao liberar Vitrine: ' + error.message); return; }
+    await reload();
   };
   const setStatusOf = async (p: Partner, s: string) => {
     await supabase.from('partners').update({ status: s }).eq('id', p.id);
