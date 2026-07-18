@@ -36,25 +36,29 @@ export default function AdminFinanceiro() {
     return (data ?? []) as Stream[];
   }, [reloadTick]);
 
-  const payments = useAsync(async () => {
+  const allPayments = useAsync(async () => {
     const { data } = await (supabase as any)
       .from('payments')
       .select('*')
-      .gte('payment_date', dr.range.from.slice(0, 10))
-      .lte('payment_date', dr.range.to.slice(0, 10))
       .order('payment_date', { ascending: false });
     return (data ?? []) as Payment[];
-  }, [dr.range.from, dr.range.to, reloadTick]);
+  }, [reloadTick]);
+
+  const payments = useMemo(() => {
+    const from = dr.range.from.slice(0, 10);
+    const to = dr.range.to.slice(0, 10);
+    return (allPayments.data ?? []).filter(p => p.payment_date >= from && p.payment_date <= to);
+  }, [allPayments.data, dr.range.from, dr.range.to]);
 
   const partners = useAsync(async () => {
     const { data } = await supabase.from('partners').select('id, name').order('name');
     return (data ?? []) as { id: string; name: string }[];
   }, []);
 
-  // aggregates per stream
+  // aggregates per stream (lifetime — independentes do filtro de período)
   const agg = useMemo(() => {
     const m = new Map<string, { total: number; payers: Set<string>; overdue: number }>();
-    (payments.data ?? []).forEach(p => {
+    (allPayments.data ?? []).forEach(p => {
       const cur = m.get(p.revenue_stream_id) ?? { total: 0, payers: new Set<string>(), overdue: 0 };
       if (p.status === 'pago') {
         cur.total += Number(p.amount);
@@ -64,7 +68,9 @@ export default function AdminFinanceiro() {
       m.set(p.revenue_stream_id, cur);
     });
     return m;
-  }, [payments.data]);
+  }, [allPayments.data]);
+
+
 
   const grandTotal = useMemo(() =>
     (streams.data ?? []).filter(s => s.status === 'ativo')
@@ -87,7 +93,7 @@ export default function AdminFinanceiro() {
             <div className="text-2xl font-semibold text-green-400 mt-1">{brl(grandTotal)}</div>
           </div>
           <div className="text-xs text-gray-400">
-            {(payments.data ?? []).filter(p => p.status === 'pago').length} pagamentos no período
+            {payments.filter(p => p.status === 'pago').length} pagamentos no período
           </div>
         </div>
       </Card>
@@ -135,7 +141,7 @@ export default function AdminFinanceiro() {
         </div>
       )}
 
-      <PaymentsTable payments={payments.data ?? []} streams={streams.data ?? []} partners={partners.data ?? []} onChanged={bump} />
+      <PaymentsTable payments={payments} streams={streams.data ?? []} partners={partners.data ?? []} onChanged={bump} />
 
       {openStream && (
         <PaymentModal
