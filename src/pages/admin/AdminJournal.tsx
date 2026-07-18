@@ -81,9 +81,10 @@ export default function AdminJournal() {
 }
 
 function ArticleForm({ article, categories, onClose, onSaved }: any) {
+  const catOptions: string[] = (categories && categories.length ? categories.map((c: any) => c.name) : ['Geral','Economia','Negócios','Cultura','Uruaçu','Nacional']);
   const [f, setF] = useState({
     title: article?.title || '',
-    category: article?.category || categories[0]?.name || '',
+    category: article?.category || catOptions[0] || 'Geral',
     cover_url: article?.cover_url || '',
     excerpt: article?.excerpt || '',
     body: article?.body || '',
@@ -91,15 +92,23 @@ function ArticleForm({ article, categories, onClose, onSaved }: any) {
     published_at: article?.published_at ? new Date(article.published_at).toISOString().slice(0,10) : new Date().toISOString().slice(0,10),
   });
   const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
   const save = async () => {
+    setErr(null);
+    if (!f.title.trim()) { setErr('Título é obrigatório.'); return; }
     setSaving(true);
-    const payload = { ...f, published_at: new Date(f.published_at).toISOString() };
-    try {
-      if (article) await supabase.from('journal_articles').update(payload).eq('id', article.id);
-      else await supabase.from('journal_articles').insert(payload);
-      onSaved();
-    } catch (e: any) { alert(e.message); }
-    finally { setSaving(false); }
+    const payload = {
+      ...f,
+      title: f.title.trim(),
+      category: (f.category || 'Geral').trim(),
+      published_at: new Date(f.published_at).toISOString(),
+    };
+    const res = article
+      ? await supabase.from('journal_articles').update(payload).eq('id', article.id)
+      : await supabase.from('journal_articles').insert(payload);
+    setSaving(false);
+    if (res.error) { console.error('journal save', res.error); setErr(res.error.message); return; }
+    onSaved();
   };
   return (
     <Modal open onClose={onClose} title={article ? 'Editar matéria' : 'Nova matéria'}
