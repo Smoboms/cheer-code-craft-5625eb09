@@ -129,50 +129,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
     let loadingFallbackId: number | null = null;
+    let lastUserId: string | null = null;
 
-    const initSession = async () => {
-      try {
-        try {
-          const storageKeys = Object.keys(localStorage);
-          for (const key of storageKeys) {
-            if (key.startsWith('sb-') && key.endsWith('-auth-token')) {
-              const value = localStorage.getItem(key);
-              if (value) {
-                try {
-                  JSON.parse(value);
-                } catch {
-                  console.warn('Removing corrupted auth token from localStorage');
-                  localStorage.removeItem(key);
-                }
-              }
+    // Limpa tokens corrompidos antes de tudo (não bloqueia).
+    try {
+      const storageKeys = Object.keys(localStorage);
+      for (const key of storageKeys) {
+        if (key.startsWith('sb-') && key.endsWith('-auth-token')) {
+          const value = localStorage.getItem(key);
+          if (value) {
+            try { JSON.parse(value); } catch {
+              console.warn('Removing corrupted auth token from localStorage');
+              localStorage.removeItem(key);
             }
           }
-        } catch (e) {
-          console.warn('localStorage cleanup error:', e);
         }
-
-        const { data, error } = await supabase.auth.getSession();
-        if (!mounted) return;
-        if (error) throw error;
-
-        await syncAuthState(data.session);
-      } catch (err) {
-        console.error('Session init error:', err);
-        if (mounted) {
-          resetUserState();
-          setSession(null);
-          setUser(null);
-        }
-      } finally {
-        if (mounted) setIsLoading(false);
       }
-    };
+    } catch (e) {
+      console.warn('localStorage cleanup error:', e);
+    }
 
     try {
+      // onAuthStateChange já dispara INITIAL_SESSION ao se inscrever, então
+      // não precisamos chamar getSession() manualmente. Isso elimina o duplo
+      // sync (initSession + INITIAL_SESSION) que atrasava o Painel ADM.
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
         (_event, nextSession) => {
           if (!mounted) return;
-
+          const nextUserId = nextSession?.user?.id ?? null;
+          // Ignora eventos que não mudam o usuário (TOKEN_REFRESHED, USER_UPDATED)
+          // para evitar refetch desnecessário de profile/roles.
+          if (
+            nextUserId === lastUserId &&
+            _event !== 'INITIAL_SESSION' &&
+            _event !== 'SIGNED_IN' &&
+            _event !== 'SIGNED_OUT'
+          ) {
+            setSession(nextSession);
+            return;
+          }
+          lastUserId = nextUserId;
           void syncAuthState(nextSession);
         }
       );
@@ -183,8 +179,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setIsLoading(false);
         }
       }, 8000);
-
-      void initSession();
 
       return () => {
         mounted = false;
@@ -197,6 +191,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Auth state change error:', err);
       setIsLoading(false);
     }
+
+
 
     return () => {
       mounted = false;
