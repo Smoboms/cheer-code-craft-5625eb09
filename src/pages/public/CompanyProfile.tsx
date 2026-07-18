@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, MapPin, Phone, Instagram, Globe, Clock, Loader2, MessageCircle, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSeo } from '@/lib/useSeo';
 import { trackEvent } from '@/lib/analytics';
+import { CACHE } from '@/lib/queryConfig';
 
 interface Partner {
   id: string;
@@ -28,22 +30,25 @@ interface Partner {
 export default function CompanyProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [partner, setPartner] = useState<Partner | null>(null);
-  const [loading, setLoading] = useState(true);
+
+  const { data: partner = null, isLoading: loading } = useQuery({
+    queryKey: ['partner', id],
+    queryFn: async (): Promise<Partner | null> => {
+      if (!id) return null;
+      const { data } = await supabase.from('partners').select('*').eq('id', id).maybeSingle();
+      return (data as any) || null;
+    },
+    enabled: !!id,
+    ...CACHE.PUBLIC,
+  });
 
   const trackedRef = useRef<string | null>(null);
   useEffect(() => {
-    (async () => {
-      if (!id) return;
-      const { data } = await supabase.from('partners').select('*').eq('id', id).maybeSingle();
-      setPartner((data as any) || null);
-      setLoading(false);
-      if (data && trackedRef.current !== (data as any).id) {
-        trackedRef.current = (data as any).id;
-        trackEvent('company_profile_view', (data as any).id, (data as any).name);
-      }
-    })();
-  }, [id]);
+    if (partner && trackedRef.current !== partner.id) {
+      trackedRef.current = partner.id;
+      trackEvent('company_profile_view', partner.id, partner.name);
+    }
+  }, [partner]);
 
   useSeo({
     title: partner ? `${partner.name}${partner.city ? ' — ' + partner.city : ' — Uruaçu'} · Rarques` : 'Empresa · Rarques',
