@@ -6,7 +6,7 @@ import { useMarketCategories } from '@/data/useMarketCategories';
 import { optimizeImage } from '@/lib/imageOptimizer';
 import { formatBRL } from '@/lib/utils';
 
-type Product = {
+export type Product = {
   id: string;
   name: string;
   category: string | null;
@@ -192,7 +192,7 @@ export function MyProductsSection({ profileComplete = true, partnerSeed = null, 
   );
 }
 
-function ProductForm({ partnerId, initial, onClose, onSaved }: {
+export function ProductForm({ partnerId, initial, onClose, onSaved }: {
   partnerId: string; initial: Product | null; onClose: () => void; onSaved: () => void;
 }) {
   const { user } = useAuth();

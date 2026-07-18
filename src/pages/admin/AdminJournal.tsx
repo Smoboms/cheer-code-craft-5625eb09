@@ -81,9 +81,10 @@ export default function AdminJournal() {
 }
 
 function ArticleForm({ article, categories, onClose, onSaved }: any) {
+  const catOptions: string[] = (categories && categories.length ? categories.map((c: any) => c.name) : ['Geral','Economia','Negócios','Cultura','Uruaçu','Nacional']);
   const [f, setF] = useState({
     title: article?.title || '',
-    category: article?.category || categories[0]?.name || '',
+    category: article?.category || catOptions[0] || 'Geral',
     cover_url: article?.cover_url || '',
     excerpt: article?.excerpt || '',
     body: article?.body || '',
@@ -91,15 +92,23 @@ function ArticleForm({ article, categories, onClose, onSaved }: any) {
     published_at: article?.published_at ? new Date(article.published_at).toISOString().slice(0,10) : new Date().toISOString().slice(0,10),
   });
   const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
   const save = async () => {
+    setErr(null);
+    if (!f.title.trim()) { setErr('Título é obrigatório.'); return; }
     setSaving(true);
-    const payload = { ...f, published_at: new Date(f.published_at).toISOString() };
-    try {
-      if (article) await supabase.from('journal_articles').update(payload).eq('id', article.id);
-      else await supabase.from('journal_articles').insert(payload);
-      onSaved();
-    } catch (e: any) { alert(e.message); }
-    finally { setSaving(false); }
+    const payload = {
+      ...f,
+      title: f.title.trim(),
+      category: (f.category || 'Geral').trim(),
+      published_at: new Date(f.published_at).toISOString(),
+    };
+    const res = article
+      ? await supabase.from('journal_articles').update(payload).eq('id', article.id)
+      : await supabase.from('journal_articles').insert(payload);
+    setSaving(false);
+    if (res.error) { console.error('journal save', res.error); setErr(res.error.message); return; }
+    onSaved();
   };
   return (
     <Modal open onClose={onClose} title={article ? 'Editar matéria' : 'Nova matéria'}
@@ -107,7 +116,7 @@ function ArticleForm({ article, categories, onClose, onSaved }: any) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="md:col-span-2"><Label>Título</Label><Input value={f.title} onChange={e=>setF({...f, title: e.target.value})} /></div>
         <div><Label>Categoria</Label><Select value={f.category} onChange={e=>setF({...f, category: e.target.value})}>
-          {categories.map((c: any) => <option key={c.id} value={c.name}>{c.name}</option>)}
+          {catOptions.map((n: string) => <option key={n} value={n}>{n}</option>)}
         </Select></div>
         <div><Label>Data de publicação</Label><Input type="date" value={f.published_at} onChange={e=>setF({...f, published_at: e.target.value})} /></div>
         <div className="md:col-span-2">
@@ -129,6 +138,7 @@ function ArticleForm({ article, categories, onClose, onSaved }: any) {
         <label className="flex items-center gap-2 text-sm text-gray-300 md:col-span-2">
           <input type="checkbox" checked={f.featured} onChange={e=>setF({...f, featured: e.target.checked})} /> Destaque (aparece em carrosséis)
         </label>
+        {err && <p className="md:col-span-2 text-sm text-red-400">{err}</p>}
       </div>
     </Modal>
   );
