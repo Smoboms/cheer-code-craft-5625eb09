@@ -70,16 +70,7 @@ export default function AdminFinanceiro() {
     return m;
   }, [allPayments.data]);
 
-      const cur = m.get(p.revenue_stream_id) ?? { total: 0, payers: new Set<string>(), overdue: 0 };
-      if (p.status === 'pago') {
-        cur.total += Number(p.amount);
-        if (p.partner_id) cur.payers.add(p.partner_id);
-      }
-      if (p.status === 'atrasado') cur.overdue += 1;
-      m.set(p.revenue_stream_id, cur);
-    });
-    return m;
-  }, [payments.data]);
+
 
   const grandTotal = useMemo(() =>
     (streams.data ?? []).filter(s => s.status === 'ativo')
