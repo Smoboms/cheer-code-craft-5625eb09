@@ -36,18 +36,24 @@ function parseFirstRow(html: string, tableId: string): Row | null {
 }
 
 async function fetchHtml(url: string): Promise<string> {
-  const r = await fetch(url, {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-      Accept:
-        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-      'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
-      'Cache-Control': 'no-cache',
-    },
-  });
-  if (!r.ok) throw new Error(`Falha ao buscar ${url}: HTTP ${r.status}`);
-  return await r.text();
+  // Tenta direto no CEPEA; se o WAF bloquear (403 em IPs de datacenter),
+  // usa um proxy público de leitura como fallback (mantendo a fonte oficial).
+  const headers = {
+    'User-Agent':
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    Accept:
+      'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+    'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
+    Referer: 'https://www.cepea.esalq.usp.br/br/',
+  };
+  const direct = await fetch(url, { headers }).catch(() => null);
+  if (direct && direct.ok) return await direct.text();
+
+  // Fallback: proxy público que replica a resposta HTML original
+  const proxied = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+  const r2 = await fetch(proxied, { headers: { 'User-Agent': headers['User-Agent'] } });
+  if (!r2.ok) throw new Error(`Falha ao buscar ${url}: HTTP ${direct?.status ?? 'n/a'} / proxy ${r2.status}`);
+  return await r2.text();
 }
 
 Deno.serve(async (req) => {
