@@ -32,6 +32,7 @@ export default function PublicSearch() {
   const [profs, setProfs] = useState<Professional[]>([]);
   const [lugares, setLugares] = useState<Lugar[]>([]);
   const [loading, setLoading] = useState(false);
+  const { articles: allArticles } = useJournalArticles();
 
   useEffect(() => setQuery(params.get('q') || ''), [params]);
 
