@@ -156,6 +156,47 @@ export function LoginPage() {
               </div>
             )}
 
+            {isRegistering && (
+              <>
+                <div className="grid grid-cols-2 gap-2">
+                  {(['client','company'] as const).map((t) => (
+                    <button key={t} type="button" onClick={() => setAccountType(t)}
+                      className={`py-2 text-xs tracking-widest uppercase border transition-all rounded-sm ${
+                        accountType === t ? 'border-white/60 bg-white/10 text-white' : 'border-white/10 text-white/50 hover:text-white/80'
+                      }`}
+                      style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                      {t === 'client' ? 'Sou Cliente' : 'Sou Empresa'}
+                    </button>
+                  ))}
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-white/50 mb-2 tracking-widest uppercase">Nome completo</label>
+                  <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Seu nome" required
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 text-sm" />
+                </div>
+                {accountType === 'company' && (
+                  <div>
+                    <label className="block text-xs font-medium text-white/50 mb-2 tracking-widest uppercase">Nome da empresa</label>
+                    <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)}
+                      placeholder="Razão social ou fantasia" required
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 text-sm" />
+                  </div>
+                )}
+                <div>
+                  <label className="block text-xs font-medium text-white/50 mb-2 tracking-widest uppercase">
+                    {accountType === 'client' ? 'CPF' : 'CNPJ'}
+                  </label>
+                  <input type="text" value={documento} onChange={(e) => setDocumento(e.target.value)}
+                    placeholder={accountType === 'client' ? '000.000.000-00' : '00.000.000/0000-00'}
+                    required inputMode="numeric"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 text-sm" />
+                </div>
+              </>
+            )}
+
+
+
             <div>
               <label htmlFor="email" className="block text-xs font-medium text-white/50 mb-2 tracking-widest uppercase">E-mail</label>
               <div className="relative">
