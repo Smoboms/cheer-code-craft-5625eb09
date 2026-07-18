@@ -425,7 +425,7 @@ function PublicBannerBlock({ banner }: { banner: ReturnType<typeof usePublicBann
           rel="noreferrer"
           className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors aspect-[16/9] lg:aspect-[32/9] bg-[#0b1a3a]"
         >
-          <img src={current.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={current.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" fetchPriority="high" decoding="async" />
         </a>
         {slides.length > 1 && (
           <div className="flex justify-center gap-1.5 mt-2">
