@@ -12,9 +12,10 @@ interface AuthContextType {
   isLoading: boolean;
   isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, metadata?: Record<string, any>) => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -210,10 +211,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
   };
 
-  const handleSignUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({ email, password });
+  const handleSignUp = async (email: string, password: string, metadata?: Record<string, any>) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: metadata ? { data: metadata } : undefined,
+    });
     if (error) throw error;
   };
+
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();

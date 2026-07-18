@@ -10,10 +10,15 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [accountType, setAccountType] = useState<'client' | 'company'>('client');
+  const [fullName, setFullName] = useState('');
+  const [documento, setDocumento] = useState('');
+  const [companyName, setCompanyName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
+
 
   const handleForgotPassword = async () => {
     setError('');
@@ -59,18 +64,33 @@ export function LoginPage() {
     setLoading(true);
     try {
       if (isRegistering) {
-        await signUp(email, password);
+        if (!fullName.trim()) { setError('Informe seu nome completo'); setLoading(false); return; }
+        if (accountType === 'client' && !documento.trim()) { setError('Informe seu CPF'); setLoading(false); return; }
+        if (accountType === 'company' && (!documento.trim() || !companyName.trim())) {
+          setError('Informe CNPJ e nome da empresa'); setLoading(false); return;
+        }
+        await signUp(email, password, {
+          full_name: fullName.trim(),
+          account_type: accountType,
+          cpf: accountType === 'client' ? documento.replace(/\D/g, '') : null,
+          cnpj: accountType === 'company' ? documento.replace(/\D/g, '') : null,
+          company_name: accountType === 'company' ? companyName.trim() : null,
+        });
+        setInfo(accountType === 'company'
+          ? 'Cadastro realizado. Sua empresa passará por curadoria após o primeiro login.'
+          : 'Cadastro realizado. Verifique seu e-mail.');
       } else {
         await signIn(email, password);
       }
     } catch (err: any) {
-      setError(err.message === 'Invalid login credentials' 
-        ? 'E-mail ou senha incorretos' 
+      setError(err.message === 'Invalid login credentials'
+        ? 'E-mail ou senha incorretos'
         : err.message || 'Erro ao fazer login');
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden"
@@ -135,6 +155,47 @@ export function LoginPage() {
                 {info}
               </div>
             )}
+
+            {isRegistering && (
+              <>
+                <div className="grid grid-cols-2 gap-2">
+                  {(['client','company'] as const).map((t) => (
+                    <button key={t} type="button" onClick={() => setAccountType(t)}
+                      className={`py-2 text-xs tracking-widest uppercase border transition-all rounded-sm ${
+                        accountType === t ? 'border-white/60 bg-white/10 text-white' : 'border-white/10 text-white/50 hover:text-white/80'
+                      }`}
+                      style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                      {t === 'client' ? 'Sou Cliente' : 'Sou Empresa'}
+                    </button>
+                  ))}
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-white/50 mb-2 tracking-widest uppercase">Nome completo</label>
+                  <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Seu nome" required
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 text-sm" />
+                </div>
+                {accountType === 'company' && (
+                  <div>
+                    <label className="block text-xs font-medium text-white/50 mb-2 tracking-widest uppercase">Nome da empresa</label>
+                    <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)}
+                      placeholder="Razão social ou fantasia" required
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 text-sm" />
+                  </div>
+                )}
+                <div>
+                  <label className="block text-xs font-medium text-white/50 mb-2 tracking-widest uppercase">
+                    {accountType === 'client' ? 'CPF' : 'CNPJ'}
+                  </label>
+                  <input type="text" value={documento} onChange={(e) => setDocumento(e.target.value)}
+                    placeholder={accountType === 'client' ? '000.000.000-00' : '00.000.000/0000-00'}
+                    required inputMode="numeric"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 text-sm" />
+                </div>
+              </>
+            )}
+
+
 
             <div>
               <label htmlFor="email" className="block text-xs font-medium text-white/50 mb-2 tracking-widest uppercase">E-mail</label>

@@ -194,8 +194,44 @@ export type Database = {
         }
         Relationships: []
       }
+      client_cashback_balances: {
+        Row: {
+          balance: number
+          created_at: string
+          id: string
+          partner_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          id?: string
+          partner_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          id?: string
+          partner_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_cashback_balances_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coupons: {
         Row: {
+          cashback_amount: number
           code: string
           created_at: string
           discount_percent: number
@@ -206,6 +242,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          cashback_amount?: number
           code: string
           created_at?: string
           discount_percent?: number
@@ -216,6 +253,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          cashback_amount?: number
           code?: string
           created_at?: string
           discount_percent?: number
@@ -711,9 +749,12 @@ export type Database = {
         Row: {
           address: string | null
           banner_url: string | null
+          cashback_enabled: boolean
+          cashback_percent: number
           category: string
           city: string | null
           city_id: string | null
+          cnpj: string | null
           created_at: string
           created_by: string | null
           description: string | null
@@ -726,6 +767,7 @@ export type Database = {
           instagram: string | null
           is_active: boolean | null
           is_member: boolean
+          legal_name: string | null
           logo_url: string | null
           maps_link: string | null
           name: string
@@ -733,8 +775,10 @@ export type Database = {
           phone: string | null
           profile_image_url: string | null
           rating: number | null
+          rejection_reason: string | null
           responsible: string | null
           status: string
+          trade_name: string | null
           updated_at: string
           website: string | null
           whatsapp: string | null
@@ -742,9 +786,12 @@ export type Database = {
         Insert: {
           address?: string | null
           banner_url?: string | null
+          cashback_enabled?: boolean
+          cashback_percent?: number
           category: string
           city?: string | null
           city_id?: string | null
+          cnpj?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -757,6 +804,7 @@ export type Database = {
           instagram?: string | null
           is_active?: boolean | null
           is_member?: boolean
+          legal_name?: string | null
           logo_url?: string | null
           maps_link?: string | null
           name: string
@@ -764,8 +812,10 @@ export type Database = {
           phone?: string | null
           profile_image_url?: string | null
           rating?: number | null
+          rejection_reason?: string | null
           responsible?: string | null
           status?: string
+          trade_name?: string | null
           updated_at?: string
           website?: string | null
           whatsapp?: string | null
@@ -773,9 +823,12 @@ export type Database = {
         Update: {
           address?: string | null
           banner_url?: string | null
+          cashback_enabled?: boolean
+          cashback_percent?: number
           category?: string
           city?: string | null
           city_id?: string | null
+          cnpj?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -788,6 +841,7 @@ export type Database = {
           instagram?: string | null
           is_active?: boolean | null
           is_member?: boolean
+          legal_name?: string | null
           logo_url?: string | null
           maps_link?: string | null
           name?: string
@@ -795,8 +849,10 @@ export type Database = {
           phone?: string | null
           profile_image_url?: string | null
           rating?: number | null
+          rejection_reason?: string | null
           responsible?: string | null
           status?: string
+          trade_name?: string | null
           updated_at?: string
           website?: string | null
           whatsapp?: string | null
@@ -955,10 +1011,12 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_type: string
           avatar_url: string | null
           bio: string | null
           card_number: string
           company: string | null
+          cpf: string | null
           created_at: string
           email: string | null
           id: string
@@ -968,16 +1026,19 @@ export type Database = {
           name: string
           phone: string | null
           segment: string | null
+          total_savings: number
           updated_at: string
           user_id: string
           what_i_offer: string | null
           what_i_seek: string | null
         }
         Insert: {
+          account_type?: string
           avatar_url?: string | null
           bio?: string | null
           card_number: string
           company?: string | null
+          cpf?: string | null
           created_at?: string
           email?: string | null
           id?: string
@@ -987,16 +1048,19 @@ export type Database = {
           name?: string
           phone?: string | null
           segment?: string | null
+          total_savings?: number
           updated_at?: string
           user_id: string
           what_i_offer?: string | null
           what_i_seek?: string | null
         }
         Update: {
+          account_type?: string
           avatar_url?: string | null
           bio?: string | null
           card_number?: string
           company?: string | null
+          cpf?: string | null
           created_at?: string
           email?: string | null
           id?: string
@@ -1006,6 +1070,7 @@ export type Database = {
           name?: string
           phone?: string | null
           segment?: string | null
+          total_savings?: number
           updated_at?: string
           user_id?: string
           what_i_offer?: string | null
@@ -1280,7 +1345,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      issue_coupon: {
+        Args: {
+          _cashback_amount: number
+          _client_user_id: string
+          _code: string
+          _discount_amount: number
+          _partner_id: string
+          _purchase_amount: number
+        }
+        Returns: string
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
