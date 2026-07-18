@@ -6,7 +6,7 @@ import { useMarketCategories } from '@/data/useMarketCategories';
 import { optimizeImage } from '@/lib/imageOptimizer';
 import { formatBRL } from '@/lib/utils';
 
-type Product = {
+export type Product = {
   id: string;
   name: string;
   category: string | null;
