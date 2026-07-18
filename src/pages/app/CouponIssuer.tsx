@@ -95,10 +95,10 @@ export function CouponIssuer({ partnerId, discountPercent, cashbackEnabled, cash
       </div>
 
       <div>
-        <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Buscar cliente (CPF, cartão ou e-mail)</label>
+        <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Buscar cliente (CPF, cartão ou nome)</label>
         <div className="flex gap-2">
           <input value={query} onChange={(e) => setQuery(e.target.value)}
-            placeholder="Digite para localizar"
+            placeholder="Digite CPF, cartão ou nome"
             className="flex-1 bg-black border border-gray-700 text-white px-3 py-2 text-sm outline-none focus:border-white" />
           <button onClick={findClient} disabled={searching || !query.trim()}
             className="bg-white text-black px-3 py-2 text-sm font-semibold flex items-center gap-1 disabled:opacity-60">
