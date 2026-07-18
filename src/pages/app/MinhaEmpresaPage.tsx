@@ -269,7 +269,7 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
 
       <div className="mb-4">
         <h2 className="text-2xl font-bold text-white mb-1">Configurar Minha Empresa</h2>
-        <p className="text-gray-400 text-sm">As alterações são salvas automaticamente</p>
+        <p className="text-gray-400 text-sm">Edite os dados e clique em Salvar Alterações</p>
       </div>
 
       <div className="space-y-4">
@@ -341,14 +341,22 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
           </div>
         )}
 
-        <div className="flex items-center justify-center gap-2 text-xs text-gray-500 h-5">
-          {autoSaving ? (
-            <><Loader2 size={12} className="animate-spin" /> Salvando…</>
-          ) : msg ? (
-            <span className={msg.includes('Erro') ? 'text-red-400' : 'text-green-400'}>
-              {msg.includes('Erro') ? msg : <><CheckCircle2 size={12} className="inline mr-1" /> {msg}</>}
+        <button
+          type="button"
+          onClick={() => persist(form)}
+          disabled={saving || uploading}
+          className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:opacity-60 disabled:cursor-not-allowed text-black font-semibold text-sm py-3 flex items-center justify-center gap-2 transition-colors"
+        >
+          {saving ? (<><Loader2 size={14} className="animate-spin" /> Salvando…</>) : 'Salvar Alterações'}
+        </button>
+
+        <div className="flex items-center justify-center gap-2 text-xs h-5">
+          {msg && (
+            <span className={msg.kind === 'err' ? 'text-red-400' : 'text-green-400'}>
+              {msg.kind === 'ok' && <CheckCircle2 size={12} className="inline mr-1" />}
+              {msg.text}
             </span>
-          ) : null}
+          )}
         </div>
       </div>
     </div>
