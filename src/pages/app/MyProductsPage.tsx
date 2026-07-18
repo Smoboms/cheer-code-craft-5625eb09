@@ -122,7 +122,7 @@ export function MyProductsPage({ onBack }: Props) {
           partnerId={partnerId}
           initial={editing}
           onClose={() => { setShowForm(false); setEditing(null); }}
-          onSaved={() => { setShowForm(false); setEditing(null); load(); }}
+          onSaved={() => { setShowForm(false); setEditing(null); reload(); }}
         />
       )}
     </div>
