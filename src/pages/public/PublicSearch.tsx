@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Building2, Wrench, ShoppingBag, MapPin, Newspaper, Cloud } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { journalArticles } from '@/data/journalArticles';
+import { useJournalArticles } from '@/data/useJournalArticles';
 import { useSeo } from '@/lib/useSeo';
 import { trackEvent } from '@/lib/analytics';
 
