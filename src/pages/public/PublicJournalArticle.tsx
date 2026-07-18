@@ -1,11 +1,44 @@
+import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Lock } from 'lucide-react';
-import { journalArticles } from '@/data/journalArticles';
+import { supabase } from '@/integrations/supabase/client';
+
+type Article = {
+  id: string;
+  title: string;
+  category: string | null;
+  excerpt: string | null;
+  body: string | null;
+  cover_url: string | null;
+  published_at: string;
+};
 
 export default function PublicJournalArticle() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const article = journalArticles.find((a) => a.id === Number(id));
+  const [article, setArticle] = useState<Article | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      if (!id) return;
+      const { data } = await supabase
+        .from('journal_articles')
+        .select('id,title,category,excerpt,body,cover_url,published_at')
+        .eq('id', id)
+        .maybeSingle();
+      setArticle((data as any) || null);
+      setLoading(false);
+    })();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="animate-fadeUp pb-4">
+        <p className="text-gray-400 text-sm">Carregando…</p>
+      </div>
+    );
+  }
 
   if (!article) {
     return (
@@ -18,8 +51,9 @@ export default function PublicJournalArticle() {
     );
   }
 
-  // Paywall: mostra apenas o primeiro parágrafo/preview
-  const preview = article.body.split('. ').slice(0, 2).join('. ') + '.';
+  const body = article.body || '';
+  const preview = body.split('. ').slice(0, 2).join('. ') + (body ? '.' : '');
+  const category = article.category || 'Geral';
 
   return (
     <div className="animate-fadeUp pb-4">
@@ -27,13 +61,17 @@ export default function PublicJournalArticle() {
         <ArrowLeft size={18} /> Voltar
       </button>
       <div className="inline-block bg-yellow-500/20 border border-yellow-500/40 px-2 py-0.5 mb-2">
-        <p className="text-[10px] font-semibold tracking-wider text-yellow-400">{article.category.toUpperCase()}</p>
+        <p className="text-[10px] font-semibold tracking-wider text-yellow-400">{category.toUpperCase()}</p>
       </div>
       <h2 className="text-2xl font-bold text-white mb-4 leading-tight">{article.title}</h2>
-      <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 mb-4" />
-      <p className="text-gray-200 leading-relaxed text-[15px] mb-6">{preview}</p>
+      <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 mb-4 overflow-hidden">
+        {article.cover_url && (
+          <img src={article.cover_url} alt={article.title} className="w-full h-full object-cover" loading="lazy" />
+        )}
+      </div>
+      {article.excerpt && <p className="text-gray-300 leading-relaxed text-[15px] mb-3 italic">{article.excerpt}</p>}
+      <p className="text-gray-200 leading-relaxed text-[15px] mb-6 whitespace-pre-wrap">{preview}</p>
 
-      {/* Paywall */}
       <div className="relative">
         <div className="pointer-events-none absolute inset-x-0 -top-16 h-16 bg-gradient-to-b from-transparent to-black" />
         <div className="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/40 p-5 text-center">
