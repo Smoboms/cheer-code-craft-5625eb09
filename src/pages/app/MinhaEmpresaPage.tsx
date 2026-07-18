@@ -36,9 +36,13 @@ type PartnerSummary = {
   created_by: string | null;
   status: string;
   is_active: boolean | null;
+  discount_percent?: number | null;
+  cashback_enabled?: boolean | null;
+  cashback_percent?: number | null;
+  rejection_reason?: string | null;
 };
 
-const PARTNER_SELECT = 'id, name, category, phone, description, created_by, status, is_active';
+const PARTNER_SELECT = 'id, name, category, phone, description, created_by, status, is_active, discount_percent, cashback_enabled, cashback_percent, rejection_reason';
 
 const AVATAR_SIGNED_TTL = 60 * 60 * 24 * 365;
 
@@ -53,11 +57,18 @@ export function MinhaEmpresaPage({ onBack }: Props) {
     what_i_seek: '',
     avatar_url: '',
   });
+  const [partnerConfig, setPartnerConfig] = useState<PartnerConfig>({
+    discount_percent: '0',
+    cashback_enabled: false,
+    cashback_percent: '0',
+  });
+  const [partner, setPartner] = useState<PartnerSummary | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [savedTick, setSavedTick] = useState(0);
   const [savedPartner, setSavedPartner] = useState<PartnerSummary | null>(null);
+
 
   useEffect(() => {
     if (profile) {
