@@ -77,51 +77,6 @@ export type Database = {
         }
         Relationships: []
       }
-      agro_quotes: {
-        Row: {
-          boi_gordo_aprazo: number | null
-          boi_gordo_avista: number | null
-          boi_source: string | null
-          boi_updated_at: string | null
-          created_at: string
-          id: string
-          soja_max: number | null
-          soja_min: number | null
-          soja_source: string | null
-          soja_updated_at: string | null
-          updated_at: string
-          vaca_gorda_avista: number | null
-        }
-        Insert: {
-          boi_gordo_aprazo?: number | null
-          boi_gordo_avista?: number | null
-          boi_source?: string | null
-          boi_updated_at?: string | null
-          created_at?: string
-          id?: string
-          soja_max?: number | null
-          soja_min?: number | null
-          soja_source?: string | null
-          soja_updated_at?: string | null
-          updated_at?: string
-          vaca_gorda_avista?: number | null
-        }
-        Update: {
-          boi_gordo_aprazo?: number | null
-          boi_gordo_avista?: number | null
-          boi_source?: string | null
-          boi_updated_at?: string | null
-          created_at?: string
-          id?: string
-          soja_max?: number | null
-          soja_min?: number | null
-          soja_source?: string | null
-          soja_updated_at?: string | null
-          updated_at?: string
-          vaca_gorda_avista?: number | null
-        }
-        Relationships: []
-      }
       analytics_events: {
         Row: {
           created_at: string
