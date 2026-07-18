@@ -64,18 +64,33 @@ export function LoginPage() {
     setLoading(true);
     try {
       if (isRegistering) {
-        await signUp(email, password);
+        if (!fullName.trim()) { setError('Informe seu nome completo'); setLoading(false); return; }
+        if (accountType === 'client' && !documento.trim()) { setError('Informe seu CPF'); setLoading(false); return; }
+        if (accountType === 'company' && (!documento.trim() || !companyName.trim())) {
+          setError('Informe CNPJ e nome da empresa'); setLoading(false); return;
+        }
+        await signUp(email, password, {
+          full_name: fullName.trim(),
+          account_type: accountType,
+          cpf: accountType === 'client' ? documento.replace(/\D/g, '') : null,
+          cnpj: accountType === 'company' ? documento.replace(/\D/g, '') : null,
+          company_name: accountType === 'company' ? companyName.trim() : null,
+        });
+        setInfo(accountType === 'company'
+          ? 'Cadastro realizado. Sua empresa passará por curadoria após o primeiro login.'
+          : 'Cadastro realizado. Verifique seu e-mail.');
       } else {
         await signIn(email, password);
       }
     } catch (err: any) {
-      setError(err.message === 'Invalid login credentials' 
-        ? 'E-mail ou senha incorretos' 
+      setError(err.message === 'Invalid login credentials'
+        ? 'E-mail ou senha incorretos'
         : err.message || 'Erro ao fazer login');
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden"
