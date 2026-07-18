@@ -116,7 +116,7 @@ function ArticleForm({ article, categories, onClose, onSaved }: any) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="md:col-span-2"><Label>Título</Label><Input value={f.title} onChange={e=>setF({...f, title: e.target.value})} /></div>
         <div><Label>Categoria</Label><Select value={f.category} onChange={e=>setF({...f, category: e.target.value})}>
-          {categories.map((c: any) => <option key={c.id} value={c.name}>{c.name}</option>)}
+          {catOptions.map((n: string) => <option key={n} value={n}>{n}</option>)}
         </Select></div>
         <div><Label>Data de publicação</Label><Input type="date" value={f.published_at} onChange={e=>setF({...f, published_at: e.target.value})} /></div>
         <div className="md:col-span-2">
