@@ -61,15 +61,13 @@ export async function updateProfile(userId: string, updates: {
 }
 
 export async function uploadAvatar(userId: string, file: File) {
-  const fileExt = (file.name.split('.').pop() || 'jpg').toLowerCase();
-  // Cache-bust the filename so the browser reloads a new avatar immediately.
-  const filePath = `${userId}/${Date.now()}.${fileExt}`;
+  // Pipeline global de imagens: otimização, resize e conversão para WEBP.
+  const optimized = await optimizeImage(file, { maxDimension: 800, quality: 0.85 });
+  const filePath = `${userId}/${Date.now()}.webp`;
 
-  // Upload to the PRIVATE `avatars` bucket (same as ProfilePage / MinhaEmpresaPage)
-  // and return a long-lived signed URL — avoids public exposure of personal photos.
   const { error: uploadError } = await supabase.storage
     .from('avatars')
-    .upload(filePath, file, { upsert: true, contentType: file.type });
+    .upload(filePath, optimized, { upsert: true, contentType: 'image/webp' });
   if (uploadError) throw uploadError;
 
   const { data, error: signedError } = await supabase.storage
