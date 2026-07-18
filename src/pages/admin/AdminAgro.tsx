@@ -65,12 +65,32 @@ export default function AdminAgro() {
     load();
   };
 
+  const [syncing, setSyncing] = useState(false);
+  const syncCepea = async () => {
+    setSyncing(true);
+    const { data, error } = await supabase.functions.invoke('sync-agro-cepea', { body: {} });
+    setSyncing(false);
+    if (error) return toast.error('Falha ao sincronizar: ' + error.message);
+    const anyRes = data as any;
+    if (anyRes?.ok === false && Array.isArray(anyRes?.errors) && anyRes.errors.length) {
+      toast.error('Sincronização parcial: ' + anyRes.errors.join(' · '));
+    } else {
+      toast.success('Cotações CEPEA/ESALQ sincronizadas');
+    }
+    load();
+  };
+
   return (
     <>
       <PageHeader
         title="Cotações Agro"
-        subtitle="Atualize manualmente os valores exibidos na página pública /agro"
-        actions={<Btn onClick={save} disabled={saving || loading}>{saving ? 'Salvando…' : 'Salvar alterações'}</Btn>}
+        subtitle="Valores-base do Indicador CEPEA/ESALQ sincronizados automaticamente. Você pode complementar manualmente (ex.: Vaca Gorda regional, ágio local)."
+        actions={
+          <div className="flex gap-2">
+            <Btn onClick={syncCepea} disabled={syncing || loading}>{syncing ? 'Sincronizando…' : 'Sincronizar CEPEA/ESALQ'}</Btn>
+            <Btn onClick={save} disabled={saving || loading}>{saving ? 'Salvando…' : 'Salvar alterações'}</Btn>
+          </div>
+        }
       />
 
       {loading ? (
