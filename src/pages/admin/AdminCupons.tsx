@@ -108,20 +108,23 @@ export default function AdminCupons() {
                 <table className="w-full text-xs">
                   <thead className="text-gray-400">
                     <tr className="text-left border-b border-white/10">
-                      <th className="py-2">Data</th><th>Associado</th><th>Empresa</th><th>Compra</th><th>%</th><th>Economia</th>
+                      <th className="py-2">Data</th><th>Hora</th><th>Associado</th><th>Empresa</th><th>Compra</th><th>%</th><th>Economia</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {data.list.map((c: any) => (
+                    {data.list.map((c: any) => {
+                      const d = new Date(c.created_at);
+                      return (
                       <tr key={c.id} className="border-b border-white/5">
-                        <td className="py-2 text-gray-300">{new Date(c.created_at).toLocaleDateString()}</td>
+                        <td className="py-2 text-gray-300">{d.toLocaleDateString('pt-BR')}</td>
+                        <td className="text-gray-300 tabular-nums">{d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</td>
                         <td className="text-white">{c.profile?.name || c.profile?.email || '—'}</td>
                         <td className="text-white">{c.partner?.name || '—'}</td>
                         <td className="text-gray-300">{formatBRL(Number(c.purchase_amount))}</td>
                         <td className="text-yellow-400">{Number(c.discount_percent).toFixed(0)}%</td>
                         <td className="text-green-400">{formatBRL(Number(c.savings))}</td>
                       </tr>
-                    ))}
+                    );})}
                   </tbody>
                 </table>
               </div>
