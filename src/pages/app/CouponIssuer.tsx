@@ -26,7 +26,7 @@ function generateCode() {
   return 'RQ-' + Math.random().toString(36).slice(2, 8).toUpperCase();
 }
 
-export function CouponIssuer({ partnerId, discountPercent, cashbackEnabled, cashbackPercent }: Props) {
+export function CouponIssuer({ partnerId, discountPercent, cashbackEnabled, cashbackPercent, cashbackFeatureUnlocked = false }: Props) {
   const [query, setQuery] = useState('');
   const [searching, setSearching] = useState(false);
   const [client, setClient] = useState<Client | null>(null);
@@ -38,9 +38,10 @@ export function CouponIssuer({ partnerId, discountPercent, cashbackEnabled, cash
 
   const purchaseValue = Number(purchase.replace(',', '.')) || 0;
   const discountAmount = useMemo(() => +(purchaseValue * (discountPercent / 100)).toFixed(2), [purchaseValue, discountPercent]);
+  const cashbackActive = cashbackFeatureUnlocked && cashbackEnabled;
   const cashbackAmount = useMemo(
-    () => (cashbackEnabled ? +(purchaseValue * (cashbackPercent / 100)).toFixed(2) : 0),
-    [purchaseValue, cashbackEnabled, cashbackPercent],
+    () => (cashbackActive ? +(purchaseValue * (cashbackPercent / 100)).toFixed(2) : 0),
+    [purchaseValue, cashbackActive, cashbackPercent],
   );
   const finalPrice = +(purchaseValue - discountAmount).toFixed(2);
 
