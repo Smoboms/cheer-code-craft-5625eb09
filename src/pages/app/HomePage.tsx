@@ -84,8 +84,9 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
   return (
     <div className="animate-fadeUp pb-4">
       <div className="mb-4">
-        <p className="text-gray-400 text-sm">Bem-vindo,</p>
-        <h2 className="text-2xl font-bold text-white">{firstName}</h2>
+        <h2 className="text-2xl font-bold text-white">
+          <span className="text-gray-400 font-normal text-base">Bem-vindo,</span> {firstName}
+        </h2>
       </div>
 
       {/* Carrossel de banners */}
