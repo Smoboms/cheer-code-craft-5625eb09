@@ -52,6 +52,7 @@ export default function SejaMembro() {
         <div className="flex flex-wrap gap-3">
           <Link
             to="/app"
+            onClick={() => trackEvent('seja_associado_click', 'seja_membro_hero', 'Quero ser um Associado', { origin: 'seja_membro_hero' })}
             className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-5 py-3 text-sm transition-colors"
           >
             Quero ser um Associado <ArrowRight size={14} />
