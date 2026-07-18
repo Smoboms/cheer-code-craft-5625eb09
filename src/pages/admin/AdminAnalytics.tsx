@@ -6,8 +6,13 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianG
 export default function AdminAnalytics() {
   const dr = useDateRange('30d');
   const { data, loading } = useAsync(async () => {
+    // Fase 4 · T16 — hard cap defensivo. Em escala 50k+, agregação client-side
+    // fica proibitiva. O cap protege o painel enquanto uma RPC de agregação
+    // não é introduzida (ver Runbook seção "Analytics agregação server-side").
     const { data: events } = await supabase.from('analytics_events').select('*')
-      .gte('created_at', dr.range.from).lte('created_at', dr.range.to);
+      .gte('created_at', dr.range.from).lte('created_at', dr.range.to)
+      .order('created_at', { ascending: false })
+      .limit(50_000);
     const list = events || [];
     const by = (t: string) => list.filter((e: any) => e.event_type === t);
     const paywallHits = by('paywall_hit').length;
