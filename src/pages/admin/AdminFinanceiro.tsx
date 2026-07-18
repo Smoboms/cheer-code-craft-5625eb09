@@ -180,6 +180,15 @@ export default function AdminFinanceiro() {
           onSaved={() => { setEditStream(null); bump(); }}
         />
       )}
+      {payersOpen && (
+        <PayersModal
+          streams={streams.data ?? []}
+          payersByStream={payersByStream}
+          partnerName={partnerName}
+          today={today}
+          onClose={() => setPayersOpen(false)}
+        />
+      )}
     </>
   );
 }
