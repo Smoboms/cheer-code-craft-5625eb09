@@ -1,25 +1,45 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid, Columns3, Building } from 'lucide-react';
+import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid, Columns3, Building, Target } from 'lucide-react';
 import { useState } from 'react';
 
-const NAV = [
-  { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/admin/empresas', label: 'Empresas', icon: Building2 },
-  { to: '/admin/profissionais', label: 'Profissionais', icon: Wrench },
-  { to: '/admin/mercado', label: 'Mercado', icon: ShoppingBag },
-  { to: '/admin/mercado-categorias', label: 'Categorias do Mercado', icon: Layers },
-  { to: '/admin/pilares', label: 'Pilares', icon: Columns3 },
-  { to: '/admin/journal', label: 'R.Journal', icon: Newspaper },
-  { to: '/admin/categorias', label: 'Categorias', icon: Tags },
-  { to: '/admin/associados', label: 'Associados', icon: Users },
-  { to: '/admin/cupons', label: 'Cupons', icon: Ticket },
-  { to: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
-  { to: '/admin/banners', label: 'Banners', icon: Megaphone },
-  { to: '/admin/locais', label: 'Locais', icon: MapPin },
-  { to: '/admin/atalhos', label: 'Atalhos da Home', icon: LayoutGrid },
-  { to: '/admin/cidades', label: 'Cidades', icon: Building },
-  
+const NAV_GROUPS: { title: string; items: { to: string; label: string; icon: any; end?: boolean }[] }[] = [
+  {
+    title: 'Gestão',
+    items: [
+      { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
+      { to: '/admin/empresas', label: 'Empresas', icon: Building2 },
+      { to: '/admin/associados', label: 'Associados', icon: Users },
+      { to: '/admin/profissionais', label: 'Profissionais', icon: Wrench },
+    ],
+  },
+  {
+    title: 'Conteúdo',
+    items: [
+      { to: '/admin/journal', label: 'R.Journal', icon: Newspaper },
+      { to: '/admin/categorias', label: 'Categorias', icon: Tags },
+      { to: '/admin/banners', label: 'Banners', icon: Megaphone },
+      { to: '/admin/atalhos', label: 'Atalhos da Home', icon: LayoutGrid },
+    ],
+  },
+  {
+    title: 'Ecossistema',
+    items: [
+      { to: '/admin/pilares', label: 'Pilares', icon: Columns3 },
+      { to: '/admin/mercado', label: 'Mercado', icon: ShoppingBag },
+      { to: '/admin/mercado-categorias', label: 'Categorias do Mercado', icon: Layers },
+      { to: '/admin/locais', label: 'Locais', icon: MapPin },
+      { to: '/admin/cidades', label: 'Cidades', icon: Building },
+    ],
+  },
+  {
+    title: 'Inteligência',
+    items: [
+      { to: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
+      { to: '/admin/cupons', label: 'Cupons', icon: Ticket },
+      { to: '/admin/metas', label: 'Metas', icon: Target },
+    ],
+  },
 ];
 
 export default function AdminLayout() {
