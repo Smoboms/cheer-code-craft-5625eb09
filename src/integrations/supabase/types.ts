@@ -1103,6 +1103,36 @@ export type Database = {
           },
         ]
       }
+      platform_goals: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+          label: string
+          sort_order: number
+          target: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+          label: string
+          sort_order?: number
+          target?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+          label?: string
+          sort_order?: number
+          target?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       professional_categories: {
         Row: {
           created_at: string
