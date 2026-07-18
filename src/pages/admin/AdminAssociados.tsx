@@ -46,9 +46,14 @@ export default function AdminAssociados() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
           <Input placeholder="Buscar por nome ou e-mail…" value={search} onChange={e=>setSearch(e.target.value)} />
           <Select value={status} onChange={e=>setStatus(e.target.value as any)}>
-            <option value="all">Todos</option>
+            <option value="all">Todos os status</option>
             <option value="active">Ativos</option>
             <option value="inactive">Inativos</option>
+          </Select>
+          <Select value={accountType} onChange={e=>setAccountType(e.target.value as any)}>
+            <option value="all">Todos os tipos</option>
+            <option value="client">Cliente</option>
+            <option value="company">Empresa</option>
           </Select>
         </div>
       </Card>
