@@ -1356,6 +1356,17 @@ export type Database = {
         }
         Returns: string
       }
+      lookup_client_for_partner: {
+        Args: { _query: string }
+        Returns: {
+          card_number: string
+          cpf: string
+          email: string
+          is_active: boolean
+          name: string
+          user_id: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

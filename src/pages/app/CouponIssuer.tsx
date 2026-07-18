@@ -49,24 +49,11 @@ export function CouponIssuer({ partnerId, discountPercent, cashbackEnabled, cash
     if (!raw) return;
     setSearching(true);
     try {
-      const digits = onlyDigits(raw);
-      // Try card_number, cpf, or email
-      let q = supabase
-        .from('profiles')
-        .select('user_id, name, email, card_number, cpf, is_active, account_type')
-        .eq('account_type', 'client')
-        .limit(1);
-      if (digits.length >= 11 && digits.length <= 14) {
-        q = q.or(`cpf.eq.${digits},card_number.eq.${digits}`);
-      } else if (raw.includes('@')) {
-        q = q.eq('email', raw.toLowerCase());
-      } else {
-        q = q.eq('card_number', digits || raw);
-      }
-      const { data, error } = await q.maybeSingle();
+      const { data, error } = await supabase.rpc('lookup_client_for_partner', { _query: raw });
       if (error) throw error;
-      if (!data) { setNotFound(true); return; }
-      setClient(data as Client);
+      const row = Array.isArray(data) ? data[0] : data;
+      if (!row) { setNotFound(true); return; }
+      setClient(row as Client);
     } catch (err: any) {
       setMsg(err.message || 'Erro na busca');
     } finally {
