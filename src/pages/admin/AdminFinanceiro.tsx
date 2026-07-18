@@ -142,15 +142,37 @@ export default function AdminFinanceiro() {
                       <Metric label="Pagantes" value={String(a.payers.size)} />
                       <Metric label="Atrasados" value={String(a.overdue)} danger={a.overdue > 0} />
                     </div>
-                    <div className="flex gap-2 mt-3">
+                    <div className="flex gap-2 mt-3 flex-wrap">
                       <Btn variant="primary" onClick={() => setOpenStream(st)}>Lançar pagamento</Btn>
                       <Btn variant="ghost" onClick={() => setEditStream(st)}>Editar fluxo</Btn>
+                      <Btn variant="ghost" onClick={() => setExpanded(e => ({ ...e, [st.id]: !e[st.id] }))}>
+                        {expanded[st.id] ? 'Ocultar pagantes' : `Ver pagantes (${a.payers.size})`}
+                      </Btn>
                     </div>
+                    {expanded[st.id] && (
+                      <PayersList
+                        entries={Array.from((payersByStream.get(st.id) ?? new Map()).values())}
+                        today={today}
+                        partnerName={partnerName}
+                      />
+                    )}
                   </>
                 ) : (
                   <>
                     <div className="text-xs text-gray-400 mt-3">Aguardando definição de valor e ativação</div>
-                    <div className="mt-3"><Btn variant="ghost" onClick={() => setEditStream(st)}>Definir valor e ativar</Btn></div>
+                    <div className="mt-3 flex gap-2 flex-wrap">
+                      <Btn variant="ghost" onClick={() => setEditStream(st)}>Definir valor e ativar</Btn>
+                      <Btn variant="ghost" onClick={() => setExpanded(e => ({ ...e, [st.id]: !e[st.id] }))}>
+                        {expanded[st.id] ? 'Ocultar pagantes' : `Ver pagantes (${a.payers.size})`}
+                      </Btn>
+                    </div>
+                    {expanded[st.id] && (
+                      <PayersList
+                        entries={Array.from((payersByStream.get(st.id) ?? new Map()).values())}
+                        today={today}
+                        partnerName={partnerName}
+                      />
+                    )}
                   </>
                 )}
               </Card>
