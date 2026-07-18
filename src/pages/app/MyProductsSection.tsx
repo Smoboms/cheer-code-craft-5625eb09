@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Plus, Trash2, Edit3, Loader2, X, ImageIcon, Package } from 'lucide-react';
+import { useState } from 'react';
+import { Plus, Loader2, X } from 'lucide-react';
+import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMarketCategories } from '@/data/useMarketCategories';
 import { optimizeImage } from '@/lib/imageOptimizer';
-import { formatBRL } from '@/lib/utils';
 
 export type Product = {
   id: string;
@@ -19,178 +19,6 @@ export type Product = {
   is_active: boolean;
   rejection_reason: string | null;
 };
-
-type PartnerSummary = {
-  id: string;
-  name: string;
-  category: string;
-  phone: string | null;
-  description: string | null;
-  created_by: string | null;
-  status: string;
-  is_active: boolean | null;
-};
-
-const PARTNER_SELECT = 'id, name, category, phone, description, created_by, status, is_active';
-
-const hasMinimumCompanyData = (partner: PartnerSummary | null) => !!(
-  partner?.id &&
-  partner.name?.trim() &&
-  partner.category?.trim() &&
-  partner.phone?.trim() &&
-  partner.description?.trim()
-);
-
-interface Props {
-  /** True quando os campos mínimos do perfil da empresa estão preenchidos. */
-  profileComplete?: boolean;
-  /** Partner salvo pela tela pai; evita estado antigo após o primeiro Save. */
-  partnerSeed?: PartnerSummary | null;
-  /** Incrementado externamente após salvar o perfil, força recarregar produtos/partner. */
-  reloadKey?: number;
-}
-
-export function MyProductsSection({ profileComplete = true, partnerSeed = null, reloadKey = 0 }: Props) {
-  const { user } = useAuth();
-  const [partner, setPartner] = useState<PartnerSummary | null>(partnerSeed);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState<Product | null>(null);
-  const [showForm, setShowForm] = useState(false);
-
-  const partnerId = partner?.id || null;
-  const productsUnlocked = hasMinimumCompanyData(partner);
-  const canCreateProducts = !!partner && productsUnlocked;
-
-  useEffect(() => {
-    if (!partnerSeed) return;
-    console.log('Partner encontrado', partnerSeed);
-    console.log('Partner ID', partnerSeed.id);
-    setPartner(partnerSeed);
-  }, [partnerSeed]);
-
-  const load = async () => {
-    console.log('Rendering MyProductsSection');
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    const { data: partnerRows, error: partnerError } = await supabase
-      .from('partners')
-      .select(PARTNER_SELECT)
-      .eq('created_by', user.id)
-      .order('updated_at', { ascending: false })
-      .limit(1);
-    const foundPartner = (partnerRows?.[0] as PartnerSummary | undefined) || partnerSeed || null;
-
-    if (partnerError) {
-      console.error('Erro ao buscar partner da empresa:', partnerError);
-    }
-
-    setPartner(foundPartner);
-    console.log('Partner encontrado', foundPartner);
-    console.log('Partner ID', foundPartner?.id || null);
-    console.log('partnerId', foundPartner?.id || null);
-    console.log('partner', foundPartner);
-    console.log('Products unlocked', hasMinimumCompanyData(foundPartner));
-    console.log('productsUnlocked', hasMinimumCompanyData(foundPartner));
-    console.log('profileComplete', profileComplete);
-    console.log('canCreateProducts', !!foundPartner && hasMinimumCompanyData(foundPartner));
-
-    if (foundPartner?.id) {
-      const { data } = await supabase.from('marketplace_products').select('*').eq('partner_id', foundPartner.id).order('created_at', { ascending: false });
-      setProducts((data as any) || []);
-    } else {
-      setProducts([]);
-    }
-    const { data: cats } = await supabase.from('partner_categories').select('name').order('name');
-    setCategories((cats || []).map((c: any) => c.name));
-    setLoading(false);
-  };
-  useEffect(() => { load(); }, [user, reloadKey, profileComplete]);
-
-  const del = async (p: Product) => { if (confirm('Excluir produto?')) { await supabase.from('marketplace_products').delete().eq('id', p.id); load(); } };
-
-  if (loading) return <div className="text-gray-400 text-sm py-4"><Loader2 size={16} className="inline animate-spin" /> Carregando…</div>;
-
-  if (!canCreateProducts) {
-    console.log('Rendering LockedState');
-    return (
-      <div className="bg-gray-900 border border-gray-800 p-4">
-        <div className="flex items-start gap-3">
-          <Package size={20} className="text-yellow-500 shrink-0 mt-0.5" />
-          <div>
-            <p className="text-white text-sm font-semibold">Mercado Rarques</p>
-            <p className="text-gray-400 text-xs mt-1">Salve os dados da sua empresa para liberar o cadastro de produtos.</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const atLimit = products.length >= 200;
-
-  return (
-    <div className="bg-gray-900 border border-gray-800 p-4">
-      <div className="flex items-center justify-between mb-3 gap-2">
-        <div className="min-w-0">
-          <p className="text-white text-sm font-semibold">Meus produtos no Mercado</p>
-          <p className="text-gray-500 text-[11px]">
-            {products.length} de 200 produtos cadastrados · Passam por curadoria antes de irem ao ar.
-          </p>
-        </div>
-        <button
-          onClick={() => { if (atLimit) { alert('Limite de 200 produtos atingido. Exclua algum produto para cadastrar um novo.'); return; } setEditing(null); setShowForm(true); }}
-          disabled={atLimit}
-          className="bg-yellow-500 hover:bg-yellow-400 text-black text-xs font-semibold px-2.5 py-1.5 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
-        >
-          <Plus size={14} /> Novo
-        </button>
-      </div>
-      {atLimit && (
-        <div className="bg-yellow-500/10 border border-yellow-500/40 text-yellow-300 text-[11px] p-2 mb-3">
-          Você atingiu o limite de 200 produtos cadastrados. Exclua algum para adicionar novos.
-        </div>
-      )}
-
-      {products.length === 0 ? (
-        <p className="text-gray-500 text-xs text-center py-4">Nenhum produto cadastrado ainda.</p>
-      ) : (
-        <div className="space-y-2">
-          {products.map((p) => (
-            <div key={p.id} className="flex items-center gap-3 bg-black border border-gray-800 p-2">
-              <div className="w-12 h-12 bg-gray-900 shrink-0">
-                {p.images?.[0] ? <img src={p.images[0]} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-700"><ImageIcon size={16} /></div>}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-white text-xs font-semibold truncate">{p.name}</p>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <span className={`text-[9px] px-1.5 py-0.5 uppercase ${p.status==='approved'?'bg-green-500/20 text-green-300':p.status==='rejected'?'bg-red-500/20 text-red-300':'bg-yellow-500/20 text-yellow-300'}`}>
-                    {p.status === 'approved' ? 'No ar' : p.status === 'rejected' ? 'Recusado' : 'Em curadoria'}
-                  </span>
-                  {p.price != null && <span className="text-gray-400 text-[10px]">{formatBRL(p.price)}</span>}
-                </div>
-              </div>
-              <button onClick={() => { setEditing(p); setShowForm(true); }} className="text-gray-400 hover:text-white p-1"><Edit3 size={14} /></button>
-              <button onClick={() => del(p)} className="text-red-400 hover:text-red-300 p-1"><Trash2 size={14} /></button>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {showForm && partnerId && (
-        <ProductForm
-          partnerId={partnerId}
-          initial={editing}
-          onClose={() => { setShowForm(false); setEditing(null); }}
-          onSaved={() => { setShowForm(false); setEditing(null); load(); }}
-        />
-      )}
-    </div>
-  );
-}
 
 export function ProductForm({ partnerId, initial, onClose, onSaved }: {
   partnerId: string; initial: Product | null; onClose: () => void; onSaved: () => void;
@@ -213,7 +41,7 @@ export function ProductForm({ partnerId, initial, onClose, onSaved }: {
 
   const upload = async (file: File) => {
     if (!user) return;
-    if (f.images.length >= 4) { alert('Máximo de 4 fotos.'); return; }
+    if (f.images.length >= 4) { toast.error('Máximo de 4 fotos.'); return; }
     setUploading(true);
     try {
       const optimized = await optimizeImage(file, { maxDimension: 1400, quality: 0.85 });
@@ -221,7 +49,7 @@ export function ProductForm({ partnerId, initial, onClose, onSaved }: {
       const { error } = await supabase.storage
         .from('partner-images')
         .upload(path, optimized, { upsert: false, contentType: 'image/webp' });
-      if (error) { alert(error.message); return; }
+      if (error) { console.error(error); toast.error(error.message); return; }
       const { data } = supabase.storage.from('partner-images').getPublicUrl(path);
       setF((s) => ({ ...s, images: [...s.images, data.publicUrl] }));
     } finally {
@@ -232,9 +60,9 @@ export function ProductForm({ partnerId, initial, onClose, onSaved }: {
   const removeImg = (i: number) => setF((s) => ({ ...s, images: s.images.filter((_, idx) => idx !== i) }));
 
   const save = async () => {
-    if (!f.name.trim()) { alert('Nome é obrigatório.'); return; }
-    if (!f.market_category_id) { alert('Selecione uma categoria.'); return; }
-    if (!f.market_subcategory_id) { alert('Selecione uma subcategoria.'); return; }
+    if (!f.name.trim()) { toast.error('Nome é obrigatório.'); return; }
+    if (!f.market_category_id) { toast.error('Selecione uma categoria.'); return; }
+    if (!f.market_subcategory_id) { toast.error('Selecione uma subcategoria.'); return; }
     setSaving(true);
     const catName = categories.find((c) => c.id === f.market_category_id)?.name || null;
     const payload: any = {
@@ -254,7 +82,7 @@ export function ProductForm({ partnerId, initial, onClose, onSaved }: {
       ? await supabase.from('marketplace_products').update(payload).eq('id', initial.id)
       : await supabase.from('marketplace_products').insert(payload);
     setSaving(false);
-    if (error) alert(error.message); else onSaved();
+    if (error) { console.error(error); toast.error(error.message); } else { toast.success(initial ? 'Produto atualizado.' : 'Produto enviado para curadoria.'); onSaved(); }
   };
 
   return (
