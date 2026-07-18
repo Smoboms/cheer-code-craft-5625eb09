@@ -113,13 +113,13 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
     (async () => {
       const { data } = await supabase
         .from('partners')
-        .select(PARTNER_SELECT + ', profile_image_url, logo_url, whatsapp')
+        .select('*')
         .eq('created_by', user.id)
         .order('updated_at', { ascending: false })
         .limit(1)
         .maybeSingle();
       if (data) {
-        setPartner(data as PartnerSummary);
+        setPartner(data as unknown as PartnerSummary);
         if (!initialLoadedRef.done) {
           setForm({
             company: (data as any).name || '',
