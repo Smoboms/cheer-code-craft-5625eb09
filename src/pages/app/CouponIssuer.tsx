@@ -132,9 +132,13 @@ export function CouponIssuer({ partnerId, discountPercent, cashbackEnabled, cash
               <p className="text-[10px] text-gray-500 uppercase">Desconto {discountPercent}%</p>
               <p className="text-white text-sm font-semibold mt-1">{formatBRL(discountAmount)}</p>
             </div>
-            <div className="border border-gray-700 p-2">
-              <p className="text-[10px] text-gray-500 uppercase">Cashback {cashbackEnabled ? `${cashbackPercent}%` : 'off'}</p>
-              <p className="text-white text-sm font-semibold mt-1">{formatBRL(cashbackAmount)}</p>
+            <div className={`border p-2 ${cashbackFeatureUnlocked ? 'border-gray-700' : 'border-gray-800 opacity-50 pointer-events-none select-none'}`}>
+              <p className="text-[10px] text-gray-500 uppercase leading-tight">
+                {cashbackFeatureUnlocked
+                  ? `Cashback ${cashbackEnabled ? `${cashbackPercent}%` : 'off'}`
+                  : 'Fidelização de Clientes — Cashback (EM BREVE)'}
+              </p>
+              <p className="text-white text-sm font-semibold mt-1">{formatBRL(cashbackFeatureUnlocked ? cashbackAmount : 0)}</p>
             </div>
             <div className="border border-yellow-500/40 bg-yellow-500/5 p-2">
               <p className="text-[10px] text-yellow-400 uppercase">A pagar</p>
