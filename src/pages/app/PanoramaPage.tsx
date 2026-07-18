@@ -6,11 +6,11 @@ interface Props { onBack: () => void; }
 
 interface Post {
   id: string;
-  titulo: string;
-  resumo: string | null;
-  conteudo: string | null;
-  imagem_url: string | null;
-  data_publicacao: string;
+  title: string;
+  excerpt: string | null;
+  body: string | null;
+  cover_url: string | null;
+  published_at: string;
 }
 
 export function PanoramaPage({ onBack }: Props) {
@@ -20,11 +20,10 @@ export function PanoramaPage({ onBack }: Props) {
   useEffect(() => {
     (async () => {
       const { data } = await supabase
-        .from('panorama_publicacoes')
-        .select('id,titulo,resumo,conteudo,imagem_url,data_publicacao')
-        .eq('status', 'published')
-        .order('ordem')
-        .order('data_publicacao', { ascending: false });
+        .from('journal_articles')
+        .select('id,title,excerpt,body,cover_url,published_at')
+        .eq('category', 'Panorama')
+        .order('published_at', { ascending: false });
       setPosts((data || []) as Post[]);
       setLoading(false);
     })();
@@ -39,7 +38,7 @@ export function PanoramaPage({ onBack }: Props) {
       <div className="mb-6">
         <div className="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 px-2 py-0.5 mb-2">
           <Globe size={11} className="text-white" />
-          <p className="text-[10px] font-semibold tracking-wider text-white">PANORAMA</p>
+          <p className="text-[10px] font-semibold tracking-wider text-white">PANORAMA · R.JOURNAL</p>
         </div>
         <h2 className="text-2xl font-bold text-white mb-1">Panorama</h2>
         <p className="text-gray-400 text-sm">Análise econômica com tradução prática para o empresário local</p>
@@ -55,16 +54,16 @@ export function PanoramaPage({ onBack }: Props) {
         <div className="space-y-4">
           {posts.map((p) => (
             <article key={p.id} className="bg-gray-900 border border-gray-800 overflow-hidden">
-              {p.imagem_url && (
-                <img src={p.imagem_url} alt={p.titulo} className="w-full aspect-video object-cover" loading="lazy" decoding="async" />
+              {p.cover_url && (
+                <img src={p.cover_url} alt={p.title} className="w-full aspect-video object-cover" loading="lazy" decoding="async" />
               )}
               <div className="p-4">
                 <p className="text-[10px] text-gray-500 tracking-wider uppercase mb-1">
-                  {new Date(p.data_publicacao).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                  {new Date(p.published_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
                 </p>
-                <h3 className="text-white font-semibold text-lg mb-2">{p.titulo}</h3>
-                {p.resumo && <p className="text-gray-400 text-sm mb-2">{p.resumo}</p>}
-                {p.conteudo && <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{p.conteudo}</p>}
+                <h3 className="text-white font-semibold text-lg mb-2">{p.title}</h3>
+                {p.excerpt && <p className="text-gray-400 text-sm mb-2">{p.excerpt}</p>}
+                {p.body && <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{p.body}</p>}
               </div>
             </article>
           ))}

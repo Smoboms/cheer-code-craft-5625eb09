@@ -102,10 +102,9 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
   });
   const [partner, setPartner] = useState<PartnerSummary | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [autoSaving, setAutoSaving] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
   const initialLoadedRef = useState({ done: false })[0];
-  const saveTimer = useState<{ t: any }>({ t: null })[0];
 
   // Carrega o formulário a partir da linha em `partners` (fonte da verdade da empresa).
   useEffect(() => {
@@ -133,7 +132,6 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
           initialLoadedRef.done = true;
         }
       } else if (!initialLoadedRef.done) {
-        // Nenhuma empresa cadastrada ainda: começa em branco (não puxa do perfil pessoal).
         initialLoadedRef.done = true;
       }
     })();
@@ -143,61 +141,52 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
 
   const persist = async (next: Form) => {
     if (!user) return;
-    setAutoSaving(true);
-    setMsg(null);
-
     if (!requiredOk) {
-      setAutoSaving(false);
-      return; // Ainda sem dados mínimos: não cria linha em `partners`.
-    }
-
-    const { data: existingRows } = await supabase
-      .from('partners')
-      .select(PARTNER_SELECT)
-      .eq('created_by', user.id)
-      .order('updated_at', { ascending: false })
-      .limit(1);
-    const existing = existingRows?.[0] as PartnerSummary | undefined;
-    const isCompanyAccount = profile?.account_type === 'company';
-    const partnerPayload: any = {
-      name: next.company.trim(),
-      category: next.segment.trim() || existing?.category || 'Geral',
-      description: next.bio || null,
-      phone: next.phone || null,
-      whatsapp: next.phone || null,
-      profile_image_url: next.avatar_url || null,
-      logo_url: next.avatar_url || null,
-      is_active: true,
-    };
-    if (!existing) {
-      partnerPayload.status = isCompanyAccount ? 'pending_curation' : 'approved';
-    }
-    const partnerMutation = existing?.id
-      ? await supabase.from('partners').update(partnerPayload).eq('id', existing.id).select(PARTNER_SELECT).single()
-      : await supabase.from('partners').insert({ ...partnerPayload, created_by: user.id }).select(PARTNER_SELECT).single();
-
-    if (partnerMutation.error) {
-      setAutoSaving(false);
-      setMsg('Erro ao salvar. Tente novamente.');
+      setMsg({ kind: 'err', text: 'Preencha nome, contato e descrição para salvar.' });
       return;
     }
-    if (partnerMutation.data) setPartner(partnerMutation.data as PartnerSummary);
+    setSaving(true);
+    setMsg(null);
+    try {
+      const { data: existingRows } = await supabase
+        .from('partners')
+        .select(PARTNER_SELECT)
+        .eq('created_by', user.id)
+        .order('updated_at', { ascending: false })
+        .limit(1);
+      const existing = existingRows?.[0] as PartnerSummary | undefined;
+      const isCompanyAccount = profile?.account_type === 'company';
+      const partnerPayload: any = {
+        name: next.company.trim(),
+        category: next.segment.trim() || existing?.category || 'Geral',
+        description: next.bio || null,
+        phone: next.phone || null,
+        whatsapp: next.phone || null,
+        profile_image_url: next.avatar_url || null,
+        logo_url: next.avatar_url || null,
+        is_active: true,
+      };
+      if (!existing) {
+        partnerPayload.status = isCompanyAccount ? 'pending_curation' : 'approved';
+      }
+      const partnerMutation = existing?.id
+        ? await supabase.from('partners').update(partnerPayload).eq('id', existing.id).select(PARTNER_SELECT).single()
+        : await supabase.from('partners').insert({ ...partnerPayload, created_by: user.id }).select(PARTNER_SELECT).single();
 
-    setAutoSaving(false);
-    setMsg('Salvo automaticamente.');
-  };
-
-  const scheduleSave = (next: Form) => {
-    if (saveTimer.t) clearTimeout(saveTimer.t);
-    saveTimer.t = setTimeout(() => persist(next), 700);
+      if (partnerMutation.error) throw partnerMutation.error;
+      if (partnerMutation.data) setPartner(partnerMutation.data as PartnerSummary);
+      setMsg({ kind: 'ok', text: 'Alterações salvas com sucesso.' });
+    } catch (err: any) {
+      console.error('Salvar empresa erro:', err);
+      setMsg({ kind: 'err', text: 'Erro ao salvar. Tente novamente.' });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const updateField = (key: keyof Form, value: string) => {
-    setForm((s) => {
-      const next = { ...s, [key]: value };
-      scheduleSave(next);
-      return next;
-    });
+    setForm((s) => ({ ...s, [key]: value }));
+    if (msg) setMsg(null);
   };
 
   const handleUpload = async (file: File) => {
@@ -213,12 +202,10 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
       if (upload.error) throw upload.error;
       const signed = await supabase.storage.from('avatars').createSignedUrl(path, AVATAR_SIGNED_TTL);
       if (signed.error) throw signed.error;
-      const nextForm = { ...form, avatar_url: signed.data.signedUrl };
-      setForm(nextForm);
-      await persist(nextForm);
+      setForm((s) => ({ ...s, avatar_url: signed.data.signedUrl }));
     } catch (err: any) {
       console.error('Upload empresa erro:', err);
-      setMsg('Erro ao enviar imagem');
+      setMsg({ kind: 'err', text: 'Erro ao enviar imagem.' });
     } finally {
       setUploading(false);
     }
@@ -282,7 +269,7 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
 
       <div className="mb-4">
         <h2 className="text-2xl font-bold text-white mb-1">Configurar Minha Empresa</h2>
-        <p className="text-gray-400 text-sm">As alterações são salvas automaticamente</p>
+        <p className="text-gray-400 text-sm">Edite os dados e clique em Salvar Alterações</p>
       </div>
 
       <div className="space-y-4">
@@ -354,14 +341,22 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
           </div>
         )}
 
-        <div className="flex items-center justify-center gap-2 text-xs text-gray-500 h-5">
-          {autoSaving ? (
-            <><Loader2 size={12} className="animate-spin" /> Salvando…</>
-          ) : msg ? (
-            <span className={msg.includes('Erro') ? 'text-red-400' : 'text-green-400'}>
-              {msg.includes('Erro') ? msg : <><CheckCircle2 size={12} className="inline mr-1" /> {msg}</>}
+        <button
+          type="button"
+          onClick={() => persist(form)}
+          disabled={saving || uploading}
+          className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:opacity-60 disabled:cursor-not-allowed text-black font-semibold text-sm py-3 flex items-center justify-center gap-2 transition-colors"
+        >
+          {saving ? (<><Loader2 size={14} className="animate-spin" /> Salvando…</>) : 'Salvar Alterações'}
+        </button>
+
+        <div className="flex items-center justify-center gap-2 text-xs h-5">
+          {msg && (
+            <span className={msg.kind === 'err' ? 'text-red-400' : 'text-green-400'}>
+              {msg.kind === 'ok' && <CheckCircle2 size={12} className="inline mr-1" />}
+              {msg.text}
             </span>
-          ) : null}
+          )}
         </div>
       </div>
     </div>
