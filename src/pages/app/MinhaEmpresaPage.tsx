@@ -52,8 +52,8 @@ export function MinhaEmpresaPage({ onBack }: Props) {
 }
 
 const HUB_ITEMS: { key: Exclude<View, 'hub'>; label: string; desc: string; icon: LucideIcon; accent: string }[] = [
-  { key: 'config', label: 'Configurar Minha Empresa', desc: 'Perfil, desconto e cashback', icon: Settings, accent: 'text-white' },
-  { key: 'products', label: 'Meus Produtos', desc: 'Cadastro e curadoria', icon: Package, accent: 'text-yellow-400' },
+  { key: 'config', label: 'Configurar Minha Empresa', desc: 'Foto, nome, contato e descrição', icon: Settings, accent: 'text-white' },
+  { key: 'products', label: 'Meus Produtos', desc: 'Vitrine (em breve)', icon: Package, accent: 'text-yellow-400' },
   { key: 'coupon', label: 'Emitir Cupom', desc: 'Descontos para clientes', icon: Ticket, accent: 'text-green-400' },
 ];
 
