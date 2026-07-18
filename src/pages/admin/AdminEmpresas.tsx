@@ -96,6 +96,20 @@ export default function AdminEmpresas() {
                       </>
                     )}
                     <Btn variant="ghost" onClick={() => toggleMember(p)}><Star size={12} className="inline" /> {p.is_member ? 'Remover' : 'Membro'}</Btn>
+                    <Btn
+                      variant={p.cashback_feature_unlocked ? 'primary' : 'ghost'}
+                      onClick={() => toggleCashbackUnlock(p)}
+                      title="Liberar Cashback"
+                    >
+                      💸 {p.cashback_feature_unlocked ? 'Cashback ON' : 'Liberar Cashback'}
+                    </Btn>
+                    <Btn
+                      variant={p.products_feature_unlocked ? 'primary' : 'ghost'}
+                      onClick={() => toggleProductsUnlock(p)}
+                      title="Liberar Vitrine de Produtos"
+                    >
+                      🛍️ {p.products_feature_unlocked ? 'Vitrine ON' : 'Liberar Vitrine'}
+                    </Btn>
                     <Btn variant="ghost" onClick={() => setEditing(p)}><Pencil size={12} /></Btn>
                     <Btn variant="danger" onClick={() => remove(p)}><Trash2 size={12} /></Btn>
                   </div>
