@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, MapPin, Phone, Instagram, Globe, Clock, Loader2, MessageCircle, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSeo } from '@/lib/useSeo';
+import { trackEvent } from '@/lib/analytics';
 
 interface Partner {
   id: string;
