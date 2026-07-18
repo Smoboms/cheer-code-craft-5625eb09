@@ -9,7 +9,6 @@ import { useApprovedProfessionals } from '@/data/useProfessionals';
 import { CardCarousel } from '@/components/public/CardCarousel';
 import { trackEvent } from '@/lib/analytics';
 import { WeatherHomeBlock } from '@/components/public/WeatherHomeBlock';
-import { AgroHomeBlock } from '@/components/public/AgroHomeBlock';
 import { supabase } from '@/integrations/supabase/client';
 import { useSeo } from '@/lib/useSeo';
 
@@ -133,21 +132,18 @@ export default function PublicHome() {
         </Link>
       </div>
 
-      {/* 5º — Widgets lado a lado: Clima + Agro */}
-      <div className="grid grid-cols-2 gap-2 md:gap-3">
-        <WeatherHomeBlock />
-        <AgroHomeBlock />
-      </div>
+      {/* 5º — Widget Clima */}
+      <WeatherHomeBlock />
 
 
       {/* Serviços Mais Procurados — ícones circulares dos atalhos_da_casa */}
-      {atalhos.filter(a => a.link !== '/agro').length > 0 && (
+      {atalhos.length > 0 && (
         <div className="mb-6 mt-4">
           <div className="flex items-end justify-between mb-3">
             <h2 className="text-white font-bold text-lg">Serviços Mais Procurados</h2>
           </div>
           <div className="grid grid-cols-4 md:grid-cols-8 gap-3">
-            {atalhos.filter(a => a.link !== '/agro').map((a) => {
+            {atalhos.map((a) => {
               const external = /^https?:\/\//.test(a.link);
               const inner = (
                 <>

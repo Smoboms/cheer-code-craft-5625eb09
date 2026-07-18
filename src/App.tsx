@@ -36,8 +36,6 @@ import AdminLocals from "./pages/admin/AdminLocals";
 import AdminHomeAtalhos from "./pages/admin/AdminHomeAtalhos";
 import AdminPilares from "./pages/admin/AdminPilares";
 import AdminCidades from "./pages/admin/AdminCidades";
-import AdminAgro from "./pages/admin/AdminAgro";
-import PublicAgro from "./pages/public/PublicAgro";
 
 
 const queryClient = new QueryClient();
@@ -65,7 +63,7 @@ const App = () => (
               <Route path="/locais" element={<PublicLocais />} />
               <Route path="/seja-membro" element={<SejaMembro />} />
               <Route path="/journal-info" element={<JournalInfo />} />
-              <Route path="/agro" element={<PublicAgro />} />
+              
             </Route>
             <Route path="/app" element={<Index />} />
             <Route path="/admin" element={<AdminLayout />}>
@@ -84,7 +82,7 @@ const App = () => (
               <Route path="atalhos" element={<AdminHomeAtalhos />} />
               <Route path="pilares" element={<AdminPilares />} />
               <Route path="cidades" element={<AdminCidades />} />
-              <Route path="agro" element={<AdminAgro />} />
+              
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
