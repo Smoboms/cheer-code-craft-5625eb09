@@ -84,6 +84,28 @@ export function MinhaEmpresaPage({ onBack }: Props) {
     }
   }, [profile]);
 
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from('partners')
+        .select(PARTNER_SELECT)
+        .eq('created_by', user.id)
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (data) {
+        setPartner(data as PartnerSummary);
+        setPartnerConfig({
+          discount_percent: String(data.discount_percent ?? 0),
+          cashback_enabled: !!data.cashback_enabled,
+          cashback_percent: String(data.cashback_percent ?? 0),
+        });
+      }
+    })();
+  }, [user, savedTick]);
+
+
   const filledCount = Object.values(form).filter((v) => v.trim().length > 0).length;
   const total = Object.keys(form).length;
   const percent = Math.round((filledCount / total) * 100);
