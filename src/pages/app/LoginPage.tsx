@@ -10,10 +10,15 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [accountType, setAccountType] = useState<'client' | 'company'>('client');
+  const [fullName, setFullName] = useState('');
+  const [documento, setDocumento] = useState('');
+  const [companyName, setCompanyName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
+
 
   const handleForgotPassword = async () => {
     setError('');
