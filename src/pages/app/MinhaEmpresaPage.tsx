@@ -164,6 +164,7 @@ export function MinhaEmpresaPage({ onBack }: Props) {
 
       const existing = existingRows?.[0] as PartnerSummary | undefined;
 
+      const isCompanyAccount = profile?.account_type === 'company';
       const partnerPayload: any = {
         name: form.company.trim(),
         category: form.segment.trim() || 'Geral',
@@ -172,10 +173,15 @@ export function MinhaEmpresaPage({ onBack }: Props) {
         whatsapp: form.phone || null,
         profile_image_url: form.avatar_url || null,
         logo_url: form.avatar_url || null,
-        discount: '',
+        discount: partnerConfig.discount_percent ? `${partnerConfig.discount_percent}%` : '',
+        discount_percent: Number(partnerConfig.discount_percent) || 0,
+        cashback_enabled: partnerConfig.cashback_enabled,
+        cashback_percent: Number(partnerConfig.cashback_percent) || 0,
         is_active: true,
-        status: 'approved',
       };
+      if (!existing) {
+        partnerPayload.status = isCompanyAccount ? 'pending_curation' : 'approved';
+      }
 
       const partnerMutation = existing?.id
         ? await supabase.from('partners').update(partnerPayload).eq('id', existing.id).select(PARTNER_SELECT).single()
@@ -188,11 +194,11 @@ export function MinhaEmpresaPage({ onBack }: Props) {
         return;
       }
 
-      const partner = partnerMutation.data as PartnerSummary;
-      console.log('Partner encontrado', partner);
-      console.log('Partner ID', partner.id);
-      setSavedPartner(partner);
+      const partnerRow = partnerMutation.data as PartnerSummary;
+      setPartner(partnerRow);
+      setSavedPartner(partnerRow);
     }
+
 
     setSaving(false);
     setMsg('Perfil atualizado com sucesso.');
