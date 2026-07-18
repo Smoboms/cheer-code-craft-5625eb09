@@ -28,8 +28,14 @@ export default function PublicJournalArticle() {
         .select('id,title,category,excerpt,body,cover_url,published_at')
         .eq('id', id)
         .maybeSingle();
-      setArticle((data as any) || null);
+      const art = (data as any) || null;
+      setArticle(art);
       setLoading(false);
+      if (art) {
+        trackEvent('article_view', art.id, art.title);
+        // Paywall é exibido para todos os visitantes do portal público
+        trackEvent('paywall_hit', art.id, art.title, { source: 'journal_article' });
+      }
     })();
   }, [id]);
 
