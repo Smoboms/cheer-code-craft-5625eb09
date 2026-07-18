@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { MapPin, Phone, Globe, Clock, X, Building2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { CACHE } from '@/lib/queryConfig';
 import { useSeo } from '@/lib/useSeo';
 
 type Lugar = {
