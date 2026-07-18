@@ -418,7 +418,7 @@ function PublicBannerBlock({ banner }: { banner: ReturnType<typeof usePublicBann
           href={current.ctaHref || '#'}
           target={external ? '_blank' : undefined}
           rel="noreferrer"
-          className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors aspect-[32/9] lg:aspect-[48/9] bg-[#0b1a3a]"
+          className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors aspect-[16/9] lg:aspect-[32/9] bg-[#0b1a3a]"
         >
           <img src={current.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
         </a>
@@ -440,7 +440,7 @@ function PublicBannerBlock({ banner }: { banner: ReturnType<typeof usePublicBann
       href={banner.ctaHref || '#'}
       target={banner.ctaHref?.startsWith('http') ? '_blank' : undefined}
       rel="noreferrer"
-      className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors mb-4 aspect-[32/9] lg:aspect-[48/9] bg-[#0b1a3a]"
+      className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors mb-4 aspect-[16/9] lg:aspect-[32/9] bg-[#0b1a3a]"
     >
       {banner.imageUrl && (
         <img src={banner.imageUrl} alt={banner.title || ''} className="absolute inset-0 w-full h-full object-cover" />

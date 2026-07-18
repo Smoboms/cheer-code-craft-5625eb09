@@ -89,7 +89,7 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
       </div>
 
       {/* Carrossel de banners */}
-      <div className="mb-3 relative overflow-hidden bg-gradient-to-br from-gray-900 to-black border border-gray-800 aspect-[32/9]">
+      <div className="mb-3 relative overflow-hidden bg-gradient-to-br from-gray-900 to-black border border-gray-800 aspect-[16/9] md:aspect-[21/9]">
         <div
           aria-hidden
           className="absolute inset-0 bg-no-repeat bg-right bg-contain opacity-10 pointer-events-none"
