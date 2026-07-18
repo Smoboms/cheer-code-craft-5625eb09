@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ArrowLeft, Plus, Search, Loader2, Package } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { CACHE } from '@/lib/queryConfig';
 import { ProductForm, type Product } from './MyProductsSection';
 
 interface Props {
@@ -10,41 +12,41 @@ interface Props {
 
 export function MyProductsPage({ onBack }: Props) {
   const { user } = useAuth();
-  const [partnerId, setPartnerId] = useState<string | null>(null);
-  const [unlocked, setUnlocked] = useState(false);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const qc = useQueryClient();
   const [query, setQuery] = useState('');
   const [editing, setEditing] = useState<Product | null>(null);
   const [showForm, setShowForm] = useState(false);
 
-  const load = async () => {
-    if (!user) { setLoading(false); return; }
-    setLoading(true);
-    const { data: partnerRows } = await supabase
-      .from('partners')
-      .select('id, products_feature_unlocked')
-      .eq('created_by', user.id)
-      .order('updated_at', { ascending: false })
-      .limit(1);
-    const pid = partnerRows?.[0]?.id || null;
-    const unlockedFlag = !!(partnerRows?.[0] as any)?.products_feature_unlocked;
-    setPartnerId(pid);
-    setUnlocked(unlockedFlag);
-    if (pid && unlockedFlag) {
-      const { data } = await supabase
-        .from('marketplace_products')
-        .select('*')
-        .eq('partner_id', pid)
-        .order('created_at', { ascending: false });
-      setProducts((data as any) || []);
-    } else {
-      setProducts([]);
-    }
-    setLoading(false);
-  };
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ['my-products', user?.id],
+    enabled: !!user,
+    ...CACHE.AUTH,
+    queryFn: async () => {
+      const { data: partnerRows } = await supabase
+        .from('partners')
+        .select('id, products_feature_unlocked')
+        .eq('created_by', user!.id)
+        .order('updated_at', { ascending: false })
+        .limit(1);
+      const pid = partnerRows?.[0]?.id || null;
+      const unlockedFlag = !!(partnerRows?.[0] as any)?.products_feature_unlocked;
+      let products: Product[] = [];
+      if (pid && unlockedFlag) {
+        const { data: rows } = await supabase
+          .from('marketplace_products')
+          .select('*')
+          .eq('partner_id', pid)
+          .order('created_at', { ascending: false });
+        products = (rows as any) || [];
+      }
+      return { partnerId: pid, unlocked: unlockedFlag, products };
+    },
+  });
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [user]);
+  const partnerId = data?.partnerId ?? null;
+  const unlocked = data?.unlocked ?? false;
+  const products = data?.products ?? [];
+  const reload = () => qc.invalidateQueries({ queryKey: ['my-products', user?.id] });
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
