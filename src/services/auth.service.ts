@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { optimizeImage } from '@/lib/imageOptimizer';
 
 export async function signUp(email: string, password: string) {
   const { data, error } = await supabase.auth.signUp({
