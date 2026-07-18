@@ -79,7 +79,8 @@ export default function AdminFinanceiro() {
 
   const [openStream, setOpenStream] = useState<Stream | null>(null);
   const [editStream, setEditStream] = useState<Stream | null>(null);
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [payersOpen, setPayersOpen] = useState(false);
+
 
   // Último pagamento por (stream, partner) — usado para listar pagantes e vencimentos
   const payersByStream = useMemo(() => {
