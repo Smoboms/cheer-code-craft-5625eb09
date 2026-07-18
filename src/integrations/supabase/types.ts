@@ -750,6 +750,7 @@ export type Database = {
           address: string | null
           banner_url: string | null
           cashback_enabled: boolean
+          cashback_feature_unlocked: boolean
           cashback_percent: number
           category: string
           city: string | null
@@ -773,6 +774,7 @@ export type Database = {
           name: string
           opening_hours: string | null
           phone: string | null
+          products_feature_unlocked: boolean
           profile_image_url: string | null
           rating: number | null
           rejection_reason: string | null
@@ -787,6 +789,7 @@ export type Database = {
           address?: string | null
           banner_url?: string | null
           cashback_enabled?: boolean
+          cashback_feature_unlocked?: boolean
           cashback_percent?: number
           category: string
           city?: string | null
@@ -810,6 +813,7 @@ export type Database = {
           name: string
           opening_hours?: string | null
           phone?: string | null
+          products_feature_unlocked?: boolean
           profile_image_url?: string | null
           rating?: number | null
           rejection_reason?: string | null
@@ -824,6 +828,7 @@ export type Database = {
           address?: string | null
           banner_url?: string | null
           cashback_enabled?: boolean
+          cashback_feature_unlocked?: boolean
           cashback_percent?: number
           category?: string
           city?: string | null
@@ -847,6 +852,7 @@ export type Database = {
           name?: string
           opening_hours?: string | null
           phone?: string | null
+          products_feature_unlocked?: boolean
           profile_image_url?: string | null
           rating?: number | null
           rejection_reason?: string | null

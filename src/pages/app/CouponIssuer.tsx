@@ -17,6 +17,7 @@ interface Props {
   discountPercent: number;
   cashbackEnabled: boolean;
   cashbackPercent: number;
+  cashbackFeatureUnlocked?: boolean;
 }
 
 const onlyDigits = (v: string) => v.replace(/\D/g, '');
@@ -25,7 +26,7 @@ function generateCode() {
   return 'RQ-' + Math.random().toString(36).slice(2, 8).toUpperCase();
 }
 
-export function CouponIssuer({ partnerId, discountPercent, cashbackEnabled, cashbackPercent }: Props) {
+export function CouponIssuer({ partnerId, discountPercent, cashbackEnabled, cashbackPercent, cashbackFeatureUnlocked = false }: Props) {
   const [query, setQuery] = useState('');
   const [searching, setSearching] = useState(false);
   const [client, setClient] = useState<Client | null>(null);
@@ -37,9 +38,10 @@ export function CouponIssuer({ partnerId, discountPercent, cashbackEnabled, cash
 
   const purchaseValue = Number(purchase.replace(',', '.')) || 0;
   const discountAmount = useMemo(() => +(purchaseValue * (discountPercent / 100)).toFixed(2), [purchaseValue, discountPercent]);
+  const cashbackActive = cashbackFeatureUnlocked && cashbackEnabled;
   const cashbackAmount = useMemo(
-    () => (cashbackEnabled ? +(purchaseValue * (cashbackPercent / 100)).toFixed(2) : 0),
-    [purchaseValue, cashbackEnabled, cashbackPercent],
+    () => (cashbackActive ? +(purchaseValue * (cashbackPercent / 100)).toFixed(2) : 0),
+    [purchaseValue, cashbackActive, cashbackPercent],
   );
   const finalPrice = +(purchaseValue - discountAmount).toFixed(2);
 
@@ -93,10 +95,10 @@ export function CouponIssuer({ partnerId, discountPercent, cashbackEnabled, cash
       </div>
 
       <div>
-        <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Buscar cliente (CPF, cartão ou e-mail)</label>
+        <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Buscar cliente (CPF, cartão ou nome)</label>
         <div className="flex gap-2">
           <input value={query} onChange={(e) => setQuery(e.target.value)}
-            placeholder="Digite para localizar"
+            placeholder="Digite CPF, cartão ou nome"
             className="flex-1 bg-black border border-gray-700 text-white px-3 py-2 text-sm outline-none focus:border-white" />
           <button onClick={findClient} disabled={searching || !query.trim()}
             className="bg-white text-black px-3 py-2 text-sm font-semibold flex items-center gap-1 disabled:opacity-60">
@@ -130,9 +132,13 @@ export function CouponIssuer({ partnerId, discountPercent, cashbackEnabled, cash
               <p className="text-[10px] text-gray-500 uppercase">Desconto {discountPercent}%</p>
               <p className="text-white text-sm font-semibold mt-1">{formatBRL(discountAmount)}</p>
             </div>
-            <div className="border border-gray-700 p-2">
-              <p className="text-[10px] text-gray-500 uppercase">Cashback {cashbackEnabled ? `${cashbackPercent}%` : 'off'}</p>
-              <p className="text-white text-sm font-semibold mt-1">{formatBRL(cashbackAmount)}</p>
+            <div className={`border p-2 ${cashbackFeatureUnlocked ? 'border-gray-700' : 'border-gray-800 opacity-50 pointer-events-none select-none'}`}>
+              <p className="text-[10px] text-gray-500 uppercase leading-tight">
+                {cashbackFeatureUnlocked
+                  ? `Cashback ${cashbackEnabled ? `${cashbackPercent}%` : 'off'}`
+                  : 'Fidelização de Clientes — Cashback (EM BREVE)'}
+              </p>
+              <p className="text-white text-sm font-semibold mt-1">{formatBRL(cashbackFeatureUnlocked ? cashbackAmount : 0)}</p>
             </div>
             <div className="border border-yellow-500/40 bg-yellow-500/5 p-2">
               <p className="text-[10px] text-yellow-400 uppercase">A pagar</p>

@@ -34,6 +34,14 @@ export default function AdminEmpresas() {
     await supabase.from('partners').update({ is_member: !p.is_member }).eq('id', p.id);
     reload();
   };
+  const toggleCashbackUnlock = async (p: Partner) => {
+    await supabase.from('partners').update({ cashback_feature_unlocked: !p.cashback_feature_unlocked }).eq('id', p.id);
+    reload();
+  };
+  const toggleProductsUnlock = async (p: Partner) => {
+    await supabase.from('partners').update({ products_feature_unlocked: !p.products_feature_unlocked }).eq('id', p.id);
+    reload();
+  };
   const setStatusOf = async (p: Partner, s: string) => {
     await supabase.from('partners').update({ status: s }).eq('id', p.id);
     reload();
@@ -88,6 +96,20 @@ export default function AdminEmpresas() {
                       </>
                     )}
                     <Btn variant="ghost" onClick={() => toggleMember(p)}><Star size={12} className="inline" /> {p.is_member ? 'Remover' : 'Membro'}</Btn>
+                    <Btn
+                      variant={p.cashback_feature_unlocked ? 'primary' : 'ghost'}
+                      onClick={() => toggleCashbackUnlock(p)}
+
+                    >
+                      💸 {p.cashback_feature_unlocked ? 'Cashback ON' : 'Liberar Cashback'}
+                    </Btn>
+                    <Btn
+                      variant={p.products_feature_unlocked ? 'primary' : 'ghost'}
+                      onClick={() => toggleProductsUnlock(p)}
+
+                    >
+                      🛍️ {p.products_feature_unlocked ? 'Vitrine ON' : 'Liberar Vitrine'}
+                    </Btn>
                     <Btn variant="ghost" onClick={() => setEditing(p)}><Pencil size={12} /></Btn>
                     <Btn variant="danger" onClick={() => remove(p)}><Trash2 size={12} /></Btn>
                   </div>
