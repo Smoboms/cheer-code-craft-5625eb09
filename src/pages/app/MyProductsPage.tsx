@@ -11,6 +11,7 @@ interface Props {
 export function MyProductsPage({ onBack }: Props) {
   const { user } = useAuth();
   const [partnerId, setPartnerId] = useState<string | null>(null);
+  const [unlocked, setUnlocked] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
@@ -22,13 +23,15 @@ export function MyProductsPage({ onBack }: Props) {
     setLoading(true);
     const { data: partnerRows } = await supabase
       .from('partners')
-      .select('id')
+      .select('id, products_feature_unlocked')
       .eq('created_by', user.id)
       .order('updated_at', { ascending: false })
       .limit(1);
     const pid = partnerRows?.[0]?.id || null;
+    const unlockedFlag = !!(partnerRows?.[0] as any)?.products_feature_unlocked;
     setPartnerId(pid);
-    if (pid) {
+    setUnlocked(unlockedFlag);
+    if (pid && unlockedFlag) {
       const { data } = await supabase
         .from('marketplace_products')
         .select('*')
