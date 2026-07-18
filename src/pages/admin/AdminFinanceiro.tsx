@@ -352,3 +352,37 @@ function StreamEditModal({ stream, onClose, onSaved }: { stream: Stream; onClose
     </Modal>
   );
 }
+
+function PayersList({ entries, today, partnerName }: {
+  entries: Payment[]; today: string; partnerName: (id: string) => string;
+}) {
+  if (!entries.length) {
+    return <div className="mt-3 text-xs text-gray-500 border-t border-white/5 pt-3">Nenhum pagante registrado ainda.</div>;
+  }
+  const sorted = [...entries].sort((a, b) => {
+    const av = a.next_due_date ?? '9999-12-31';
+    const bv = b.next_due_date ?? '9999-12-31';
+    return av.localeCompare(bv);
+  });
+  const fmt = (iso: string | null) => iso ? iso.split('-').reverse().join('/') : '—';
+  const daysTo = (iso: string) => Math.round((new Date(iso).getTime() - new Date(today).getTime()) / 86400000);
+  return (
+    <div className="mt-3 border-t border-white/5 pt-3">
+      <div className="text-[11px] uppercase tracking-widest text-gray-400 mb-2">Empresas pagantes</div>
+      <ul className="space-y-1.5">
+        {sorted.map(p => {
+          const overdue = p.next_due_date ? p.next_due_date < today : false;
+          const soon = p.next_due_date ? (daysTo(p.next_due_date) <= 15 && !overdue) : false;
+          return (
+            <li key={p.id} className="flex items-center justify-between text-sm gap-2">
+              <span className="text-white truncate">{partnerName(p.partner_id!)}</span>
+              <span className={`text-xs ${overdue ? 'text-red-400' : soon ? 'text-yellow-400' : 'text-gray-400'}`}>
+                {overdue ? 'Vencido em ' : 'Vence em '}{fmt(p.next_due_date)}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
