@@ -79,7 +79,8 @@ export default function AdminFinanceiro() {
 
   const [openStream, setOpenStream] = useState<Stream | null>(null);
   const [editStream, setEditStream] = useState<Stream | null>(null);
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [payersOpen, setPayersOpen] = useState(false);
+
 
   // Último pagamento por (stream, partner) — usado para listar pagantes e vencimentos
   const payersByStream = useMemo(() => {
@@ -102,7 +103,10 @@ export default function AdminFinanceiro() {
     <>
       <PageHeader title="Financeiro" subtitle="Fluxos de receita e pagamentos" />
 
-      <PeriodPicker {...dr} />
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <div className="flex-1 min-w-0"><PeriodPicker {...dr} /></div>
+        <Btn variant="ghost" onClick={() => setPayersOpen(true)}>Ver pagantes</Btn>
+      </div>
 
       <Card className="p-4 mb-4">
         <div className="flex items-center justify-between">
@@ -145,34 +149,12 @@ export default function AdminFinanceiro() {
                     <div className="flex gap-2 mt-3 flex-wrap">
                       <Btn variant="primary" onClick={() => setOpenStream(st)}>Lançar pagamento</Btn>
                       <Btn variant="ghost" onClick={() => setEditStream(st)}>Editar fluxo</Btn>
-                      <Btn variant="ghost" onClick={() => setExpanded(e => ({ ...e, [st.id]: !e[st.id] }))}>
-                        {expanded[st.id] ? 'Ocultar pagantes' : `Ver pagantes (${a.payers.size})`}
-                      </Btn>
                     </div>
-                    {expanded[st.id] && (
-                      <PayersList
-                        entries={Array.from((payersByStream.get(st.id) ?? new Map()).values())}
-                        today={today}
-                        partnerName={partnerName}
-                      />
-                    )}
                   </>
                 ) : (
                   <>
                     <div className="text-xs text-gray-400 mt-3">Aguardando definição de valor e ativação</div>
-                    <div className="mt-3 flex gap-2 flex-wrap">
-                      <Btn variant="ghost" onClick={() => setEditStream(st)}>Definir valor e ativar</Btn>
-                      <Btn variant="ghost" onClick={() => setExpanded(e => ({ ...e, [st.id]: !e[st.id] }))}>
-                        {expanded[st.id] ? 'Ocultar pagantes' : `Ver pagantes (${a.payers.size})`}
-                      </Btn>
-                    </div>
-                    {expanded[st.id] && (
-                      <PayersList
-                        entries={Array.from((payersByStream.get(st.id) ?? new Map()).values())}
-                        today={today}
-                        partnerName={partnerName}
-                      />
-                    )}
+                    <div className="mt-3"><Btn variant="ghost" onClick={() => setEditStream(st)}>Definir valor e ativar</Btn></div>
                   </>
                 )}
               </Card>
@@ -196,6 +178,15 @@ export default function AdminFinanceiro() {
           stream={editStream}
           onClose={() => setEditStream(null)}
           onSaved={() => { setEditStream(null); bump(); }}
+        />
+      )}
+      {payersOpen && (
+        <PayersModal
+          streams={streams.data ?? []}
+          payersByStream={payersByStream}
+          partnerName={partnerName}
+          today={today}
+          onClose={() => setPayersOpen(false)}
         />
       )}
     </>
@@ -353,36 +344,105 @@ function StreamEditModal({ stream, onClose, onSaved }: { stream: Stream; onClose
   );
 }
 
-function PayersList({ entries, today, partnerName }: {
-  entries: Payment[]; today: string; partnerName: (id: string) => string;
+function PayersModal({ streams, payersByStream, partnerName, today, onClose }: {
+  streams: Stream[];
+  payersByStream: Map<string, Map<string, Payment>>;
+  partnerName: (id: string) => string;
+  today: string;
+  onClose: () => void;
 }) {
-  if (!entries.length) {
-    return <div className="mt-3 text-xs text-gray-500 border-t border-white/5 pt-3">Nenhum pagante registrado ainda.</div>;
-  }
-  const sorted = [...entries].sort((a, b) => {
-    const av = a.next_due_date ?? '9999-12-31';
-    const bv = b.next_due_date ?? '9999-12-31';
-    return av.localeCompare(bv);
-  });
+  const tabs = streams.length ? streams : [];
+  const [activeId, setActiveId] = useState<string>(tabs[0]?.id ?? '');
+  const [q, setQ] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'em_dia' | 'proximo' | 'vencido'>('all');
+
   const fmt = (iso: string | null) => iso ? iso.split('-').reverse().join('/') : '—';
   const daysTo = (iso: string) => Math.round((new Date(iso).getTime() - new Date(today).getTime()) / 86400000);
+
+  const entries = useMemo(() => {
+    const inner = payersByStream.get(activeId) ?? new Map<string, Payment>();
+    const all = Array.from(inner.values()).map(p => {
+      const overdue = p.next_due_date ? p.next_due_date < today : false;
+      const soon = p.next_due_date ? (!overdue && daysTo(p.next_due_date) <= 15) : false;
+      return { p, overdue, soon, name: partnerName(p.partner_id!) };
+    });
+    const term = q.trim().toLowerCase();
+    return all
+      .filter(e => !term || e.name.toLowerCase().includes(term))
+      .filter(e => statusFilter === 'all'
+        || (statusFilter === 'vencido' && e.overdue)
+        || (statusFilter === 'proximo' && e.soon)
+        || (statusFilter === 'em_dia' && !e.overdue && !e.soon))
+      .sort((a, b) => (a.p.next_due_date ?? '9999-12-31').localeCompare(b.p.next_due_date ?? '9999-12-31'));
+  }, [payersByStream, activeId, q, statusFilter, today, partnerName]);
+
+  const activeStream = tabs.find(s => s.id === activeId);
+
   return (
-    <div className="mt-3 border-t border-white/5 pt-3">
-      <div className="text-[11px] uppercase tracking-widest text-gray-400 mb-2">Empresas pagantes</div>
-      <ul className="space-y-1.5">
-        {sorted.map(p => {
-          const overdue = p.next_due_date ? p.next_due_date < today : false;
-          const soon = p.next_due_date ? (daysTo(p.next_due_date) <= 15 && !overdue) : false;
-          return (
-            <li key={p.id} className="flex items-center justify-between text-sm gap-2">
-              <span className="text-white truncate">{partnerName(p.partner_id!)}</span>
-              <span className={`text-xs ${overdue ? 'text-red-400' : soon ? 'text-yellow-400' : 'text-gray-400'}`}>
-                {overdue ? 'Vencido em ' : 'Vence em '}{fmt(p.next_due_date)}
-              </span>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+    <Modal open onClose={onClose} title="Empresas pagantes"
+      footer={<Btn variant="ghost" onClick={onClose}>Fechar</Btn>}>
+      <div className="space-y-3">
+        <div className="flex flex-wrap gap-1 border-b border-white/10 pb-2">
+          {tabs.map(s => {
+            const count = (payersByStream.get(s.id)?.size ?? 0);
+            const on = s.id === activeId;
+            return (
+              <button key={s.id} onClick={() => setActiveId(s.id)}
+                className={`text-xs px-3 py-1.5 border ${on ? 'bg-yellow-500 text-black border-yellow-500' : 'border-white/15 text-gray-300 hover:bg-white/5'}`}>
+                {s.name} <span className="opacity-70">({count})</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-wrap gap-2 items-center">
+          <Input placeholder="Buscar empresa…" value={q} onChange={e => setQ(e.target.value)} />
+          <Select value={statusFilter} onChange={e => setStatusFilter(e.target.value as any)}>
+            <option value="all">Todos</option>
+            <option value="em_dia">Em dia</option>
+            <option value="proximo">Vencendo (≤15d)</option>
+            <option value="vencido">Vencidos</option>
+          </Select>
+        </div>
+
+        <div className="text-[11px] uppercase tracking-widest text-gray-400">
+          {activeStream?.name} · {entries.length} {entries.length === 1 ? 'empresa' : 'empresas'}
+        </div>
+
+        <div className="max-h-[55vh] overflow-y-auto border border-white/5">
+          {entries.length === 0 ? (
+            <div className="p-4 text-xs text-gray-500">Nenhum pagante para os filtros atuais.</div>
+          ) : (
+            <table className="w-full text-sm">
+              <thead className="text-gray-400 text-[10px] uppercase tracking-widest bg-[#0a0f1e] sticky top-0">
+                <tr>
+                  <th className="text-left px-3 py-2">Empresa</th>
+                  <th className="text-left px-3 py-2">Últ. pagamento</th>
+                  <th className="text-left px-3 py-2">Próx. vencimento</th>
+                  <th className="text-left px-3 py-2">Status</th>
+                </tr>
+              </thead>
+              <tbody className="text-white">
+                {entries.map(({ p, overdue, soon, name }) => (
+                  <tr key={p.id} className="border-t border-white/5">
+                    <td className="px-3 py-2 truncate max-w-[220px]">{name}</td>
+                    <td className="px-3 py-2 text-gray-300">{fmt(p.payment_date)}</td>
+                    <td className={`px-3 py-2 ${overdue ? 'text-red-400' : soon ? 'text-yellow-400' : 'text-gray-300'}`}>
+                      {fmt(p.next_due_date)}
+                    </td>
+                    <td className="px-3 py-2 text-xs">
+                      <span className={`px-2 py-0.5 border ${overdue ? 'border-red-500/60 text-red-400' : soon ? 'border-yellow-500/60 text-yellow-400' : 'border-green-500/60 text-green-400'}`}>
+                        {overdue ? 'Vencido' : soon ? 'Vencendo' : 'Em dia'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+    </Modal>
   );
 }
+
