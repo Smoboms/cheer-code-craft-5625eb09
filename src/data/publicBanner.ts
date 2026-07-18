@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { CACHE } from '@/lib/queryConfig';
 
 export type BannerTarget = 'public' | 'associate' | 'both';
 
@@ -63,36 +65,42 @@ export async function fetchBannerConfig(): Promise<PublicBannerConfig> {
   return fromRow(data);
 }
 
+const QUERY_KEY = ['public-banner'] as const;
+
 export function usePublicBanner(): PublicBannerConfig {
-  const [cfg, setCfg] = useState<PublicBannerConfig>(DEFAULT_CONFIG);
+  const qc = useQueryClient();
+  const { data } = useQuery({
+    queryKey: QUERY_KEY,
+    queryFn: fetchBannerConfig,
+    ...CACHE.PUBLIC,
+  });
 
   useEffect(() => {
-    let active = true;
-    fetchBannerConfig().then((c) => { if (active) setCfg(c); });
-
     const channel = supabase
       .channel('public_home_banner_changes')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'public_home_banner' },
         (payload: any) => {
-          if (!active) return;
-          if (payload.new) setCfg(fromRow(payload.new));
+          if (payload.new) {
+            qc.setQueryData(QUERY_KEY, fromRow(payload.new));
+          } else {
+            qc.invalidateQueries({ queryKey: QUERY_KEY });
+          }
         },
       )
       .subscribe();
 
-    const onCustom = () => { fetchBannerConfig().then((c) => active && setCfg(c)); };
+    const onCustom = () => qc.invalidateQueries({ queryKey: QUERY_KEY });
     window.addEventListener('rarques:publicBanner:updated', onCustom);
 
     return () => {
-      active = false;
       supabase.removeChannel(channel);
       window.removeEventListener('rarques:publicBanner:updated', onCustom);
     };
-  }, []);
+  }, [qc]);
 
-  return cfg;
+  return data ?? DEFAULT_CONFIG;
 }
 
 export function filterSlidesFor(cfg: PublicBannerConfig, audience: 'public' | 'associate'): BannerSlide[] {
