@@ -6,7 +6,7 @@ export function WeatherHomeBlock() {
   const { data, loading } = useWeather();
 
   return (
-    <div className="bg-gray-900 border border-gray-800 px-3 py-2.5 mb-4 flex items-center justify-between gap-3">
+    <div className="bg-gray-900 border border-gray-800 px-3 py-2.5 flex items-center justify-between gap-3 h-full">
       <div className="flex items-center gap-2.5 min-w-0">
         <CloudSun size={22} className="text-yellow-400 shrink-0" />
         <div className="min-w-0">

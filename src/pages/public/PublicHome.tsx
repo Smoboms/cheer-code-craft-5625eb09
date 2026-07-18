@@ -134,7 +134,7 @@ export default function PublicHome() {
       </div>
 
       {/* 5º — Widgets lado a lado: Clima + Agro */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2 md:gap-3">
         <WeatherHomeBlock />
         <AgroHomeBlock />
       </div>
