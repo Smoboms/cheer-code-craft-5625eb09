@@ -79,6 +79,24 @@ export default function AdminFinanceiro() {
 
   const [openStream, setOpenStream] = useState<Stream | null>(null);
   const [editStream, setEditStream] = useState<Stream | null>(null);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  // Último pagamento por (stream, partner) — usado para listar pagantes e vencimentos
+  const payersByStream = useMemo(() => {
+    const m = new Map<string, Map<string, Payment>>();
+    (allPayments.data ?? []).forEach(p => {
+      if (!p.partner_id) return;
+      const inner = m.get(p.revenue_stream_id) ?? new Map<string, Payment>();
+      const cur = inner.get(p.partner_id);
+      if (!cur || p.payment_date > cur.payment_date) inner.set(p.partner_id, p);
+      m.set(p.revenue_stream_id, inner);
+    });
+    return m;
+  }, [allPayments.data]);
+
+  const partnerName = (id: string) => (partners.data ?? []).find(p => p.id === id)?.name ?? '—';
+  const today = new Date().toISOString().slice(0, 10);
+
 
   return (
     <>
@@ -124,15 +142,37 @@ export default function AdminFinanceiro() {
                       <Metric label="Pagantes" value={String(a.payers.size)} />
                       <Metric label="Atrasados" value={String(a.overdue)} danger={a.overdue > 0} />
                     </div>
-                    <div className="flex gap-2 mt-3">
+                    <div className="flex gap-2 mt-3 flex-wrap">
                       <Btn variant="primary" onClick={() => setOpenStream(st)}>Lançar pagamento</Btn>
                       <Btn variant="ghost" onClick={() => setEditStream(st)}>Editar fluxo</Btn>
+                      <Btn variant="ghost" onClick={() => setExpanded(e => ({ ...e, [st.id]: !e[st.id] }))}>
+                        {expanded[st.id] ? 'Ocultar pagantes' : `Ver pagantes (${a.payers.size})`}
+                      </Btn>
                     </div>
+                    {expanded[st.id] && (
+                      <PayersList
+                        entries={Array.from((payersByStream.get(st.id) ?? new Map()).values())}
+                        today={today}
+                        partnerName={partnerName}
+                      />
+                    )}
                   </>
                 ) : (
                   <>
                     <div className="text-xs text-gray-400 mt-3">Aguardando definição de valor e ativação</div>
-                    <div className="mt-3"><Btn variant="ghost" onClick={() => setEditStream(st)}>Definir valor e ativar</Btn></div>
+                    <div className="mt-3 flex gap-2 flex-wrap">
+                      <Btn variant="ghost" onClick={() => setEditStream(st)}>Definir valor e ativar</Btn>
+                      <Btn variant="ghost" onClick={() => setExpanded(e => ({ ...e, [st.id]: !e[st.id] }))}>
+                        {expanded[st.id] ? 'Ocultar pagantes' : `Ver pagantes (${a.payers.size})`}
+                      </Btn>
+                    </div>
+                    {expanded[st.id] && (
+                      <PayersList
+                        entries={Array.from((payersByStream.get(st.id) ?? new Map()).values())}
+                        today={today}
+                        partnerName={partnerName}
+                      />
+                    )}
                   </>
                 )}
               </Card>
@@ -310,5 +350,39 @@ function StreamEditModal({ stream, onClose, onSaved }: { stream: Stream; onClose
         </div>
       </div>
     </Modal>
+  );
+}
+
+function PayersList({ entries, today, partnerName }: {
+  entries: Payment[]; today: string; partnerName: (id: string) => string;
+}) {
+  if (!entries.length) {
+    return <div className="mt-3 text-xs text-gray-500 border-t border-white/5 pt-3">Nenhum pagante registrado ainda.</div>;
+  }
+  const sorted = [...entries].sort((a, b) => {
+    const av = a.next_due_date ?? '9999-12-31';
+    const bv = b.next_due_date ?? '9999-12-31';
+    return av.localeCompare(bv);
+  });
+  const fmt = (iso: string | null) => iso ? iso.split('-').reverse().join('/') : '—';
+  const daysTo = (iso: string) => Math.round((new Date(iso).getTime() - new Date(today).getTime()) / 86400000);
+  return (
+    <div className="mt-3 border-t border-white/5 pt-3">
+      <div className="text-[11px] uppercase tracking-widest text-gray-400 mb-2">Empresas pagantes</div>
+      <ul className="space-y-1.5">
+        {sorted.map(p => {
+          const overdue = p.next_due_date ? p.next_due_date < today : false;
+          const soon = p.next_due_date ? (daysTo(p.next_due_date) <= 15 && !overdue) : false;
+          return (
+            <li key={p.id} className="flex items-center justify-between text-sm gap-2">
+              <span className="text-white truncate">{partnerName(p.partner_id!)}</span>
+              <span className={`text-xs ${overdue ? 'text-red-400' : soon ? 'text-yellow-400' : 'text-gray-400'}`}>
+                {overdue ? 'Vencido em ' : 'Vence em '}{fmt(p.next_due_date)}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
