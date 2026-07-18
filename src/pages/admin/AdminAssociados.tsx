@@ -10,13 +10,29 @@ export default function AdminAssociados() {
   const [editing, setEditing] = useState<any | null>(null);
   const [cardsFor, setCardsFor] = useState<any | null>(null);
 
+  const [accountType, setAccountType] = useState<'all' | 'client' | 'company'>('all');
   const { data, loading, reload } = useAsync(async () => {
-    let q = supabase.from('profiles').select('*, coupons(id, savings, created_at)').order('created_at', { ascending: false });
+    // Fetch profiles and coupons separately — coupons.user_id has FK to auth.users, not profiles,
+    // so PostgREST embedded resource selection was returning an error and no rows.
+    let q = supabase.from('profiles').select('*').order('created_at', { ascending: false });
     if (status === 'active') q = q.eq('is_active', true);
     if (status === 'inactive') q = q.eq('is_active', false);
-    const { data } = await q;
-    return (data || []).filter((p: any) => !search || (p.name || '').toLowerCase().includes(search.toLowerCase()) || (p.email || '').toLowerCase().includes(search.toLowerCase()));
-  }, [search, status]);
+    if (accountType !== 'all') q = q.eq('account_type', accountType);
+    const [{ data: profs, error: profErr }, { data: coups, error: coupErr }] = await Promise.all([
+      q,
+      supabase.from('coupons').select('user_id, savings, created_at'),
+    ]);
+    if (profErr) console.error('profiles fetch', profErr);
+    if (coupErr) console.error('coupons fetch', coupErr);
+    const byUser = new Map<string, any[]>();
+    (coups || []).forEach((c: any) => {
+      const arr = byUser.get(c.user_id) || [];
+      arr.push(c);
+      byUser.set(c.user_id, arr);
+    });
+    const merged = (profs || []).map((p: any) => ({ ...p, coupons: byUser.get(p.user_id) || [] }));
+    return merged.filter((p: any) => !search || (p.name || '').toLowerCase().includes(search.toLowerCase()) || (p.email || '').toLowerCase().includes(search.toLowerCase()));
+  }, [search, status, accountType]);
 
   const toggleActive = async (p: any) => {
     await supabase.from('profiles').update({ is_active: !p.is_active }).eq('id', p.id);
