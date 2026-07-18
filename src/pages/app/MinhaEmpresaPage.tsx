@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft, CheckCircle2, AlertCircle, Loader2, Clock, XCircle, Settings, Package, Ticket, LucideIcon } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { CouponIssuer } from './CouponIssuer';
@@ -91,6 +92,7 @@ function MinhaEmpresaHub({ onBack, onOpen }: { onBack: () => void; onOpen: (v: E
 
 function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; onBack: () => void }) {
   const { user, profile, refreshProfile } = useAuth();
+  const qc = useQueryClient();
   const [form, setForm] = useState<Form>({
     company: '',
     segment: '',
@@ -175,6 +177,8 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
 
       if (partnerMutation.error) throw partnerMutation.error;
       if (partnerMutation.data) setPartner(partnerMutation.data as PartnerSummary);
+      qc.invalidateQueries({ queryKey: ['partners', 'active'] });
+      qc.invalidateQueries({ queryKey: ['my-products', user.id] });
       setMsg({ kind: 'ok', text: 'Alterações salvas com sucesso.' });
     } catch (err: any) {
       console.error('Salvar empresa erro:', err);
