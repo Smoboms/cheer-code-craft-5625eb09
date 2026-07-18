@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Lock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { trackEvent } from '@/lib/analytics';
 
 type Article = {
   id: string;
@@ -27,8 +28,14 @@ export default function PublicJournalArticle() {
         .select('id,title,category,excerpt,body,cover_url,published_at')
         .eq('id', id)
         .maybeSingle();
-      setArticle((data as any) || null);
+      const art = (data as any) || null;
+      setArticle(art);
       setLoading(false);
+      if (art) {
+        trackEvent('article_view', art.id, art.title);
+        // Paywall é exibido para todos os visitantes do portal público
+        trackEvent('paywall_hit', art.id, art.title, { source: 'journal_article' });
+      }
     })();
   }, [id]);
 
@@ -83,10 +90,14 @@ export default function PublicJournalArticle() {
             Torne-se um Associado Rarques e leia todas as matérias completas do R.Journal.
           </p>
           <Link
-            to="/app"
+            to="/seja-membro"
+            onClick={() => {
+              trackEvent('paywall_login_click', article.id, article.title, { source: 'journal_article' });
+              trackEvent('seja_associado_click', 'paywall_journal', article.title, { origin: 'paywall_journal' });
+            }}
             className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-4 py-2 text-sm transition-colors"
           >
-            Acessar Área do Associado
+            Assine para continuar lendo
           </Link>
         </div>
       </div>

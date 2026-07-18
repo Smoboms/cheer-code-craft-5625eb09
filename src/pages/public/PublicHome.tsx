@@ -9,6 +9,7 @@ import { useApprovedProfessionals } from '@/data/useProfessionals';
 import { CardCarousel } from '@/components/public/CardCarousel';
 import { trackEvent } from '@/lib/analytics';
 import { WeatherHomeBlock } from '@/components/public/WeatherHomeBlock';
+import { AgroHomeBlock } from '@/components/public/AgroHomeBlock';
 import { supabase } from '@/integrations/supabase/client';
 import { useSeo } from '@/lib/useSeo';
 
@@ -125,24 +126,28 @@ export default function PublicHome() {
         </div>
         <Link
           to="/seja-membro"
+          onClick={() => trackEvent('seja_associado_click', 'home_card', 'Ser Membro', { origin: 'home_card_rarques' })}
           className="shrink-0 bg-yellow-500 hover:bg-yellow-400 text-black px-2 py-1 text-[10px] font-semibold inline-flex items-center gap-1"
         >
           Ser Membro <ArrowRight size={10} />
         </Link>
       </div>
 
-      {/* 5º — Widget do Clima */}
-      <WeatherHomeBlock />
+      {/* 5º — Widgets lado a lado: Clima + Agro */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <WeatherHomeBlock />
+        <AgroHomeBlock />
+      </div>
 
 
       {/* Serviços Mais Procurados — ícones circulares dos atalhos_da_casa */}
-      {atalhos.length > 0 && (
+      {atalhos.filter(a => a.link !== '/agro').length > 0 && (
         <div className="mb-6 mt-4">
           <div className="flex items-end justify-between mb-3">
             <h2 className="text-white font-bold text-lg">Serviços Mais Procurados</h2>
           </div>
           <div className="grid grid-cols-4 md:grid-cols-8 gap-3">
-            {atalhos.map((a) => {
+            {atalhos.filter(a => a.link !== '/agro').map((a) => {
               const external = /^https?:\/\//.test(a.link);
               const inner = (
                 <>

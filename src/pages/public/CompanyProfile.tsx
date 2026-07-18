@@ -200,6 +200,7 @@ export default function CompanyProfile() {
         </ul>
         <Link
           to="/seja-membro"
+          onClick={() => import('@/lib/analytics').then(m => m.trackEvent('seja_associado_click', 'company_profile', 'Conheça os Benefícios', { origin: 'company_profile' }))}
           className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-4 py-2 text-sm transition-colors"
         >
           Conheça os Benefícios

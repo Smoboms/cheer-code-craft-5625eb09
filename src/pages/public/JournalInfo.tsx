@@ -47,6 +47,7 @@ export default function JournalInfo() {
           </Link>
           <Link
             to="/seja-membro"
+            onClick={() => import('@/lib/analytics').then(m => m.trackEvent('seja_associado_click', 'journal_info_hero', 'Assinar como Associado', { origin: 'journal_info_hero' }))}
             className="inline-flex items-center gap-2 border border-gray-700 hover:border-yellow-500 text-white font-semibold px-5 py-3 text-sm transition-colors"
           >
             Assinar como Associado
@@ -83,6 +84,7 @@ export default function JournalInfo() {
       <div className="text-center">
         <Link
           to="/seja-membro"
+          onClick={() => import('@/lib/analytics').then(m => m.trackEvent('seja_associado_click', 'journal_info_footer', 'Assinar o R.Journal', { origin: 'journal_info_footer' }))}
           className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-6 py-3 text-sm transition-colors"
         >
           Assinar o R.Journal <ArrowRight size={14} />

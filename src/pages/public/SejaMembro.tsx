@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { trackEvent } from '@/lib/analytics';
 import {
   CreditCard, Gift, Percent, Users, Sparkles, Crown, Award, Building2,
   ShoppingBag, Newspaper, Wrench, Scale, TrendingUp, ArrowRight, CheckCircle2,
@@ -51,6 +52,7 @@ export default function SejaMembro() {
         <div className="flex flex-wrap gap-3">
           <Link
             to="/app"
+            onClick={() => trackEvent('seja_associado_click', 'seja_membro_hero', 'Quero ser um Associado', { origin: 'seja_membro_hero' })}
             className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-5 py-3 text-sm transition-colors"
           >
             Quero ser um Associado <ArrowRight size={14} />
@@ -99,6 +101,7 @@ export default function SejaMembro() {
         <p className="text-gray-300 text-sm mb-5">Junte-se ao ecossistema Rarques.</p>
         <Link
           to="/app"
+          onClick={() => trackEvent('seja_associado_click', 'seja_membro_footer', 'Quero fazer parte da Rarques', { origin: 'seja_membro_footer' })}
           className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-6 py-3 text-sm transition-colors"
         >
           Quero fazer parte da Rarques <ArrowRight size={14} />
