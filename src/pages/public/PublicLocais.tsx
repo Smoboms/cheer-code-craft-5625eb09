@@ -39,8 +39,6 @@ export default function PublicLocais() {
   const tipo = params.get('tipo') || '';
   const cat = params.get('cat') || '';
 
-  const [lugares, setLugares] = useState<Lugar[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Lugar | null>(null);
 
   useSeo({
@@ -49,18 +47,17 @@ export default function PublicLocais() {
     canonical: `${window.location.origin}/locais`,
   });
 
-
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
+  const { data: lugares = [], isLoading: loading } = useQuery({
+    queryKey: ['lugares', 'public', tipo || null, cat || null],
+    queryFn: async (): Promise<Lugar[]> => {
       let q: any = supabase.from('lugares').select('*').eq('ativo', true).order('nome');
       if (tipo) q = q.eq('tipo', tipo);
       if (cat) q = q.ilike('categoria', `%${cat}%`);
       const { data } = await q;
-      setLugares((data as Lugar[]) || []);
-      setLoading(false);
-    })();
-  }, [tipo, cat]);
+      return (data as Lugar[]) || [];
+    },
+    ...CACHE.PUBLIC,
+  });
 
   const categorias = useMemo(
     () => Array.from(new Set(lugares.map((l) => l.categoria).filter(Boolean))) as string[],
