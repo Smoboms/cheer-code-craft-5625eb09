@@ -107,34 +107,37 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
   const initialLoadedRef = useState({ done: false })[0];
   const saveTimer = useState<{ t: any }>({ t: null })[0];
 
-  useEffect(() => {
-    if (profile && !initialLoadedRef.done) {
-      setForm({
-        company: profile.company || '',
-        segment: profile.segment || '',
-        bio: profile.bio || '',
-        phone: profile.phone || '',
-        what_i_offer: profile.what_i_offer || '',
-        what_i_seek: profile.what_i_seek || '',
-        avatar_url: profile.avatar_url || '',
-      });
-      initialLoadedRef.done = true;
-    }
-  }, [profile, initialLoadedRef]);
-
+  // Carrega o formulário a partir da linha em `partners` (fonte da verdade da empresa).
   useEffect(() => {
     if (!user) return;
     (async () => {
       const { data } = await supabase
         .from('partners')
-        .select(PARTNER_SELECT)
+        .select(PARTNER_SELECT + ', profile_image_url, logo_url, whatsapp')
         .eq('created_by', user.id)
         .order('updated_at', { ascending: false })
         .limit(1)
         .maybeSingle();
-      if (data) setPartner(data as PartnerSummary);
+      if (data) {
+        setPartner(data as PartnerSummary);
+        if (!initialLoadedRef.done) {
+          setForm({
+            company: (data as any).name || '',
+            segment: (data as any).category || '',
+            bio: (data as any).description || '',
+            phone: (data as any).phone || (data as any).whatsapp || '',
+            what_i_offer: '',
+            what_i_seek: '',
+            avatar_url: (data as any).profile_image_url || (data as any).logo_url || '',
+          });
+          initialLoadedRef.done = true;
+        }
+      } else if (!initialLoadedRef.done) {
+        // Nenhuma empresa cadastrada ainda: começa em branco (não puxa do perfil pessoal).
+        initialLoadedRef.done = true;
+      }
     })();
-  }, [user]);
+  }, [user, initialLoadedRef]);
 
   const requiredOk = !!(form.company.trim() && form.phone.trim() && form.bio.trim());
 
@@ -142,40 +145,46 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
     if (!user) return;
     setAutoSaving(true);
     setMsg(null);
-    const { error } = await supabase.from('profiles').update(next).eq('user_id', user.id);
-    if (error) { setAutoSaving(false); setMsg('Erro ao salvar. Tente novamente.'); return; }
 
-    if (requiredOk) {
-      const { data: existingRows } = await supabase
-        .from('partners')
-        .select(PARTNER_SELECT)
-        .eq('created_by', user.id)
-        .order('updated_at', { ascending: false })
-        .limit(1);
-      const existing = existingRows?.[0] as PartnerSummary | undefined;
-      const isCompanyAccount = profile?.account_type === 'company';
-      const partnerPayload: any = {
-        name: next.company.trim(),
-        category: next.segment.trim() || existing?.category || 'Geral',
-        description: next.bio || null,
-        phone: next.phone || null,
-        whatsapp: next.phone || null,
-        profile_image_url: next.avatar_url || null,
-        logo_url: next.avatar_url || null,
-        is_active: true,
-      };
-      if (!existing) {
-        partnerPayload.status = isCompanyAccount ? 'pending_curation' : 'approved';
-      }
-      const partnerMutation = existing?.id
-        ? await supabase.from('partners').update(partnerPayload).eq('id', existing.id).select(PARTNER_SELECT).single()
-        : await supabase.from('partners').insert({ ...partnerPayload, created_by: user.id }).select(PARTNER_SELECT).single();
-      if (partnerMutation.data) setPartner(partnerMutation.data as PartnerSummary);
+    if (!requiredOk) {
+      setAutoSaving(false);
+      return; // Ainda sem dados mínimos: não cria linha em `partners`.
     }
+
+    const { data: existingRows } = await supabase
+      .from('partners')
+      .select(PARTNER_SELECT)
+      .eq('created_by', user.id)
+      .order('updated_at', { ascending: false })
+      .limit(1);
+    const existing = existingRows?.[0] as PartnerSummary | undefined;
+    const isCompanyAccount = profile?.account_type === 'company';
+    const partnerPayload: any = {
+      name: next.company.trim(),
+      category: next.segment.trim() || existing?.category || 'Geral',
+      description: next.bio || null,
+      phone: next.phone || null,
+      whatsapp: next.phone || null,
+      profile_image_url: next.avatar_url || null,
+      logo_url: next.avatar_url || null,
+      is_active: true,
+    };
+    if (!existing) {
+      partnerPayload.status = isCompanyAccount ? 'pending_curation' : 'approved';
+    }
+    const partnerMutation = existing?.id
+      ? await supabase.from('partners').update(partnerPayload).eq('id', existing.id).select(PARTNER_SELECT).single()
+      : await supabase.from('partners').insert({ ...partnerPayload, created_by: user.id }).select(PARTNER_SELECT).single();
+
+    if (partnerMutation.error) {
+      setAutoSaving(false);
+      setMsg('Erro ao salvar. Tente novamente.');
+      return;
+    }
+    if (partnerMutation.data) setPartner(partnerMutation.data as PartnerSummary);
 
     setAutoSaving(false);
     setMsg('Salvo automaticamente.');
-    await refreshProfile();
   };
 
   const scheduleSave = (next: Form) => {
