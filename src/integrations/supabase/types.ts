@@ -915,6 +915,7 @@ export type Database = {
       pilar_conteudos: {
         Row: {
           ativo: boolean
+          banner_url: string | null
           city_id: string | null
           created_at: string
           data_evento: string | null
@@ -925,6 +926,7 @@ export type Database = {
           local: string | null
           ordem: number
           pilar: Database["public"]["Enums"]["pilar_kind"]
+          publicado: boolean
           subtitulo: string | null
           tipo: Database["public"]["Enums"]["pilar_tipo"]
           titulo: string
@@ -932,6 +934,7 @@ export type Database = {
         }
         Insert: {
           ativo?: boolean
+          banner_url?: string | null
           city_id?: string | null
           created_at?: string
           data_evento?: string | null
@@ -942,6 +945,7 @@ export type Database = {
           local?: string | null
           ordem?: number
           pilar: Database["public"]["Enums"]["pilar_kind"]
+          publicado?: boolean
           subtitulo?: string | null
           tipo: Database["public"]["Enums"]["pilar_tipo"]
           titulo: string
@@ -949,6 +953,7 @@ export type Database = {
         }
         Update: {
           ativo?: boolean
+          banner_url?: string | null
           city_id?: string | null
           created_at?: string
           data_evento?: string | null
@@ -959,6 +964,7 @@ export type Database = {
           local?: string | null
           ordem?: number
           pilar?: Database["public"]["Enums"]["pilar_kind"]
+          publicado?: boolean
           subtitulo?: string | null
           tipo?: Database["public"]["Enums"]["pilar_tipo"]
           titulo?: string
@@ -970,6 +976,168 @@ export type Database = {
             columns: ["city_id"]
             isOneToOne: false
             referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pilar_cronograma: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          horario: string
+          id: string
+          ordem: number
+          pilar_conteudo_id: string
+          titulo: string
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          horario: string
+          id?: string
+          ordem?: number
+          pilar_conteudo_id: string
+          titulo: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          horario?: string
+          id?: string
+          ordem?: number
+          pilar_conteudo_id?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pilar_cronograma_pilar_conteudo_id_fkey"
+            columns: ["pilar_conteudo_id"]
+            isOneToOne: false
+            referencedRelation: "pilar_conteudos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pilar_empresas: {
+        Row: {
+          created_at: string
+          id: string
+          logo_url: string | null
+          nome: string
+          ordem: number
+          partner_id: string | null
+          pilar_conteudo_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          nome: string
+          ordem?: number
+          partner_id?: string | null
+          pilar_conteudo_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          nome?: string
+          ordem?: number
+          partner_id?: string | null
+          pilar_conteudo_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pilar_empresas_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pilar_empresas_pilar_conteudo_id_fkey"
+            columns: ["pilar_conteudo_id"]
+            isOneToOne: false
+            referencedRelation: "pilar_conteudos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pilar_galeria: {
+        Row: {
+          created_at: string
+          id: string
+          imagem_url: string
+          legenda: string | null
+          ordem: number
+          pilar_conteudo_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          imagem_url: string
+          legenda?: string | null
+          ordem?: number
+          pilar_conteudo_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          imagem_url?: string
+          legenda?: string | null
+          ordem?: number
+          pilar_conteudo_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pilar_galeria_pilar_conteudo_id_fkey"
+            columns: ["pilar_conteudo_id"]
+            isOneToOne: false
+            referencedRelation: "pilar_conteudos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pilar_palestrantes: {
+        Row: {
+          bio: string | null
+          cargo: string | null
+          created_at: string
+          foto_url: string | null
+          id: string
+          nome: string
+          ordem: number
+          pilar_conteudo_id: string
+          updated_at: string
+        }
+        Insert: {
+          bio?: string | null
+          cargo?: string | null
+          created_at?: string
+          foto_url?: string | null
+          id?: string
+          nome: string
+          ordem?: number
+          pilar_conteudo_id: string
+          updated_at?: string
+        }
+        Update: {
+          bio?: string | null
+          cargo?: string | null
+          created_at?: string
+          foto_url?: string | null
+          id?: string
+          nome?: string
+          ordem?: number
+          pilar_conteudo_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pilar_palestrantes_pilar_conteudo_id_fkey"
+            columns: ["pilar_conteudo_id"]
+            isOneToOne: false
+            referencedRelation: "pilar_conteudos"
             referencedColumns: ["id"]
           },
         ]
