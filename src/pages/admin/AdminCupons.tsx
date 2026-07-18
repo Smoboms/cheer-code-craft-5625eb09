@@ -7,11 +7,21 @@ import { formatBRL } from '@/lib/utils';
 export default function AdminCupons() {
   const dr = useDateRange('30d');
   const { data, loading } = useAsync(async () => {
-    const { data: coupons } = await supabase.from('coupons')
-      .select('*, partner:partners(name), profile:profiles!inner(name, email, user_id)')
+    // coupons has no FK to profiles (coupons.user_id → auth.users), so we can't embed profiles!inner.
+    // Fetch coupons + partners embed, then hydrate profile data with a second query keyed by user_id.
+    const { data: rawCoupons, error: coupErr } = await supabase.from('coupons')
+      .select('*, partner:partners(name)')
       .gte('created_at', dr.range.from).lte('created_at', dr.range.to)
       .order('created_at', { ascending: false });
-    const list = coupons || [];
+    if (coupErr) console.error('coupons fetch', coupErr);
+    const rows = rawCoupons || [];
+    const userIds = Array.from(new Set(rows.map((c: any) => c.user_id).filter(Boolean)));
+    let profileMap = new Map<string, any>();
+    if (userIds.length) {
+      const { data: profs } = await supabase.from('profiles').select('user_id, name, email').in('user_id', userIds);
+      (profs || []).forEach((p: any) => profileMap.set(p.user_id, p));
+    }
+    const list = rows.map((c: any) => ({ ...c, profile: profileMap.get(c.user_id) || null }));
     const partnerRank = new Map<string, { name: string; n: number; sum: number }>();
     const userRank = new Map<string, { name: string; n: number; sum: number }>();
     list.forEach((c: any) => {
@@ -19,8 +29,8 @@ export default function AdminCupons() {
       const pv = partnerRank.get(pk) || { name: pk, n: 0, sum: 0 };
       pv.n += 1; pv.sum += Number(c.savings || 0);
       partnerRank.set(pk, pv);
-      const uk = c.profile?.email || '—';
-      const uv = userRank.get(uk) || { name: c.profile?.name || uk, n: 0, sum: 0 };
+      const uk = c.profile?.email || c.user_id || '—';
+      const uv = userRank.get(uk) || { name: c.profile?.name || c.profile?.email || uk, n: 0, sum: 0 };
       uv.n += 1; uv.sum += Number(c.savings || 0);
       userRank.set(uk, uv);
     });
