@@ -19,12 +19,6 @@ interface Form {
   avatar_url: string;
 }
 
-interface PartnerConfig {
-  discount_percent: string;
-  cashback_enabled: boolean;
-  cashback_percent: string;
-}
-
 type PartnerSummary = {
   id: string;
   name: string;
@@ -37,10 +31,12 @@ type PartnerSummary = {
   discount_percent?: number | null;
   cashback_enabled?: boolean | null;
   cashback_percent?: number | null;
+  cashback_feature_unlocked?: boolean | null;
+  products_feature_unlocked?: boolean | null;
   rejection_reason?: string | null;
 };
 
-const PARTNER_SELECT = 'id, name, category, phone, description, created_by, status, is_active, discount_percent, cashback_enabled, cashback_percent, rejection_reason';
+const PARTNER_SELECT = 'id, name, category, phone, description, created_by, status, is_active, discount_percent, cashback_enabled, cashback_percent, cashback_feature_unlocked, products_feature_unlocked, rejection_reason';
 const AVATAR_SIGNED_TTL = 60 * 60 * 24 * 365;
 
 type View = 'hub' | 'config' | 'products' | 'coupon';
