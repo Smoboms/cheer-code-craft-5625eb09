@@ -185,6 +185,16 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
           <p className="text-white font-semibold text-xs">Jurídico Empresarial</p>
           <p className="text-gray-400 text-[10px]">Assessoria dedicada</p>
         </button>
+        <button onClick={() => onOpenMore('panorama')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
+          <Globe size={18} className="text-blue-400 mb-1.5" />
+          <p className="text-white font-semibold text-xs">Panorama</p>
+          <p className="text-gray-400 text-[10px]">Análise econômica</p>
+        </button>
+        <button onClick={() => onOpenMore('beneficios')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
+          <Gift size={18} className="text-green-400 mb-1.5" />
+          <p className="text-white font-semibold text-xs">Benefícios</p>
+          <p className="text-gray-400 text-[10px]">Parceiros e descontos</p>
+        </button>
       </div>
     </div>
   );
