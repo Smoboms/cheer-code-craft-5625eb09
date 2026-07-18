@@ -1,25 +1,45 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid, Columns3, Building } from 'lucide-react';
+import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid, Columns3, Building, Target } from 'lucide-react';
 import { useState } from 'react';
 
-const NAV = [
-  { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/admin/empresas', label: 'Empresas', icon: Building2 },
-  { to: '/admin/profissionais', label: 'Profissionais', icon: Wrench },
-  { to: '/admin/mercado', label: 'Mercado', icon: ShoppingBag },
-  { to: '/admin/mercado-categorias', label: 'Categorias do Mercado', icon: Layers },
-  { to: '/admin/pilares', label: 'Pilares', icon: Columns3 },
-  { to: '/admin/journal', label: 'R.Journal', icon: Newspaper },
-  { to: '/admin/categorias', label: 'Categorias', icon: Tags },
-  { to: '/admin/associados', label: 'Associados', icon: Users },
-  { to: '/admin/cupons', label: 'Cupons', icon: Ticket },
-  { to: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
-  { to: '/admin/banners', label: 'Banners', icon: Megaphone },
-  { to: '/admin/locais', label: 'Locais', icon: MapPin },
-  { to: '/admin/atalhos', label: 'Atalhos da Home', icon: LayoutGrid },
-  { to: '/admin/cidades', label: 'Cidades', icon: Building },
-  
+const NAV_GROUPS: { title: string; items: { to: string; label: string; icon: any; end?: boolean }[] }[] = [
+  {
+    title: 'Gestão',
+    items: [
+      { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
+      { to: '/admin/empresas', label: 'Empresas', icon: Building2 },
+      { to: '/admin/associados', label: 'Associados', icon: Users },
+      { to: '/admin/profissionais', label: 'Profissionais', icon: Wrench },
+    ],
+  },
+  {
+    title: 'Conteúdo',
+    items: [
+      { to: '/admin/journal', label: 'R.Journal', icon: Newspaper },
+      { to: '/admin/categorias', label: 'Categorias', icon: Tags },
+      { to: '/admin/banners', label: 'Banners', icon: Megaphone },
+      { to: '/admin/atalhos', label: 'Atalhos da Home', icon: LayoutGrid },
+    ],
+  },
+  {
+    title: 'Ecossistema',
+    items: [
+      { to: '/admin/pilares', label: 'Pilares', icon: Columns3 },
+      { to: '/admin/mercado', label: 'Mercado', icon: ShoppingBag },
+      { to: '/admin/mercado-categorias', label: 'Categorias do Mercado', icon: Layers },
+      { to: '/admin/locais', label: 'Locais', icon: MapPin },
+      { to: '/admin/cidades', label: 'Cidades', icon: Building },
+    ],
+  },
+  {
+    title: 'Inteligência',
+    items: [
+      { to: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
+      { to: '/admin/cupons', label: 'Cupons', icon: Ticket },
+      { to: '/admin/metas', label: 'Metas', icon: Target },
+    ],
+  },
 ];
 
 export default function AdminLayout() {
@@ -63,19 +83,24 @@ export default function AdminLayout() {
           <div className="text-2xl text-yellow-500" style={{ fontFamily: 'UnifrakturCook, serif' }}>Rarques</div>
           <div className="text-[11px] uppercase tracking-widest text-gray-400 mt-1">Painel Adm</div>
         </div>
-        <nav className="flex-1 py-3">
-          {NAV.map(item => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-2.5 text-sm border-l-2 ${isActive ? 'border-yellow-500 bg-white/5 text-white' : 'border-transparent text-gray-300 hover:bg-white/5'}`
-              }
-            >
-              <item.icon size={16} />
-              {item.label}
-            </NavLink>
+        <nav className="flex-1 py-3 overflow-y-auto">
+          {NAV_GROUPS.map(group => (
+            <div key={group.title} className="mb-3">
+              <div className="px-4 py-1 text-[10px] uppercase tracking-widest text-gray-500">{group.title}</div>
+              {group.items.map(item => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-4 py-2.5 text-sm border-l-2 ${isActive ? 'border-yellow-500 bg-white/5 text-white' : 'border-transparent text-gray-300 hover:bg-white/5'}`
+                  }
+                >
+                  <item.icon size={16} />
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
           ))}
         </nav>
         <button onClick={() => navigate('/app')} className="flex items-center gap-2 px-4 py-3 text-xs text-gray-400 hover:text-white border-t border-white/10">
@@ -96,19 +121,24 @@ export default function AdminLayout() {
       </div>
       {mobileOpen && (
         <div className="md:hidden fixed top-14 left-0 right-0 bottom-0 z-40 bg-[#070c19] overflow-y-auto">
-          {NAV.map(item => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              onClick={() => setMobileOpen(false)}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 text-sm border-l-2 ${isActive ? 'border-yellow-500 bg-white/5 text-white' : 'border-transparent text-gray-300'}`
-              }
-            >
-              <item.icon size={16} />
-              {item.label}
-            </NavLink>
+          {NAV_GROUPS.map(group => (
+            <div key={group.title} className="mb-2">
+              <div className="px-4 py-2 text-[10px] uppercase tracking-widest text-gray-500">{group.title}</div>
+              {group.items.map(item => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  onClick={() => setMobileOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-4 py-3 text-sm border-l-2 ${isActive ? 'border-yellow-500 bg-white/5 text-white' : 'border-transparent text-gray-300'}`
+                  }
+                >
+                  <item.icon size={16} />
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
           ))}
         </div>
       )}

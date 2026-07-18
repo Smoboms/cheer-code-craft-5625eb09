@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Btn, Card, Input, Label, Modal, PageHeader, Select, Textarea, EmptyState } from './ui';
 import { useAsync } from './hooks';
@@ -7,11 +8,22 @@ import { Pencil, Trash2, Check, X, Star } from 'lucide-react';
 type Partner = any;
 
 export default function AdminEmpresas() {
+  const [params, setParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [city, setCity] = useState('');
   const [status, setStatus] = useState<'all' | 'approved' | 'pending_curation' | 'rejected'>('all');
+  const [extraFilter, setExtraFilter] = useState<'none' | 'no_photo' | 'incomplete'>('none');
   const [editing, setEditing] = useState<Partner | null>(null);
   const [creating, setCreating] = useState(false);
+
+  useEffect(() => {
+    const s = params.get('status');
+    if (s === 'approved' || s === 'pending_curation' || s === 'rejected') setStatus(s);
+    const f = params.get('filter');
+    if (f === 'no_photo' || f === 'incomplete') setExtraFilter(f);
+  }, [params]);
+
+  const clearFilter = () => { setExtraFilter('none'); setStatus('all'); setParams({}); };
 
   const { data, loading, reload } = useAsync(async () => {
     let q = supabase.from('partners').select('*, coupons(purchase_amount)').order('created_at', { ascending: false });
@@ -21,9 +33,15 @@ export default function AdminEmpresas() {
     return (data || []).filter((p: any) => {
       if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
       if (city && !(p.city || '').toLowerCase().includes(city.toLowerCase())) return false;
+      if (extraFilter === 'no_photo' && (p.logo_url || p.profile_image_url || p.banner_url)) return false;
+      if (extraFilter === 'incomplete') {
+        const hasContact = !!(p.whatsapp || p.phone || p.email);
+        const complete = !!p.name && hasContact && !!p.description;
+        if (complete) return false;
+      }
       return true;
     });
-  }, [search, city, status]);
+  }, [search, city, status, extraFilter]);
 
   const cats = useAsync(async () => {
     const { data } = await supabase.from('partner_categories').select('*').order('name');
@@ -68,7 +86,17 @@ export default function AdminEmpresas() {
             <option value="pending_curation">Pendentes de curadoria</option>
             <option value="rejected">Recusadas</option>
           </Select>
+          <Select value={extraFilter} onChange={e => setExtraFilter(e.target.value as any)}>
+            <option value="none">Sem filtro extra</option>
+            <option value="no_photo">Sem foto cadastrada</option>
+            <option value="incomplete">Cadastro incompleto</option>
+          </Select>
         </div>
+        {(extraFilter !== 'none' || status !== 'all') && (
+          <div className="mt-2 text-xs text-gray-400">
+            Filtros ativos <button onClick={clearFilter} className="ml-2 underline text-yellow-400">limpar</button>
+          </div>
+        )}
       </Card>
 
       {loading ? <EmptyState>Carregando…</EmptyState> :
