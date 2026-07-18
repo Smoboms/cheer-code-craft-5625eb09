@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Btn, Card, EmptyState, Input, Label, PageHeader, Select, Textarea, Modal } from './ui';
 import { Star, StarOff, Check, X, Trash2, Edit3 } from 'lucide-react';
