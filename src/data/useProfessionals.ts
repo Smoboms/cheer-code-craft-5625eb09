@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { CACHE } from '@/lib/queryConfig';
 
 export interface Professional {
   id: string;
@@ -23,31 +24,25 @@ export interface ProfessionalCategory {
 }
 
 export function useProfessionalCategories() {
-  const [categories, setCategories] = useState<ProfessionalCategory[]>([]);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
+  const { data, isLoading } = useQuery({
+    queryKey: ['professional-categories'],
+    queryFn: async (): Promise<ProfessionalCategory[]> => {
       const { data, error } = await (supabase as any)
         .from('professional_categories')
         .select('*')
         .order('name');
-      if (cancelled) return;
       if (error) console.error(error);
-      setCategories((data as any) || []);
-      setLoading(false);
-    })();
-    return () => { cancelled = true; };
-  }, []);
-  return { categories, loading };
+      return (data as any) || [];
+    },
+    ...CACHE.PUBLIC,
+  });
+  return { categories: data ?? [], loading: isLoading };
 }
 
 export function useApprovedProfessionals(categorySlug?: string) {
-  const [items, setItems] = useState<Professional[]>([]);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
+  const { data, isLoading } = useQuery({
+    queryKey: ['professionals', 'approved', categorySlug ?? null],
+    queryFn: async (): Promise<Professional[]> => {
       let q = (supabase as any)
         .from('professionals')
         .select('*')
@@ -56,12 +51,10 @@ export function useApprovedProfessionals(categorySlug?: string) {
         .order('created_at', { ascending: false });
       if (categorySlug) q = q.eq('category_slug', categorySlug);
       const { data, error } = await q;
-      if (cancelled) return;
       if (error) console.error(error);
-      setItems((data as any) || []);
-      setLoading(false);
-    })();
-    return () => { cancelled = true; };
-  }, [categorySlug]);
-  return { items, loading };
+      return (data as any) || [];
+    },
+    ...CACHE.PUBLIC,
+  });
+  return { items: data ?? [], loading: isLoading };
 }
