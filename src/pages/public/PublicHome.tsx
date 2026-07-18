@@ -216,7 +216,7 @@ export default function PublicHome() {
                 >
                   <div className="aspect-video bg-gray-800 shrink-0 flex items-center justify-center overflow-hidden">
                     {img ? (
-                      <img src={img} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                      <img src={img} alt={p.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                     ) : (
                       <Icons.Building2 className="w-10 h-10 opacity-30 text-gray-500" />
                     )}
@@ -256,7 +256,7 @@ export default function PublicHome() {
               >
                 <div className="aspect-video bg-gray-800 shrink-0 flex items-center justify-center overflow-hidden">
                   {p.photo_url ? (
-                    <img src={p.photo_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                    <img src={p.photo_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   ) : (
                     <Icons.Wrench className="w-10 h-10 opacity-30 text-gray-500" />
                   )}
@@ -291,7 +291,7 @@ export default function PublicHome() {
                 >
                   <div className="aspect-video bg-gray-800 shrink-0 flex items-center justify-center overflow-hidden">
                     {img ? (
-                      <img src={img} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                      <img src={img} alt={p.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                     ) : (
                       <Icons.ShoppingBag className="w-10 h-10 opacity-30 text-gray-500" />
                     )}
@@ -327,7 +327,7 @@ export default function PublicHome() {
             >
               <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950 shrink-0 overflow-hidden">
                 {a.cover_url && (
-                  <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" />
+                  <img src={a.cover_url} alt={a.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 )}
               </div>
               <div className="p-3 flex-1 flex flex-col">
@@ -425,7 +425,7 @@ function PublicBannerBlock({ banner }: { banner: ReturnType<typeof usePublicBann
           rel="noreferrer"
           className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors aspect-[16/9] lg:aspect-[32/9] bg-[#0b1a3a]"
         >
-          <img src={current.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={current.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" fetchPriority="high" decoding="async" />
         </a>
         {slides.length > 1 && (
           <div className="flex justify-center gap-1.5 mt-2">
@@ -448,7 +448,7 @@ function PublicBannerBlock({ banner }: { banner: ReturnType<typeof usePublicBann
       className="relative block overflow-hidden border border-yellow-500/40 hover:border-yellow-400 transition-colors mb-4 aspect-[16/9] lg:aspect-[32/9] bg-[#0b1a3a]"
     >
       {banner.imageUrl && (
-        <img src={banner.imageUrl} alt={banner.title || ''} className="absolute inset-0 w-full h-full object-cover" />
+        <img src={banner.imageUrl} alt={banner.title || ''} className="absolute inset-0 w-full h-full object-cover" fetchPriority="high" decoding="async" />
       )}
       {(banner.title || banner.text || banner.ctaLabel) && (
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-1.5">

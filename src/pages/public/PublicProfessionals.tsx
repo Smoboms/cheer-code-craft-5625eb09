@@ -148,7 +148,7 @@ function ProGrid({ items }: { items: any[] }) {
         >
           <div className="aspect-video bg-gray-800 shrink-0 flex items-center justify-center overflow-hidden">
             {p.photo_url ? (
-              <img src={p.photo_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+              <img src={p.photo_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
             ) : (
               <img src="/placeholder.svg" alt="" className="w-10 h-10 opacity-40" />
             )}

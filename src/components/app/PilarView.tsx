@@ -93,7 +93,7 @@ export function PilarView({ pilar, title, subtitle, badge, onBack }: Props) {
                 {conteudos.map(c => (
                   <div key={c.id} className="bg-gray-900 border border-gray-800 overflow-hidden">
                     {c.imagem_url ? (
-                      <img src={c.imagem_url} alt={c.titulo} loading="lazy" className="aspect-video w-full object-cover" />
+                      <img src={c.imagem_url} alt={c.titulo} loading="lazy" decoding="async" className="aspect-video w-full object-cover" />
                     ) : (
                       <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-950" />
                     )}
