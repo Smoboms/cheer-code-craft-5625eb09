@@ -70,6 +70,9 @@ export default function AdminAssociados() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <div className="text-white font-medium">{p.name || '(sem nome)'}</div>
+                      <span className="text-[10px] border border-white/20 text-gray-300 px-1.5 py-0.5 uppercase">
+                        {p.account_type === 'company' ? 'Empresa' : 'Cliente'}
+                      </span>
                       {!p.is_active && <span className="text-[10px] border border-red-500 text-red-400 px-1.5 py-0.5">INATIVO</span>}
                     </div>
                     <div className="text-xs text-gray-400 mt-0.5">{p.email} · {p.company || '—'}</div>
