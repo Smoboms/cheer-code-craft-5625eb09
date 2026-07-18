@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid, Columns3, Building } from 'lucide-react';
+import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid, Columns3, Building, Wheat } from 'lucide-react';
 import { useState } from 'react';
 
 const NAV = [
@@ -19,6 +19,7 @@ const NAV = [
   { to: '/admin/locais', label: 'Locais', icon: MapPin },
   { to: '/admin/atalhos', label: 'Atalhos da Home', icon: LayoutGrid },
   { to: '/admin/cidades', label: 'Cidades', icon: Building },
+  { to: '/admin/agro', label: 'Cotações Agro', icon: Wheat },
 ];
 
 export default function AdminLayout() {
