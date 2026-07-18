@@ -83,19 +83,24 @@ export default function AdminLayout() {
           <div className="text-2xl text-yellow-500" style={{ fontFamily: 'UnifrakturCook, serif' }}>Rarques</div>
           <div className="text-[11px] uppercase tracking-widest text-gray-400 mt-1">Painel Adm</div>
         </div>
-        <nav className="flex-1 py-3">
-          {NAV.map(item => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-2.5 text-sm border-l-2 ${isActive ? 'border-yellow-500 bg-white/5 text-white' : 'border-transparent text-gray-300 hover:bg-white/5'}`
-              }
-            >
-              <item.icon size={16} />
-              {item.label}
-            </NavLink>
+        <nav className="flex-1 py-3 overflow-y-auto">
+          {NAV_GROUPS.map(group => (
+            <div key={group.title} className="mb-3">
+              <div className="px-4 py-1 text-[10px] uppercase tracking-widest text-gray-500">{group.title}</div>
+              {group.items.map(item => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-4 py-2.5 text-sm border-l-2 ${isActive ? 'border-yellow-500 bg-white/5 text-white' : 'border-transparent text-gray-300 hover:bg-white/5'}`
+                  }
+                >
+                  <item.icon size={16} />
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
           ))}
         </nav>
         <button onClick={() => navigate('/app')} className="flex items-center gap-2 px-4 py-3 text-xs text-gray-400 hover:text-white border-t border-white/10">
