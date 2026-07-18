@@ -36,8 +36,6 @@ function parseFirstRow(html: string, tableId: string): Row | null {
 }
 
 async function fetchHtml(url: string): Promise<string> {
-  // Tenta direto no CEPEA; se o WAF bloquear (403 em IPs de datacenter),
-  // usa um proxy público de leitura como fallback (mantendo a fonte oficial).
   const headers = {
     'User-Agent':
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
@@ -46,14 +44,30 @@ async function fetchHtml(url: string): Promise<string> {
     'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
     Referer: 'https://www.cepea.esalq.usp.br/br/',
   };
-  const direct = await fetch(url, { headers }).catch(() => null);
-  if (direct && direct.ok) return await direct.text();
 
-  // Fallback: proxy público que replica a resposta HTML original
-  const proxied = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-  const r2 = await fetch(proxied, { headers: { 'User-Agent': headers['User-Agent'] } });
-  if (!r2.ok) throw new Error(`Falha ao buscar ${url}: HTTP ${direct?.status ?? 'n/a'} / proxy ${r2.status}`);
-  return await r2.text();
+  // 1) Direto no CEPEA
+  const direct = await fetch(url, { headers, redirect: 'follow' }).catch(() => null);
+  if (direct && direct.ok) {
+    const t = await direct.text();
+    if (t && t.length > 2000) return t;
+  }
+
+  // 2) Fallbacks públicos (r.jina.ai preserva o HTML; allorigins repassa cru)
+  const candidates = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    `https://r.jina.ai/${url}`,
+  ];
+  for (const c of candidates) {
+    try {
+      const r = await fetch(c, { headers: { 'User-Agent': headers['User-Agent'] } });
+      if (r.ok) {
+        const t = await r.text();
+        if (t && t.length > 2000) return t;
+      }
+    } catch (_) { /* tenta próximo */ }
+  }
+
+  throw new Error(`Falha ao buscar ${url}: fonte inacessível (WAF/bloqueio)`);
 }
 
 Deno.serve(async (req) => {
