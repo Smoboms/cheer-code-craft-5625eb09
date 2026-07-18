@@ -138,6 +138,7 @@ function ArticleForm({ article, categories, onClose, onSaved }: any) {
         <label className="flex items-center gap-2 text-sm text-gray-300 md:col-span-2">
           <input type="checkbox" checked={f.featured} onChange={e=>setF({...f, featured: e.target.checked})} /> Destaque (aparece em carrosséis)
         </label>
+        {err && <p className="md:col-span-2 text-sm text-red-400">{err}</p>}
       </div>
     </Modal>
   );
