@@ -190,6 +190,7 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
         memberCompany={currentUser.company}
         memberNumber={currentUser.memberNumber}
         memberPhoto={currentUser.photo}
+        cardTier={cardTier}
       />
     </div>
   );
