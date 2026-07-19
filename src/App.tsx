@@ -101,6 +101,7 @@ const App = () => (
                 <Route path="/locais" element={<PublicLocais />} />
                 <Route path="/seja-membro" element={<SejaMembro />} />
                 <Route path="/journal-info" element={<JournalInfo />} />
+                <Route path="/cartao" element={<PublicCardLookup />} />
                 <Route path="/cartao/:cardCode" element={<PublicCard />} />
               </Route>
               <Route path="/app" element={<Index />} />
