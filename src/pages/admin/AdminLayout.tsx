@@ -2,6 +2,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid, Columns3, Building, Target, DollarSign, ChevronDown, ShieldAlert } from 'lucide-react';
 import { useState } from 'react';
+import { DashboardSkeleton } from '@/components/ui/skeleton';
 
 // Fase 6 · T2 — Prefetch inteligente. Ao passar o mouse sobre um item do menu,
 // aciona o mesmo `import()` que o React.lazy usa em App.tsx. O chunk é baixado
