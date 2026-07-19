@@ -23,6 +23,7 @@ const PublicLocais = lazy(() => import("./pages/public/PublicLocais"));
 const SejaMembro = lazy(() => import("./pages/public/SejaMembro"));
 const JournalInfo = lazy(() => import("./pages/public/JournalInfo"));
 const PublicCard = lazy(() => import("./pages/public/PublicCard"));
+const PublicCardLookup = lazy(() => import("./pages/public/PublicCardLookup"));
 
 // Authenticated area — lazy
 const Index = lazy(() => import("./pages/Index.tsx"));
