@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Btn, Card, EmptyState, Input, Label, PageHeader } from './ui';
@@ -112,7 +113,7 @@ export default function AdminMercadoCategorias() {
         </div>
       </Card>
 
-      {loading ? <div className="text-gray-400 text-sm">Carregando…</div> :
+      {loading ? <CardGridSkeleton items={3} /> :
        !categories.length ? <EmptyState>Nenhuma categoria criada.</EmptyState> : (
         <div className="space-y-2">
           {[...categories].sort((a, b) => a.sort_order - b.sort_order).map((c) => {

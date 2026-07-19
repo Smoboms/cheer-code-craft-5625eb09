@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useMemo, useState } from 'react';
 import { ArrowLeft, Plus, Search, Loader2, Package } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';

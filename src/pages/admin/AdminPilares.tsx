@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Btn, Card, EmptyState, Input, Label, Modal, PageHeader, Select, Textarea } from './ui';
@@ -117,7 +118,7 @@ export default function AdminPilares() {
         </Select></div>
       </Card>
 
-      {loading ? <Card className="p-6 text-gray-400 text-sm">Carregando…</Card>
+      {loading ? <div className="p-2"><CardGridSkeleton items={3} /></div>
        : !rows.length ? <EmptyState>Nenhum conteúdo.</EmptyState> : (
         <div className="space-y-2">
           {rows.map((r: any) => (
@@ -261,7 +262,7 @@ function PalestrantesTab({ conteudoId }: { conteudoId: string }) {
       </div>
       <Btn onClick={add}>+ Adicionar palestrante</Btn>
       <div className="mt-4 space-y-2">
-        {loading ? <div className="text-gray-400 text-sm">Carregando…</div>
+        {loading ? <CardGridSkeleton items={3} />
           : !rows.length ? <div className="text-gray-500 text-sm">Nenhum palestrante.</div>
           : rows.map(r => (
             <Card key={r.id} className="p-2 flex justify-between items-center">
@@ -307,7 +308,7 @@ function EmpresasTab({ conteudoId }: { conteudoId: string }) {
       </div>
       <Btn onClick={add}>+ Adicionar empresa</Btn>
       <div className="mt-4 space-y-2">
-        {loading ? <div className="text-gray-400 text-sm">Carregando…</div>
+        {loading ? <CardGridSkeleton items={3} />
           : !rows.length ? <div className="text-gray-500 text-sm">Nenhuma empresa.</div>
           : rows.map(r => (
             <Card key={r.id} className="p-2 flex justify-between items-center">
@@ -338,7 +339,7 @@ function GaleriaTab({ conteudoId }: { conteudoId: string }) {
       </div>
       <Btn onClick={add}>+ Adicionar imagem</Btn>
       <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-2">
-        {loading ? <div className="text-gray-400 text-sm">Carregando…</div>
+        {loading ? <CardGridSkeleton items={3} />
           : !rows.length ? <div className="text-gray-500 text-sm">Galeria vazia.</div>
           : rows.map(r => (
             <div key={r.id} className="relative border border-white/10">
@@ -371,7 +372,7 @@ function CronogramaTab({ conteudoId }: { conteudoId: string }) {
       </div>
       <Btn onClick={add}>+ Adicionar item</Btn>
       <div className="mt-4 space-y-2">
-        {loading ? <div className="text-gray-400 text-sm">Carregando…</div>
+        {loading ? <CardGridSkeleton items={3} />
           : !rows.length ? <div className="text-gray-500 text-sm">Sem cronograma.</div>
           : rows.map(r => (
             <Card key={r.id} className="p-2 flex justify-between items-center">

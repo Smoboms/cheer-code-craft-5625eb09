@@ -198,7 +198,7 @@ export default function PublicHome() {
           <Link to="/empresas" className="text-gray-400 hover:text-white text-xs">Ver tudo →</Link>
         </div>
         {loadingPartners ? (
-          <p className="text-gray-500 text-sm">Carregando…</p>
+          <div><CardGridSkeleton items={3} /></div>
         ) : featuredCompanies.length === 0 ? (
           <div className="bg-gray-900 border border-gray-800 p-6 text-center">
             <p className="text-gray-400 text-sm">Ainda não há empresas cadastradas.</p>

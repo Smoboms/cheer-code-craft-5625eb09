@@ -112,7 +112,7 @@ export default function PublicProfessionals() {
       </div>
 
       {loading ? (
-        <p className="text-gray-500 text-sm text-center py-8">Carregando…</p>
+        <div className="py-6"><CardGridSkeleton items={6} /></div>
       ) : filtered.length === 0 ? (
         <div className="bg-gray-900 border border-gray-800 p-8 text-center">
           <p className="text-gray-400 text-sm mb-3">Nenhum profissional cadastrado ainda nesta categoria.</p>

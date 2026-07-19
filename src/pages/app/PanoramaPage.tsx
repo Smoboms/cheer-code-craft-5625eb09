@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Globe } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -44,7 +45,7 @@ export function PanoramaPage({ onBack }: Props) {
       </div>
 
       {loading ? (
-        <div className="text-gray-400 text-sm">Carregando…</div>
+        <CardGridSkeleton items={3} />
       ) : !posts.length ? (
         <div className="bg-gray-900 border border-gray-800 p-4 text-gray-400 text-sm">
           Nenhuma publicação disponível no momento.

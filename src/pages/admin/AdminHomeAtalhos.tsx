@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Btn, Card, EmptyState, Input, Label, Modal, PageHeader, Select } from './ui';
@@ -62,7 +63,7 @@ export default function AdminHomeAtalhos() {
       />
 
       {loading ? (
-        <Card className="p-6 text-gray-400 text-sm">Carregando…</Card>
+        <div className="p-2"><CardGridSkeleton items={3} /></div>
       ) : !data?.length ? (
         <EmptyState>Nenhum atalho.</EmptyState>
       ) : (
