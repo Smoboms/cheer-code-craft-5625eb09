@@ -78,30 +78,32 @@ export default function AdminLayout() {
   const { isLoading, isAdmin, user } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(NAV_GROUPS.map(g => [g.title, true]))
+  );
+  const toggleGroup = (title: string) =>
+    setOpenGroups(prev => ({ ...prev, [title]: !prev[title] }));
 
   if (isLoading) {
     return <div className="min-h-screen bg-[#0a0f1e] flex items-center justify-center text-gray-400">Carregando…</div>;
   }
 
-  if (!user) {
+  if (!user || !isAdmin) {
     return (
       <div className="min-h-screen bg-[#0a0f1e] flex items-center justify-center px-6">
-        <div className="max-w-md text-center">
-          <h1 className="text-white text-2xl mb-3" style={{ fontFamily: 'UnifrakturCook, serif' }}>Rarques</h1>
-          <p className="text-gray-300 mb-4">Acesso restrito. Entre com uma conta autorizada.</p>
-          <button onClick={() => navigate('/app')} className="bg-yellow-500 text-black px-4 py-2 text-sm font-semibold">Ir para o login</button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen bg-[#0a0f1e] flex items-center justify-center px-6">
-        <div className="max-w-md text-center">
-          <h1 className="text-white text-2xl mb-3" style={{ fontFamily: 'UnifrakturCook, serif' }}>Rarques</h1>
-          <p className="text-gray-300 mb-4">Você não tem permissão para acessar o Painel Administrativo.</p>
-          <button onClick={() => navigate('/app')} className="bg-yellow-500 text-black px-4 py-2 text-sm font-semibold">Voltar para a plataforma</button>
+        <div className="max-w-lg text-center border border-yellow-500/40 bg-[#070c19] p-8">
+          <ShieldAlert className="mx-auto text-yellow-500 mb-4" size={44} />
+          <div className="text-[10px] uppercase tracking-[0.35em] text-yellow-500/80 mb-2">Acesso Negado</div>
+          <h1 className="text-white text-2xl mb-4" style={{ fontFamily: 'UnifrakturCook, serif' }}>Rarques</h1>
+          <p className="text-gray-200 text-sm leading-relaxed mb-6 uppercase tracking-wider">
+            Espaço protegido pela Equipe de Especialização Tática da Rarques.
+          </p>
+          <p className="text-gray-500 text-xs mb-6">
+            Qualquer tentativa de acesso não autorizado é registrada e bloqueada automaticamente.
+          </p>
+          <button onClick={() => navigate('/app')} className="bg-yellow-500 text-black px-5 py-2 text-sm font-semibold tracking-wider">
+            VOLTAR
+          </button>
         </div>
       </div>
     );
