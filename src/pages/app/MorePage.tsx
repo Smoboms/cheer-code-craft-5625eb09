@@ -20,7 +20,8 @@ const items: Item[] = [
   { key: 'beneficios', label: 'Benefícios', desc: 'Parceiros e descontos', icon: Tag, accent: 'text-green-400' },
 ];
 
-export function MorePage({ onOpen }: Props) {
+export function MorePage({ onOpen, isCompany = false }: Props) {
+  const visible = items.filter(it => !it.companyOnly || isCompany);
   return (
     <div className="animate-fadeUp pb-4">
       <div className="mb-4">
