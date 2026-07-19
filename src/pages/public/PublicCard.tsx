@@ -87,8 +87,12 @@ export default function PublicCard() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center text-sm text-muted-foreground">
-        Carregando carteirinha…
+      <div className="min-h-[60vh] flex items-center justify-center p-6">
+        <div className="w-full max-w-sm space-y-3">
+          <div className="skeleton-block" style={{ height: 220, borderRadius: 16 }} />
+          <div className="skeleton-block" style={{ height: 14, width: '60%' }} />
+          <div className="skeleton-block" style={{ height: 12, width: '40%' }} />
+        </div>
       </div>
     );
   }
