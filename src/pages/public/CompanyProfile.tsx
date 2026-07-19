@@ -35,7 +35,12 @@ export default function CompanyProfile() {
     queryKey: ['partner', id],
     queryFn: async (): Promise<Partner | null> => {
       if (!id) return null;
-      const { data } = await supabase.from('partners').select('*').eq('id', id).maybeSingle();
+      // Só campos públicos — cnpj/email/legal_name/responsible NUNCA são retornados aqui.
+      const { data } = await supabase
+        .from('partners')
+        .select('id, name, category, discount, distance, banner_url, logo_url, profile_image_url, description, address, city, phone, whatsapp, instagram, website, opening_hours, is_member')
+        .eq('id', id)
+        .maybeSingle();
       return (data as any) || null;
     },
     enabled: !!id,
