@@ -39,9 +39,9 @@ export function PublicPlatformSwitchCard() {
             <div className="text-sm text-white font-medium">Área Pública da Plataforma</div>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
-            Controla se visitantes (não autenticados) podem navegar na vitrine pública.
-            Quando desativada, exibe apenas a tela "🚀 Em Breve" com botão para a Área do Associado.
-            Associados, empresas e administradores continuam navegando normalmente.
+            Controla se a vitrine pública está acessível. Quando desativada, exibe a tela
+            "Em Breve" para todos — visitantes, associados e empresas.
+            Apenas os administradores (rarquesmatriz / imobiliario454) continuam navegando.
           </p>
         </div>
         <div className="flex flex-col items-end gap-2 shrink-0">
