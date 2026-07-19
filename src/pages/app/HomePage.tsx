@@ -9,6 +9,7 @@ interface Props {
   userName: string;
   onNavigate: (tab: TabType) => void;
   onOpenMore: (section: MoreSection) => void;
+  isCompany?: boolean;
 }
 
 type BannerAction = { type: 'tab'; value: TabType } | { type: 'more'; value: MoreSection };
