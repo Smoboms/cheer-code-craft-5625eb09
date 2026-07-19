@@ -76,6 +76,13 @@ export default function AdminAssociados() {
                         {p.account_type === 'company' ? 'Empresa' : 'Cliente'}
                       </span>
                       {!p.is_active && <span className="text-[10px] border border-red-500 text-red-400 px-1.5 py-0.5">INATIVO</span>}
+                      {p.account_type === 'client' && (
+                        p.is_public === false ? (
+                          <span className="text-[10px] border border-red-500/60 text-red-300 px-1.5 py-0.5" title="Perfil Público">🔴 Oculto</span>
+                        ) : (
+                          <span className="text-[10px] border border-green-500/60 text-green-300 px-1.5 py-0.5" title="Perfil Público">🟢 Público</span>
+                        )
+                      )}
                     </div>
                     <div className="text-xs text-gray-400 mt-0.5">{p.email} · {p.company || '—'}</div>
                     {p.account_type === 'client' && p.card_code && (
