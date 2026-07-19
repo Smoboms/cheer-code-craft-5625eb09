@@ -99,7 +99,8 @@ export default function PublicCard() {
         <p className="text-sm text-muted-foreground">
           O código <span className="font-mono">{formatCardCode(normalized) || cardCode}</span> não corresponde a nenhum membro.
         </p>
-        <Link to="/" className="mt-2 text-sm underline">Voltar para a Home</Link>
+        <Link to="/cartao" className="mt-2 text-sm underline">Buscar por outro código</Link>
+        <Link to="/" className="text-xs text-muted-foreground underline">Voltar para a Home</Link>
       </div>
     );
   }
