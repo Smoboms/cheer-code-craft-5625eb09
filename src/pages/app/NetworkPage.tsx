@@ -103,7 +103,7 @@ export function NetworkPage({ currentUser, isCompany = false }: NetworkPageProps
       <button
         type="button"
         onClick={() => setShowCardModal(true)}
-        className={`w-full text-left text-white shadow-2xl aspect-[1.586/1] flex flex-col justify-between p-3 sm:p-6 relative overflow-hidden border-2 mb-8 ${
+        className={`rcard-preserve w-full text-left text-white shadow-2xl aspect-[1.586/1] flex flex-col justify-between p-3 sm:p-6 relative overflow-hidden border-2 mb-8 ${
           isCompany
             ? 'bg-gradient-to-br from-black via-gray-900 to-black border-gray-400/40'
             : 'bg-gradient-to-br from-black via-[#3a1d0f] to-black border-[#B85C2E]/70'
@@ -152,7 +152,7 @@ export function NetworkPage({ currentUser, isCompany = false }: NetworkPageProps
           <div className="flex items-end justify-between gap-2">
             <div className="min-w-0">
               <p className="text-[10px] sm:text-xs opacity-70 mb-0.5 sm:mb-1">ECONOMIA TOTAL</p>
-              <p className={`text-base sm:text-xl font-bold truncate ${isCompany ? 'text-green-400' : 'text-[#F1A56C]'}`}>{formatBRL(totalSavings)}</p>
+              <p className="savings-fixed text-base sm:text-xl font-bold truncate" style={{ color: '#22c55e' }}>{formatBRL(totalSavings)}</p>
             </div>
             <div className="text-right min-w-0">
               <p className="text-[10px] sm:text-xs opacity-70 mb-0.5 sm:mb-1">BENEFÍCIOS</p>
@@ -163,16 +163,16 @@ export function NetworkPage({ currentUser, isCompany = false }: NetworkPageProps
       </button>
 
 
-      {/* Total Savings Card - Compressed */}
-      <div className={`mb-8 p-3 ${isCompany ? 'bg-gradient-to-br from-green-500 to-green-600' : 'bg-gradient-to-br from-[#B85C2E] to-[#7A3B1D]'}`}>
+      {/* Total Savings Card - Verde FIXO (não muda com perfil nem tema) */}
+      <div className="savings-fixed mb-8 p-3 bg-gradient-to-br from-green-500 to-green-600">
         <div className="flex items-center gap-3">
           <TrendingUp size={24} className="text-white flex-shrink-0" />
           <div className="flex-1">
-            <p className="text-white/90 text-xs font-semibold">Economia Total</p>
-            <p className="text-white text-2xl font-bold">{formatBRL(totalSavings)}</p>
+            <p className="text-white/90 text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.9)' }}>Economia Total</p>
+            <p className="text-white text-2xl font-bold" style={{ color: '#ffffff' }}>{formatBRL(totalSavings)}</p>
           </div>
         </div>
-        <p className="text-white/95 text-xs mt-2">
+        <p className="text-white/95 text-xs mt-2" style={{ color: 'rgba(255,255,255,0.95)' }}>
           Continue usando seus benefícios para aumentar sua economia!
         </p>
       </div>

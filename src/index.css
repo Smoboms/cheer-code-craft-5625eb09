@@ -119,22 +119,22 @@
    enquanto a Área do Associado está montada).
    ========================================================= */
 body[data-associate-theme="light"] {
-  background-color: #f5f5f5;
+  background-color: #F5F4F1;
 }
-/* Backgrounds escuros → claros */
+/* Backgrounds escuros → claros (off-white, não branco puro) */
 body[data-associate-theme="light"] .bg-black,
 body[data-associate-theme="light"] .bg-gray-950,
-body[data-associate-theme="light"] .bg-gray-900 { background-color: #ffffff !important; }
-body[data-associate-theme="light"] .bg-gray-800 { background-color: #f3f4f6 !important; }
-body[data-associate-theme="light"] .bg-gray-700 { background-color: #e5e7eb !important; }
+body[data-associate-theme="light"] .bg-gray-900 { background-color: #FDFCFA !important; }
+body[data-associate-theme="light"] .bg-gray-800 { background-color: #F1EFEA !important; }
+body[data-associate-theme="light"] .bg-gray-700 { background-color: #E7E4DD !important; }
 
-/* Bordas escuras → claras */
+/* Bordas escuras → claras suaves (preservam profundidade/sombra) */
 body[data-associate-theme="light"] .border-gray-900,
 body[data-associate-theme="light"] .border-gray-800,
-body[data-associate-theme="light"] .border-gray-700 { border-color: #e5e7eb !important; }
+body[data-associate-theme="light"] .border-gray-700 { border-color: #E5E2DA !important; }
 
-/* Texto claro → escuro (mantém accent yellow/orange intocados) */
-body[data-associate-theme="light"] .text-white { color: #0a0a0a !important; }
+/* Texto claro → escuro (accent yellow/orange/green intocados) */
+body[data-associate-theme="light"] .text-white { color: #1a1a1a !important; }
 body[data-associate-theme="light"] .text-gray-100,
 body[data-associate-theme="light"] .text-gray-200,
 body[data-associate-theme="light"] .text-gray-300 { color: #1f2937 !important; }
@@ -143,14 +143,38 @@ body[data-associate-theme="light"] .text-gray-500 { color: #6b7280 !important; }
 
 /* Hover states escuros → claros equivalentes */
 body[data-associate-theme="light"] .hover\:bg-gray-800:hover,
-body[data-associate-theme="light"] .hover\:bg-gray-900:hover { background-color: #f3f4f6 !important; }
+body[data-associate-theme="light"] .hover\:bg-gray-900:hover { background-color: #F1EFEA !important; }
 body[data-associate-theme="light"] .hover\:bg-white\/10:hover { background-color: rgba(0,0,0,0.06) !important; }
 
-/* Gradientes de header/card escuros — suaviza para claro
-   (não toca gradientes do R-CARD que usam via-[#3a1d0f] / preto — carteirinha
-   permanece preta em ambos os temas, mantendo identidade visual da tarefa 5). */
-body[data-associate-theme="light"] .from-black.to-gray-950,
-body[data-associate-theme="light"] .from-black.via-black.to-gray-950 {
-  background-image: linear-gradient(to right, #ffffff, #f9fafb) !important;
+/* Sombras suaves adicionais para preservar profundidade no tema claro */
+body[data-associate-theme="light"] .shadow-2xl {
+  box-shadow: 0 10px 30px -12px rgba(30, 25, 15, 0.18), 0 4px 12px -4px rgba(30, 25, 15, 0.08) !important;
 }
+
+/* =========================================================
+   R-CARD: preserva SEMPRE o fundo escuro e texto branco,
+   mesmo com Tema Claro ativo. Regra da Tarefa 3.
+   ========================================================= */
+body[data-associate-theme="light"] .rcard-preserve,
+body[data-associate-theme="light"] .rcard-preserve * {
+  /* mantém as cores originais dos utilitários dentro do card */
+}
+body[data-associate-theme="light"] .rcard-preserve .text-white { color: #ffffff !important; }
+body[data-associate-theme="light"] .rcard-preserve .text-gray-100,
+body[data-associate-theme="light"] .rcard-preserve .text-gray-200,
+body[data-associate-theme="light"] .rcard-preserve .text-gray-300 { color: #e5e7eb !important; }
+body[data-associate-theme="light"] .rcard-preserve .text-gray-400 { color: #9ca3af !important; }
+body[data-associate-theme="light"] .rcard-preserve .bg-black,
+body[data-associate-theme="light"] .rcard-preserve .bg-gray-950,
+body[data-associate-theme="light"] .rcard-preserve .bg-gray-900 { background-color: unset !important; }
+body[data-associate-theme="light"] .rcard-preserve .border-gray-700,
+body[data-associate-theme="light"] .rcard-preserve .border-gray-800,
+body[data-associate-theme="light"] .rcard-preserve .border-gray-900 { border-color: rgba(255,255,255,0.15) !important; }
+
+/* =========================================================
+   Economia Total (verde FIXO — Tarefa 1). Nunca inverte.
+   ========================================================= */
+body[data-associate-theme="light"] .savings-fixed .text-white,
+.savings-fixed .text-white { color: #ffffff !important; }
+
 
