@@ -35,12 +35,25 @@ function readStoredActiveType(): AccountType | null {
   } catch { return null; }
 }
 
+function hasStoredSession(): boolean {
+  try {
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith('sb-') && key.endsWith('-auth-token')) {
+        const v = localStorage.getItem(key);
+        if (v && v.length > 20) return true;
+      }
+    }
+  } catch {}
+  return false;
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [activeAccountType, setActiveAccountType] = useState<AccountType | null>(readStoredActiveType());
-  const [isLoading, setIsLoading] = useState(true);
+  // Só mostramos splash se há sessão persistida a hidratar. Sem sessão, vai direto para LoginPage.
+  const [isLoading, setIsLoading] = useState(() => hasStoredSession());
   const [isAdmin, setIsAdmin] = useState(false);
   const syncRequestRef = useRef(0);
 
@@ -189,7 +202,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.warn('Auth bootstrap fallback activated');
           setIsLoading(false);
         }
-      }, 8000);
+      }, 2500);
 
       return () => {
         mounted = false;
