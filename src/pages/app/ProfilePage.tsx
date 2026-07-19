@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
-import { ArrowLeft, Camera, User, Mail, LogOut, Shield, Loader2 } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { ArrowLeft, Camera, User, Mail, LogOut, Shield, Loader2, Eye, EyeOff } from 'lucide-react';
+import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { optimizeImage, toWebpName } from '@/lib/imageOptimizer';
@@ -30,7 +31,43 @@ export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout, on
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [isPublic, setIsPublic] = useState<boolean>(true);
+  const [publicBusy, setPublicBusy] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('is_public')
+        .eq('user_id', user.id)
+        .eq('account_type', activeAccountType ?? 'client')
+        .maybeSingle();
+      if (data && typeof data.is_public === 'boolean') setIsPublic(data.is_public);
+    })();
+  }, [user, activeAccountType]);
+
+  const handleTogglePublic = async () => {
+    if (!user || publicBusy) return;
+    const next = !isPublic;
+    setPublicBusy(true);
+    setIsPublic(next); // optimistic
+    const { error } = await supabase
+      .from('profiles')
+      .update({ is_public: next })
+      .eq('user_id', user.id)
+      .eq('account_type', activeAccountType ?? 'client');
+    setPublicBusy(false);
+    if (error) {
+      setIsPublic(!next);
+      toast.error('Não foi possível atualizar a preferência. Tente novamente.');
+      return;
+    }
+    toast.success(next ? 'Perfil público ativado com sucesso.' : 'Perfil público desativado.');
+  };
+
+
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -152,6 +189,41 @@ export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout, on
           </div>
 
           <ProfileSwitcherCard />
+
+          {activeAccountType === 'client' && (
+            <div className="bg-gray-900 border border-gray-800 p-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    {isPublic ? <Eye size={16} className="text-yellow-400" /> : <EyeOff size={16} className="text-gray-500" />}
+                    <h3 className="text-sm font-semibold text-white">Perfil Público</h3>
+                  </div>
+                  <p className="text-xs text-gray-400 leading-snug">
+                    Controle se seu perfil pode ser encontrado por outras pessoas na plataforma.
+                  </p>
+                  <p className={`text-[11px] mt-2 font-medium ${isPublic ? 'text-green-400' : 'text-gray-500'}`}>
+                    {isPublic ? 'Tornar meu perfil público' : 'Ocultar meu perfil público'}
+                  </p>
+                </div>
+                <button
+                  role="switch"
+                  aria-checked={isPublic}
+                  onClick={handleTogglePublic}
+                  disabled={publicBusy}
+                  className={`relative shrink-0 w-12 h-6 transition-colors border ${
+                    isPublic ? 'bg-yellow-500 border-yellow-500' : 'bg-gray-700 border-gray-600'
+                  } disabled:opacity-60`}
+                >
+                  <span
+                    className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white transition-transform ${
+                      isPublic ? 'translate-x-6' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+          )}
+
 
 
 

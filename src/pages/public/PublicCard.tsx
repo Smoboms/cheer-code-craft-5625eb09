@@ -95,15 +95,25 @@ export default function PublicCard() {
   if (notFound || !data) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3 px-4 text-center">
-        <h1 className="text-xl font-semibold">Cartão não encontrado</h1>
-        <p className="text-sm text-muted-foreground">
-          O código <span className="font-mono">{formatCardCode(normalized) || cardCode}</span> não corresponde a nenhum membro.
+        <div className="w-14 h-14 flex items-center justify-center border border-neutral-300 rounded-full text-2xl">
+          🔒
+        </div>
+        <h1 className="text-xl font-semibold">Perfil indisponível</h1>
+        <p className="text-sm text-muted-foreground max-w-sm">
+          Este perfil não está disponível para visualização pública no momento.
         </p>
-        <Link to="/cartao" className="mt-2 text-sm underline">Buscar por outro código</Link>
-        <Link to="/" className="text-xs text-muted-foreground underline">Voltar para a Home</Link>
+        <Link
+          to="/"
+          className="mt-2 inline-flex items-center justify-center px-4 py-2 bg-black text-white text-sm hover:bg-neutral-800 transition-colors"
+        >
+          Voltar para a página inicial
+        </Link>
+        <Link to="/cartao" className="text-xs text-muted-foreground underline">Buscar por outro código</Link>
       </div>
     );
   }
+  // ref preserved to avoid unused-import warnings if visual copy evolves
+  void formatCardCode;
 
   const isExec = data.card_tier === 'executive';
   const shellClass = isExec
