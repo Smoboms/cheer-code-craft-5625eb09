@@ -1644,6 +1644,17 @@ export type Database = {
     Functions: {
       generate_unique_card_code: { Args: never; Returns: string }
       generate_unique_card_number: { Args: never; Returns: string }
+      get_public_card_by_code: {
+        Args: { _code: string }
+        Returns: {
+          avatar_url: string
+          card_code: string
+          card_number: string
+          is_active: boolean
+          name: string
+          user_id: string
+        }[]
+      }
       issue_coupon: {
         Args: {
           _cashback_amount: number
