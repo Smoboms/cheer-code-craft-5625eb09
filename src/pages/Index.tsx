@@ -84,6 +84,15 @@ const Index = () => {
   };
 
   const renderMoreSection = () => {
+    // Bloqueio hard: seções exclusivas de Empresa NUNCA carregam para conta Cliente.
+    if ((moreSection === 'minhaempresa' || moreSection === 'juridico') && !isCompanyActive) {
+      return (
+        <div className="animate-fadeUp">
+          <button onClick={() => setMoreSection(null)} className="text-gray-300 hover:text-white text-sm mb-3">← Voltar</button>
+          <p className="text-gray-400 text-sm">Área exclusiva para contas Empresa.</p>
+        </div>
+      );
+    }
     switch (moreSection) {
       case 'nexus': return <NexusPage onBack={() => setMoreSection(null)} />;
       case 'elas': return <ElasPage onBack={() => setMoreSection(null)} />;
