@@ -16,9 +16,10 @@ interface NetworkPageProps {
     bio: string;
     photo?: string | null;
   };
+  isCompany?: boolean;
 }
 
-export function NetworkPage({ currentUser }: NetworkPageProps) {
+export function NetworkPage({ currentUser, isCompany = false }: NetworkPageProps) {
   const { user } = useAuth();
   const [showCardModal, setShowCardModal] = useState(false);
   const [totalSavings, setTotalSavings] = useState(0);
