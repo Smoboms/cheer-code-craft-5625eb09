@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
+import { AssociateThemeProvider } from '@/contexts/ThemeContext';
+
 import { useAuth } from '@/contexts/AuthContext';
 import { LoginPage } from '@/pages/app/LoginPage';
 import { OnboardingPage } from '@/pages/app/OnboardingPage';
