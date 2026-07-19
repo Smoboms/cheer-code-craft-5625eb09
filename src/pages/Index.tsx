@@ -53,24 +53,31 @@ const Index = () => {
   if (profile && !profile.name) return <OnboardingPage />;
 
 
+  const Wrap = ({ children }: { children: ReactNode }) => (
+    <AssociateThemeProvider>{children}</AssociateThemeProvider>
+  );
+
   if (currentTab === 'config') {
     return (
-      <ProfilePage
-        onBack={() => setCurrentTab('inicio')}
-        userProfile={{
-          email: profile.email || user.email || '',
-          name: profile.name,
-          photo: profile.avatar_url,
-        }}
-        onUpdateProfile={async () => { await refreshProfile(); }}
-        onLogout={async () => { await signOut(); }}
-        isAdmin={isAdminUser}
-        onAdminPanel={() => {
-          window.location.assign('/admin');
-        }}
-      />
+      <Wrap>
+        <ProfilePage
+          onBack={() => setCurrentTab('inicio')}
+          userProfile={{
+            email: profile.email || user.email || '',
+            name: profile.name,
+            photo: profile.avatar_url,
+          }}
+          onUpdateProfile={async () => { await refreshProfile(); }}
+          onLogout={async () => { await signOut(); }}
+          isAdmin={isAdminUser}
+          onAdminPanel={() => {
+            window.location.assign('/admin');
+          }}
+        />
+      </Wrap>
     );
   }
+
 
   const currentUser = {
     name: profile?.name || 'Usuário',
