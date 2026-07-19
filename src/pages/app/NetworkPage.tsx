@@ -22,6 +22,17 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
   const { user } = useAuth();
   const [showCardModal, setShowCardModal] = useState(false);
   const [totalSavings, setTotalSavings] = useState(0);
+  const [cardTier, setCardTier] = useState<'standard' | 'executive'>('standard');
+
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    (async () => {
+      const { data } = await supabase.from('profiles').select('card_tier').eq('user_id', user.id).maybeSingle();
+      if (active && data?.card_tier === 'executive') setCardTier('executive');
+    })();
+    return () => { active = false; };
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
