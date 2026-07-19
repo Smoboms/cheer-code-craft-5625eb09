@@ -70,11 +70,8 @@ const queryClient = new QueryClient({
   },
 });
 
-const RouteFallback = () => (
-  <div className="min-h-[40vh] flex items-center justify-center text-sm text-muted-foreground">
-    Carregando…
-  </div>
-);
+import { PageSkeleton } from "@/components/ui/skeleton";
+const RouteFallback = () => <PageSkeleton />;
 
 const App = () => (
   <ErrorBoundary>
