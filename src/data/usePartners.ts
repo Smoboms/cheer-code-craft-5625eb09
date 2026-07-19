@@ -18,7 +18,7 @@ export interface DirectoryPartner {
   city: string | null;
   phone: string | null;
   whatsapp: string | null;
-  email: string | null;
+  // email/cnpj/legal_name/responsible: NÃO expostos publicamente
   website: string | null;
   instagram: string | null;
   maps_link: string | null;
