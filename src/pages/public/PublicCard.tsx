@@ -14,6 +14,7 @@ interface PublicCardData {
   card_code: string;
   is_active: boolean;
   user_id: string;
+  card_tier: 'standard' | 'executive';
 }
 
 export default function PublicCard() {
