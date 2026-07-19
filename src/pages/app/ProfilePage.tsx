@@ -24,6 +24,8 @@ const AVATAR_SIGNED_TTL = 60 * 60 * 24 * 365; // ~1 ano
 
 export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout, onAdminPanel, isAdmin }: ProfilePageProps) {
   const { user, activeAccountType } = useAuth();
+  const { theme, setTheme } = useAssociateTheme();
+
   const [name, setName] = useState(userProfile.name);
   const [photo, setPhoto] = useState<string | null>(userProfile.photo);
   const [uploading, setUploading] = useState(false);
