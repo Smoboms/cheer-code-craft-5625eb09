@@ -64,8 +64,11 @@ export default function CompanyProfile() {
 
   if (loading) {
     return (
-      <div className="animate-fadeUp pb-4">
-        <p className="text-gray-400 text-sm"><Loader2 className="inline animate-spin" size={16} /> Carregando…</p>
+      <div className="animate-fadeUp pb-4 space-y-3 p-4">
+        <div className="skeleton-block" style={{ height: 160, borderRadius: 12 }} />
+        <div className="skeleton-block" style={{ height: 18, width: '60%' }} />
+        <div className="skeleton-block" style={{ height: 12, width: '40%' }} />
+        <div className="skeleton-block" style={{ height: 12, width: '90%' }} />
       </div>
     );
   }
