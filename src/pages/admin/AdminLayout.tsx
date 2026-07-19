@@ -3,6 +3,37 @@ import { useAuth } from '@/contexts/AuthContext';
 import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid, Columns3, Building, Target, DollarSign } from 'lucide-react';
 import { useState } from 'react';
 
+// Fase 6 · T2 — Prefetch inteligente. Ao passar o mouse sobre um item do menu,
+// aciona o mesmo `import()` que o React.lazy usa em App.tsx. O chunk é baixado
+// e cacheado pelo browser; a navegação subsequente renderiza sem espera de rede.
+// Cada factory é chamada no máximo uma vez por sessão (flag `prefetched`).
+const PREFETCH: Record<string, { load: () => Promise<unknown>; prefetched?: boolean }> = {
+  '/admin': { load: () => import('./AdminDashboard') },
+  '/admin/empresas': { load: () => import('./AdminEmpresas') },
+  '/admin/associados': { load: () => import('./AdminAssociados') },
+  '/admin/profissionais': { load: () => import('./AdminProfissionais') },
+  '/admin/journal': { load: () => import('./AdminJournal') },
+  '/admin/categorias': { load: () => import('./AdminCategorias') },
+  '/admin/banners': { load: () => import('./AdminBanners') },
+  '/admin/atalhos': { load: () => import('./AdminHomeAtalhos') },
+  '/admin/pilares': { load: () => import('./AdminPilares') },
+  '/admin/mercado': { load: () => import('./AdminMercado') },
+  '/admin/mercado-categorias': { load: () => import('./AdminMercadoCategorias') },
+  '/admin/locais': { load: () => import('./AdminLocals') },
+  '/admin/cidades': { load: () => import('./AdminCidades') },
+  '/admin/analytics': { load: () => import('./AdminAnalytics') },
+  '/admin/cupons': { load: () => import('./AdminCupons') },
+  '/admin/metas': { load: () => import('./AdminMetas') },
+  '/admin/financeiro': { load: () => import('./AdminFinanceiro') },
+};
+
+function prefetchRoute(to: string) {
+  const entry = PREFETCH[to];
+  if (!entry || entry.prefetched) return;
+  entry.prefetched = true;
+  entry.load().catch(() => { entry.prefetched = false; });
+}
+
 const NAV_GROUPS: { title: string; items: { to: string; label: string; icon: any; end?: boolean }[] }[] = [
   {
     title: 'Gestão',
