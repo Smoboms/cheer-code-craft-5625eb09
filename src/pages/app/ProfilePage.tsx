@@ -62,7 +62,8 @@ export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout, on
     const { error } = await supabase
       .from('profiles')
       .update({ name: name.trim(), avatar_url: photo })
-      .eq('user_id', user.id);
+      .eq('user_id', user.id)
+      .eq('account_type', activeAccountType ?? 'client');
     setSaving(false);
     if (error) {
       setMsg('Erro ao salvar. Tente novamente.');
