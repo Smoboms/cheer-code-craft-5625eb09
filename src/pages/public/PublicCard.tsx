@@ -104,22 +104,36 @@ export default function PublicCard() {
     );
   }
 
+  const isExec = data.card_tier === 'executive';
+  const shellClass = isExec
+    ? 'w-full max-w-sm bg-gradient-to-br from-[#1a1204] via-black to-[#1a1204] border-2 border-yellow-500/70 shadow-[0_10px_40px_-10px_rgba(212,175,55,0.6)]'
+    : 'w-full max-w-sm bg-gradient-to-br from-black via-gray-900 to-black border-2 border-white/80 shadow-2xl';
+  const statusChipClass = isExec
+    ? 'bg-yellow-500/30 border-yellow-400/80'
+    : (data.is_active ? 'bg-yellow-500/20 border-yellow-500/50' : 'bg-red-500/10 border-red-500/40');
+  const statusTextClass = isExec ? 'text-yellow-300' : (data.is_active ? 'text-yellow-400' : 'text-red-400');
+
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-start px-4 py-10 bg-neutral-50">
+    <div className={`min-h-[70vh] flex flex-col items-center justify-start px-4 py-10 ${isExec ? 'bg-neutral-950' : 'bg-neutral-50'}`}>
       {/* R-CARD visual (reused layout) */}
-      <div className="w-full max-w-sm bg-gradient-to-br from-black via-gray-900 to-black border-2 border-white/80 shadow-2xl">
+      <div className={shellClass}>
         <div className="relative p-5">
+          {isExec && (
+            <div className="absolute top-3 right-3 text-[9px] tracking-[0.25em] font-semibold text-yellow-400 border border-yellow-500/60 px-2 py-0.5">
+              EXECUTIVO
+            </div>
+          )}
           <div className="flex items-center justify-between mb-4">
-            <div className={`inline-block px-2 py-0.5 border ${data.is_active ? 'bg-yellow-500/20 border-yellow-500/50' : 'bg-red-500/10 border-red-500/40'}`}>
-              <p className={`text-[10px] font-semibold tracking-wider ${data.is_active ? 'text-yellow-400' : 'text-red-400'}`}>
+            <div className={`inline-block px-2 py-0.5 border ${statusChipClass}`}>
+              <p className={`text-[10px] font-semibold tracking-wider ${statusTextClass}`}>
                 {data.is_active ? 'MEMBRO ATIVO' : 'MEMBRO INATIVO'}
               </p>
             </div>
-            <img src={logoRCard} alt="R-CARD" className="h-10 w-auto opacity-80" />
+            {!isExec && <img src={logoRCard} alt="R-CARD" className="h-10 w-auto opacity-80" />}
           </div>
 
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-white to-gray-200 flex items-center justify-center border-2 border-white overflow-hidden flex-shrink-0">
+            <div className={`w-14 h-14 flex items-center justify-center overflow-hidden flex-shrink-0 ${isExec ? 'bg-gradient-to-br from-yellow-300 to-yellow-600 border-2 border-yellow-400' : 'bg-gradient-to-br from-white to-gray-200 border-2 border-white'}`}>
               {data.avatar_url ? (
                 <img src={data.avatar_url} alt={data.name} className="w-full h-full object-cover" />
               ) : (
@@ -127,21 +141,23 @@ export default function PublicCard() {
               )}
             </div>
             <div className="min-w-0">
-              <p className="text-white font-semibold text-base truncate">{data.name}</p>
-              <p className="text-gray-400 text-xs truncate">Membro Rarques Association</p>
+              <p className={`font-semibold text-base truncate ${isExec ? 'text-yellow-100' : 'text-white'}`}>{data.name}</p>
+              <p className={`text-xs truncate ${isExec ? 'text-yellow-500/80' : 'text-gray-400'}`}>
+                {isExec ? 'Membro Executivo · Rarques' : 'Membro Rarques Association'}
+              </p>
             </div>
           </div>
 
-          <div className="border-t border-gray-700 pt-4">
-            <p className="text-gray-400 text-[10px] tracking-widest mb-1">NÚMERO DO CARTÃO</p>
-            <p className="text-white text-base sm:text-lg font-mono tracking-[0.2em] whitespace-nowrap overflow-hidden text-ellipsis">
+          <div className={`border-t pt-4 ${isExec ? 'border-yellow-500/30' : 'border-gray-700'}`}>
+            <p className={`text-[10px] tracking-widest mb-1 ${isExec ? 'text-yellow-500/80' : 'text-gray-400'}`}>NÚMERO DO CARTÃO</p>
+            <p className={`text-base sm:text-lg font-mono tracking-[0.2em] whitespace-nowrap overflow-hidden text-ellipsis ${isExec ? 'text-yellow-100' : 'text-white'}`}>
               {formatCardNumber(data.card_number)}
             </p>
           </div>
 
-          <div className="mt-4 border border-white/40 p-2 text-center">
-            <p className="text-white text-[11px] tracking-wider font-semibold">
-              RARQUES ASSOCIATION · R-CARD
+          <div className={`mt-4 border p-2 text-center ${isExec ? 'border-yellow-500/50 bg-yellow-500/5' : 'border-white/40'}`}>
+            <p className={`text-[11px] tracking-wider font-semibold ${isExec ? 'text-yellow-300' : 'text-white'}`}>
+              RARQUES ASSOCIATION · R-CARD{isExec ? ' EXECUTIVO' : ''}
             </p>
           </div>
         </div>
