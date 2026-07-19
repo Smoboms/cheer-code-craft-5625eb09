@@ -1,5 +1,5 @@
 import { useState, ReactNode } from 'react';
-import { AssociateThemeProvider } from '@/contexts/ThemeContext';
+
 
 import { useAuth } from '@/contexts/AuthContext';
 import { LoginPage } from '@/pages/app/LoginPage';
@@ -53,9 +53,8 @@ const Index = () => {
   if (profile && !profile.name) return <OnboardingPage />;
 
 
-  const Wrap = ({ children }: { children: ReactNode }) => (
-    <AssociateThemeProvider>{children}</AssociateThemeProvider>
-  );
+  const Wrap = ({ children }: { children: ReactNode }) => <>{children}</>;
+
 
   if (currentTab === 'config') {
     return (

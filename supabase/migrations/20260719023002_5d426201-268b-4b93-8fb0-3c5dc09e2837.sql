@@ -1,0 +1,2 @@
+DELETE FROM public.professionals WHERE id = '0f1cca22-8e82-4295-800e-9447fb7be5f5';
+UPDATE public.public_home_banner SET active = false, image_url = '', slides = '[]'::jsonb, title = '', text = '', cta_label = '', cta_href = '' WHERE id = 1;
