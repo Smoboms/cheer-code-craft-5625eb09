@@ -202,7 +202,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.warn('Auth bootstrap fallback activated');
           setIsLoading(false);
         }
-      }, 8000);
+      }, 2500);
 
       return () => {
         mounted = false;
