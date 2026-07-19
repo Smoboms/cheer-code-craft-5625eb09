@@ -127,11 +127,12 @@ const Index = () => {
                 userName={currentUser.name}
                 onNavigate={handleTabChange}
                 onOpenMore={(s) => { setCurrentTab('mais'); setMoreSection(s); }}
+                isCompany={isCompanyActive}
               />
             )}
-            {currentTab === 'rcard' && <NetworkPage currentUser={currentUser} />}
+            {currentTab === 'rcard' && <NetworkPage currentUser={currentUser} isCompany={isCompanyActive} />}
             {currentTab === 'journal' && <JournalPage onBack={() => setCurrentTab('inicio')} />}
-            {currentTab === 'mais' && <MorePage onOpen={setMoreSection} />}
+            {currentTab === 'mais' && <MorePage onOpen={setMoreSection} isCompany={isCompanyActive} />}
             {currentTab === 'beneficios' && <BenefitsPage />}
 
           </>
