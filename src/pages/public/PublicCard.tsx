@@ -108,11 +108,11 @@ export default function PublicCard() {
   const isExec = data.card_tier === 'executive';
   const shellClass = isExec
     ? 'w-full max-w-sm bg-gradient-to-br from-[#1a1204] via-black to-[#1a1204] border-2 border-yellow-500/70 shadow-[0_10px_40px_-10px_rgba(212,175,55,0.6)]'
-    : 'w-full max-w-sm bg-gradient-to-br from-black via-gray-900 to-black border-2 border-white/80 shadow-2xl';
+    : 'w-full max-w-sm bg-gradient-to-br from-black via-[#3a1d0f] to-black border-2 border-[#B85C2E]/70 shadow-2xl';
   const statusChipClass = isExec
     ? 'bg-yellow-500/30 border-yellow-400/80'
-    : (data.is_active ? 'bg-yellow-500/20 border-yellow-500/50' : 'bg-red-500/10 border-red-500/40');
-  const statusTextClass = isExec ? 'text-yellow-300' : (data.is_active ? 'text-yellow-400' : 'text-red-400');
+    : (data.is_active ? 'bg-[#B85C2E]/20 border-[#B85C2E]/60' : 'bg-red-500/10 border-red-500/40');
+  const statusTextClass = isExec ? 'text-yellow-300' : (data.is_active ? 'text-[#F1A56C]' : 'text-red-400');
 
   return (
     <div className={`min-h-[70vh] flex flex-col items-center justify-start px-4 py-10 ${isExec ? 'bg-neutral-950' : 'bg-neutral-50'}`}>
@@ -143,9 +143,9 @@ export default function PublicCard() {
             </div>
             <div className="min-w-0">
               <p className={`font-semibold text-base truncate ${isExec ? 'text-yellow-100' : 'text-white'}`}>{data.name}</p>
-              <p className={`text-xs truncate ${isExec ? 'text-yellow-500/80' : 'text-gray-400'}`}>
-                {isExec ? 'Membro Executivo · Rarques' : 'Membro Rarques Association'}
-              </p>
+              {isExec && (
+                <p className="text-xs truncate text-yellow-500/80">Membro Executivo · Rarques</p>
+              )}
             </div>
           </div>
 
