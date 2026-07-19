@@ -57,7 +57,7 @@ export default function AdminDashboard() {
   const goals = useAsync(async () => {
     const [{ data: gs }, associados, empresasMembro, rcards, produtos] = await Promise.all([
       supabase.from('platform_goals').select('*').order('sort_order'),
-      supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('is_active', true),
+      supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('account_type', 'client').eq('is_active', true),
       supabase.from('partners').select('id', { count: 'exact', head: true }).eq('is_member', true),
       supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('account_type', 'client').eq('is_active', true),
       supabase.from('marketplace_products').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
