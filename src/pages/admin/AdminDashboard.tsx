@@ -73,7 +73,7 @@ export default function AdminDashboard() {
 
   const { data, loading } = useAsync(async () => {
     const [associados, empresas, empresasMembro, cupons, cuponsPeriodo, coupSum, articleViews, newProfiles, weeklyCoupons, searches, productViews, professionalViews, companyViews] = await Promise.all([
-      supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('is_active', true),
+      supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('account_type', 'client').eq('is_active', true),
       supabase.from('partners').select('id', { count: 'exact', head: true }),
       supabase.from('partners').select('id', { count: 'exact', head: true }).eq('is_member', true),
       supabase.from('coupons').select('id', { count: 'exact', head: true }),
