@@ -30,7 +30,7 @@ export function MorePage({ onOpen, isCompany = false }: Props) {
       </div>
 
       <div className="grid grid-cols-2 gap-2">
-        {items.map((it) => {
+        {visible.map((it) => {
           const Icon = it.icon;
           return (
             <button
