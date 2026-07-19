@@ -22,8 +22,8 @@ export function DigitalCardModal({ isOpen, onClose, memberName, memberCompany, m
     name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
   const shellClass = isExec
-    ? 'w-full max-w-sm bg-gradient-to-br from-[#1a1204] via-black to-[#1a1204] border-2 border-yellow-500/70 shadow-[0_10px_40px_-10px_rgba(212,175,55,0.6)] relative'
-    : 'w-full max-w-sm bg-gradient-to-br from-black via-gray-900 to-black border-2 border-white/80 shadow-2xl relative';
+    ? 'rcard-preserve w-full max-w-sm bg-gradient-to-br from-[#1a1204] via-black to-[#1a1204] border-2 border-yellow-500/70 shadow-[0_10px_40px_-10px_rgba(212,175,55,0.6)] relative'
+    : 'rcard-preserve w-full max-w-sm bg-gradient-to-br from-black via-gray-900 to-black border-2 border-white/80 shadow-2xl relative';
 
   return (
     <div
