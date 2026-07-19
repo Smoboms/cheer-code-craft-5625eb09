@@ -25,9 +25,10 @@ function formatCardNumber(cardNumber: string): string {
 const ADMIN_EMAIL = 'rarquesmatriz@gmail.com';
 
 const Index = () => {
-  const { user, profile, isLoading, isAdmin, signOut, refreshProfile } = useAuth();
+  const { user, profile, isLoading, isAdmin, signOut, refreshProfile, activeAccountType, hasCompanyProfile } = useAuth();
   const [currentTab, setCurrentTab] = useState<TabType>('inicio');
   const [moreSection, setMoreSection] = useState<MoreSection | null>(null);
+  const isCompanyActive = activeAccountType === 'company' && hasCompanyProfile;
   
 
   const isAdminUser = isAdmin || user?.email === ADMIN_EMAIL;
