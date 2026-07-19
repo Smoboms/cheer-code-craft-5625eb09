@@ -7,10 +7,13 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export function PublicLayout() {
   const { enabled } = usePlatformStatus();
-  const { user } = useAuth();
-  // Somente visitantes públicos são bloqueados. Usuários logados
-  // (associado / empresa / admin) navegam livremente.
-  const showOverlay = !enabled && !user;
+  const { user, isAdmin } = useAuth();
+  // Área Pública restrita: quando desativada, SOMENTE administradores
+  // (rarquesmatriz@gmail.com / imobiliario454@gmail.com) navegam.
+  // Todos os demais — visitantes, associados e empresas — veem o overlay.
+  const ADMIN_EMAILS = ['rarquesmatriz@gmail.com', 'imobiliario454@gmail.com'];
+  const isAllowed = isAdmin || (user?.email ? ADMIN_EMAILS.includes(user.email) : false);
+  const showOverlay = !enabled && !isAllowed;
 
   return (
     <div className="min-h-screen bg-black relative">

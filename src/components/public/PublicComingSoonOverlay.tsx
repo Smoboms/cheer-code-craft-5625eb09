@@ -31,7 +31,7 @@ export function PublicComingSoonOverlay() {
           <Rocket className="text-yellow-500" size={26} />
         </div>
         <div className="text-[10px] uppercase tracking-[0.4em] text-yellow-500/80 mb-2">Rarques</div>
-        <h1 className="text-white text-2xl font-semibold mb-2">🚀 Em Breve</h1>
+        <h1 className="text-white text-2xl font-semibold mb-2">Em Breve</h1>
         <p className="text-yellow-500/90 text-sm mb-5 uppercase tracking-widest">
           A Cidade Inteligente está chegando.
         </p>
