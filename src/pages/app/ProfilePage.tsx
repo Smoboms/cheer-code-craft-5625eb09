@@ -1,8 +1,7 @@
 import { useState, useRef } from 'react';
-import { ArrowLeft, Camera, User, Mail, LogOut, Shield, Loader2, Moon, Sun } from 'lucide-react';
+import { ArrowLeft, Camera, User, Mail, LogOut, Shield, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useAssociateTheme } from '@/contexts/ThemeContext';
 import { optimizeImage, toWebpName } from '@/lib/imageOptimizer';
 import { ProfileSwitcherCard } from '@/components/profile/ProfileSwitcherCard';
 
