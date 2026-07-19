@@ -152,7 +152,7 @@ export function NetworkPage({ currentUser, isCompany = false }: NetworkPageProps
           <div className="flex items-end justify-between gap-2">
             <div className="min-w-0">
               <p className="text-[10px] sm:text-xs opacity-70 mb-0.5 sm:mb-1">ECONOMIA TOTAL</p>
-              <p className={`text-base sm:text-xl font-bold truncate ${isCompany ? 'text-green-400' : 'text-[#F1A56C]'}`}>{formatBRL(totalSavings)}</p>
+              <p className="savings-fixed text-base sm:text-xl font-bold truncate" style={{ color: '#22c55e' }}>{formatBRL(totalSavings)}</p>
             </div>
             <div className="text-right min-w-0">
               <p className="text-[10px] sm:text-xs opacity-70 mb-0.5 sm:mb-1">BENEFÍCIOS</p>
