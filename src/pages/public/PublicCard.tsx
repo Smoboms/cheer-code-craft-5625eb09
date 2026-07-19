@@ -107,8 +107,8 @@ export default function PublicCard() {
 
   const isExec = data.card_tier === 'executive';
   const shellClass = isExec
-    ? 'w-full max-w-sm bg-gradient-to-br from-[#1a1204] via-black to-[#1a1204] border-2 border-yellow-500/70 shadow-[0_10px_40px_-10px_rgba(212,175,55,0.6)]'
-    : 'w-full max-w-sm bg-gradient-to-br from-black via-[#3a1d0f] to-black border-2 border-[#B85C2E]/70 shadow-2xl';
+    ? 'rcard-preserve w-full max-w-sm bg-gradient-to-br from-[#1a1204] via-black to-[#1a1204] border-2 border-yellow-500/70 shadow-[0_10px_40px_-10px_rgba(212,175,55,0.6)]'
+    : 'rcard-preserve w-full max-w-sm bg-gradient-to-br from-black via-[#3a1d0f] to-black border-2 border-[#B85C2E]/70 shadow-2xl';
   const statusChipClass = isExec
     ? 'bg-yellow-500/30 border-yellow-400/80'
     : (data.is_active ? 'bg-[#B85C2E]/20 border-[#B85C2E]/60' : 'bg-red-500/10 border-red-500/40');
