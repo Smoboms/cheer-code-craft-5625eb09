@@ -164,7 +164,7 @@ export function NetworkPage({ currentUser, isCompany = false }: NetworkPageProps
 
 
       {/* Total Savings Card - Compressed */}
-      <div className="mb-8 bg-gradient-to-br from-green-500 to-green-600 p-3">
+      <div className={`mb-8 p-3 ${isCompany ? 'bg-gradient-to-br from-green-500 to-green-600' : 'bg-gradient-to-br from-[#B85C2E] to-[#7A3B1D]'}`}>
         <div className="flex items-center gap-3">
           <TrendingUp size={24} className="text-white flex-shrink-0" />
           <div className="flex-1">
@@ -183,7 +183,7 @@ export function NetworkPage({ currentUser, isCompany = false }: NetworkPageProps
       {/* Digital Card Button - moved to the end and compacted */}
       <button
         onClick={() => setShowCardModal(true)}
-        className="w-full bg-black hover:bg-gray-950 border border-white/80 text-white font-semibold py-2.5 text-sm flex items-center justify-center gap-2 transition-colors mt-6"
+        className={`w-full bg-black hover:bg-gray-950 border text-white font-semibold py-2.5 text-sm flex items-center justify-center gap-2 transition-colors mt-6 ${isCompany ? 'border-white/80' : 'border-[#B85C2E]/80'}`}
       >
         <IdCard size={16} />
         Ver Minha Carteirinha
@@ -198,7 +198,9 @@ export function NetworkPage({ currentUser, isCompany = false }: NetworkPageProps
         memberNumber={currentUser.memberNumber}
         memberPhoto={currentUser.photo}
         cardTier={cardTier}
+        showCompany={isCompany}
       />
+
     </div>
   );
 }
