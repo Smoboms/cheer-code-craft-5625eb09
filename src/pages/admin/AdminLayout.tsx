@@ -165,6 +165,8 @@ export default function AdminLayout() {
                   to={item.to}
                   end={item.end}
                   onClick={() => setMobileOpen(false)}
+                  onTouchStart={() => prefetchRoute(item.to)}
+                  onFocus={() => prefetchRoute(item.to)}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-4 py-3 text-sm border-l-2 ${isActive ? 'border-yellow-500 bg-white/5 text-white' : 'border-transparent text-gray-300'}`
                   }
