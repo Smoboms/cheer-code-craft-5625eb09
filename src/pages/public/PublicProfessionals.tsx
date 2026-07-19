@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { MessageCircle, Search, MapPin, Plus } from 'lucide-react';

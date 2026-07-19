@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Lock } from 'lucide-react';

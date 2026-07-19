@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useEffect, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';

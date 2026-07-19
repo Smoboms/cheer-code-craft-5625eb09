@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useJournalArticles } from '@/data/useJournalArticles';

@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useEffect } from 'react';
 import { useWeather, weatherLabel } from '@/data/useWeather';
 import { CloudSun, Wind, Droplets, Sun, Loader2 } from 'lucide-react';

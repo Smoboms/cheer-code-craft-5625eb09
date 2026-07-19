@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useEffect, useMemo, useState } from 'react';
 import { Search, X, MessageCircle, Store, ShoppingBag } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
