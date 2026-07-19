@@ -148,6 +148,8 @@ export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout, on
             <p className="text-xs text-gray-500 mt-2">O e-mail não pode ser alterado</p>
           </div>
 
+          <ProfileSwitcherCard />
+
           {msg && <p className="text-sm text-center text-red-400">{msg}</p>}
 
           <button
