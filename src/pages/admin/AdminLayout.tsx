@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid, Columns3, Building, Target, DollarSign } from 'lucide-react';
+import { LayoutDashboard, Building2, Newspaper, Tags, Users, Ticket, BarChart3, Megaphone, ShoppingBag, ArrowLeft, Menu, X, Wrench, Layers, MapPin, LayoutGrid, Columns3, Building, Target, DollarSign, ChevronDown, ShieldAlert } from 'lucide-react';
 import { useState } from 'react';
 
 // Fase 6 · T2 — Prefetch inteligente. Ao passar o mouse sobre um item do menu,
@@ -78,30 +78,32 @@ export default function AdminLayout() {
   const { isLoading, isAdmin, user } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(NAV_GROUPS.map(g => [g.title, true]))
+  );
+  const toggleGroup = (title: string) =>
+    setOpenGroups(prev => ({ ...prev, [title]: !prev[title] }));
 
   if (isLoading) {
     return <div className="min-h-screen bg-[#0a0f1e] flex items-center justify-center text-gray-400">Carregando…</div>;
   }
 
-  if (!user) {
+  if (!user || !isAdmin) {
     return (
       <div className="min-h-screen bg-[#0a0f1e] flex items-center justify-center px-6">
-        <div className="max-w-md text-center">
-          <h1 className="text-white text-2xl mb-3" style={{ fontFamily: 'UnifrakturCook, serif' }}>Rarques</h1>
-          <p className="text-gray-300 mb-4">Acesso restrito. Entre com uma conta autorizada.</p>
-          <button onClick={() => navigate('/app')} className="bg-yellow-500 text-black px-4 py-2 text-sm font-semibold">Ir para o login</button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen bg-[#0a0f1e] flex items-center justify-center px-6">
-        <div className="max-w-md text-center">
-          <h1 className="text-white text-2xl mb-3" style={{ fontFamily: 'UnifrakturCook, serif' }}>Rarques</h1>
-          <p className="text-gray-300 mb-4">Você não tem permissão para acessar o Painel Administrativo.</p>
-          <button onClick={() => navigate('/app')} className="bg-yellow-500 text-black px-4 py-2 text-sm font-semibold">Voltar para a plataforma</button>
+        <div className="max-w-lg text-center border border-yellow-500/40 bg-[#070c19] p-8">
+          <ShieldAlert className="mx-auto text-yellow-500 mb-4" size={44} />
+          <div className="text-[10px] uppercase tracking-[0.35em] text-yellow-500/80 mb-2">Acesso Negado</div>
+          <h1 className="text-white text-2xl mb-4" style={{ fontFamily: 'UnifrakturCook, serif' }}>Rarques</h1>
+          <p className="text-gray-200 text-sm leading-relaxed mb-6 uppercase tracking-wider">
+            Espaço protegido pela Equipe de Especialização Tática da Rarques.
+          </p>
+          <p className="text-gray-500 text-xs mb-6">
+            Qualquer tentativa de acesso não autorizado é registrada e bloqueada automaticamente.
+          </p>
+          <button onClick={() => navigate('/app')} className="bg-yellow-500 text-black px-5 py-2 text-sm font-semibold tracking-wider">
+            VOLTAR
+          </button>
         </div>
       </div>
     );
@@ -116,27 +118,37 @@ export default function AdminLayout() {
           <div className="text-[11px] uppercase tracking-widest text-gray-400 mt-1">Painel Adm</div>
         </div>
         <nav className="flex-1 py-3 overflow-y-auto">
-          {NAV_GROUPS.map(group => (
-            <div key={group.title} className="mb-3">
-              <div className="px-4 py-1 text-[10px] uppercase tracking-widest text-gray-500">{group.title}</div>
-              {group.items.map(item => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.end}
-                  onMouseEnter={() => prefetchRoute(item.to)}
-                  onFocus={() => prefetchRoute(item.to)}
-                  onTouchStart={() => prefetchRoute(item.to)}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-2.5 text-sm border-l-2 ${isActive ? 'border-yellow-500 bg-white/5 text-white' : 'border-transparent text-gray-300 hover:bg-white/5'}`
-                  }
+          {NAV_GROUPS.map(group => {
+            const isOpen = openGroups[group.title];
+            return (
+              <div key={group.title} className="mb-2">
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(group.title)}
+                  className="w-full flex items-center justify-between px-4 py-2 text-[10px] uppercase tracking-widest text-gray-500 hover:text-gray-300"
                 >
-                  <item.icon size={16} />
-                  {item.label}
-                </NavLink>
-              ))}
-            </div>
-          ))}
+                  <span>{group.title}</span>
+                  <ChevronDown size={12} className={`transition-transform ${isOpen ? '' : '-rotate-90'}`} />
+                </button>
+                {isOpen && group.items.map(item => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.end}
+                    onMouseEnter={() => prefetchRoute(item.to)}
+                    onFocus={() => prefetchRoute(item.to)}
+                    onTouchStart={() => prefetchRoute(item.to)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-2.5 text-sm border-l-2 ${isActive ? 'border-yellow-500 bg-white/5 text-white' : 'border-transparent text-gray-300 hover:bg-white/5'}`
+                    }
+                  >
+                    <item.icon size={16} />
+                    {item.label}
+                  </NavLink>
+                ))}
+              </div>
+            );
+          })}
         </nav>
         <button onClick={() => navigate('/app')} className="flex items-center gap-2 px-4 py-3 text-xs text-gray-400 hover:text-white border-t border-white/10">
           <ArrowLeft size={14} /> Voltar para a plataforma
@@ -156,27 +168,37 @@ export default function AdminLayout() {
       </div>
       {mobileOpen && (
         <div className="md:hidden fixed top-14 left-0 right-0 bottom-0 z-40 bg-[#070c19] overflow-y-auto">
-          {NAV_GROUPS.map(group => (
-            <div key={group.title} className="mb-2">
-              <div className="px-4 py-2 text-[10px] uppercase tracking-widest text-gray-500">{group.title}</div>
-              {group.items.map(item => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.end}
-                  onClick={() => setMobileOpen(false)}
-                  onTouchStart={() => prefetchRoute(item.to)}
-                  onFocus={() => prefetchRoute(item.to)}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 text-sm border-l-2 ${isActive ? 'border-yellow-500 bg-white/5 text-white' : 'border-transparent text-gray-300'}`
-                  }
+          {NAV_GROUPS.map(group => {
+            const isOpen = openGroups[group.title];
+            return (
+              <div key={group.title} className="mb-2">
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(group.title)}
+                  className="w-full flex items-center justify-between px-4 py-3 text-[10px] uppercase tracking-widest text-gray-500"
                 >
-                  <item.icon size={16} />
-                  {item.label}
-                </NavLink>
-              ))}
-            </div>
-          ))}
+                  <span>{group.title}</span>
+                  <ChevronDown size={12} className={`transition-transform ${isOpen ? '' : '-rotate-90'}`} />
+                </button>
+                {isOpen && group.items.map(item => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.end}
+                    onClick={() => setMobileOpen(false)}
+                    onTouchStart={() => prefetchRoute(item.to)}
+                    onFocus={() => prefetchRoute(item.to)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-3 text-sm border-l-2 ${isActive ? 'border-yellow-500 bg-white/5 text-white' : 'border-transparent text-gray-300'}`
+                    }
+                  >
+                    <item.icon size={16} />
+                    {item.label}
+                  </NavLink>
+                ))}
+              </div>
+            );
+          })}
         </div>
       )}
 
