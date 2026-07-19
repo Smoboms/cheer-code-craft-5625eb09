@@ -16,9 +16,10 @@ interface NetworkPageProps {
     bio: string;
     photo?: string | null;
   };
+  isCompany?: boolean;
 }
 
-export function NetworkPage({ currentUser }: NetworkPageProps) {
+export function NetworkPage({ currentUser, isCompany = false }: NetworkPageProps) {
   const { user } = useAuth();
   const [showCardModal, setShowCardModal] = useState(false);
   const [totalSavings, setTotalSavings] = useState(0);
@@ -98,11 +99,15 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
         </div>
       </div>
 
-      {/* Membership Card - Black Edition Style */}
+      {/* Membership Card - paleta condicional (Client: laranja queimado; Empresa: preto/branco padrão) */}
       <button
         type="button"
         onClick={() => setShowCardModal(true)}
-        className="w-full text-left bg-gradient-to-br from-black via-gray-900 to-black text-white shadow-2xl aspect-[1.586/1] flex flex-col justify-between p-3 sm:p-6 relative overflow-hidden border-2 border-gray-400/40 mb-8"
+        className={`w-full text-left text-white shadow-2xl aspect-[1.586/1] flex flex-col justify-between p-3 sm:p-6 relative overflow-hidden border-2 mb-8 ${
+          isCompany
+            ? 'bg-gradient-to-br from-black via-gray-900 to-black border-gray-400/40'
+            : 'bg-gradient-to-br from-black via-[#3a1d0f] to-black border-[#B85C2E]/70'
+        }`}
       >
         <div className="absolute top-0 right-0 w-2/3 h-full opacity-20">
           <svg viewBox="0 0 400 250" className="w-full h-full">
@@ -122,7 +127,7 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
 
         <div className="flex items-start justify-between relative z-10 gap-2">
           <div className="relative min-w-0">
-            <div className="inline-block bg-[#9b59b6] px-2 py-0.5 mb-2">
+            <div className={`inline-block px-2 py-0.5 mb-2 ${isCompany ? 'bg-[#9b59b6]' : 'bg-[#B85C2E]'}`}>
               <p className="text-[10px] font-semibold tracking-wide">MEMBRO ATIVO</p>
             </div>
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#FFFFFF] to-[#E0E0E0] flex items-center justify-center border-2 border-[#FFFFFF] flex-shrink-0 overflow-hidden">
@@ -138,14 +143,16 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
         <div className="flex-1 flex flex-col justify-center relative z-10 min-w-0">
           <p className="text-xs sm:text-base tracking-wider mb-1 sm:mb-2 font-medium truncate">{currentUser.name}</p>
           <p className="text-[11px] sm:text-base tracking-[0.1em] sm:tracking-[0.15em] font-mono truncate">{currentUser.memberNumber}</p>
-          <p className="text-[9px] sm:text-[10px] opacity-70 mt-1 uppercase truncate">{currentUser.company}</p>
+          {isCompany && (
+            <p className="text-[9px] sm:text-[10px] opacity-70 mt-1 uppercase truncate">{currentUser.company}</p>
+          )}
         </div>
 
         <div className="relative z-10">
           <div className="flex items-end justify-between gap-2">
             <div className="min-w-0">
               <p className="text-[10px] sm:text-xs opacity-70 mb-0.5 sm:mb-1">ECONOMIA TOTAL</p>
-              <p className="text-base sm:text-xl font-bold text-green-400 truncate">{formatBRL(totalSavings)}</p>
+              <p className={`text-base sm:text-xl font-bold truncate ${isCompany ? 'text-green-400' : 'text-[#F1A56C]'}`}>{formatBRL(totalSavings)}</p>
             </div>
             <div className="text-right min-w-0">
               <p className="text-[10px] sm:text-xs opacity-70 mb-0.5 sm:mb-1">BENEFÍCIOS</p>
@@ -157,7 +164,7 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
 
 
       {/* Total Savings Card - Compressed */}
-      <div className="mb-8 bg-gradient-to-br from-green-500 to-green-600 p-3">
+      <div className={`mb-8 p-3 ${isCompany ? 'bg-gradient-to-br from-green-500 to-green-600' : 'bg-gradient-to-br from-[#B85C2E] to-[#7A3B1D]'}`}>
         <div className="flex items-center gap-3">
           <TrendingUp size={24} className="text-white flex-shrink-0" />
           <div className="flex-1">
@@ -176,7 +183,7 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
       {/* Digital Card Button - moved to the end and compacted */}
       <button
         onClick={() => setShowCardModal(true)}
-        className="w-full bg-black hover:bg-gray-950 border border-white/80 text-white font-semibold py-2.5 text-sm flex items-center justify-center gap-2 transition-colors mt-6"
+        className={`w-full bg-black hover:bg-gray-950 border text-white font-semibold py-2.5 text-sm flex items-center justify-center gap-2 transition-colors mt-6 ${isCompany ? 'border-white/80' : 'border-[#B85C2E]/80'}`}
       >
         <IdCard size={16} />
         Ver Minha Carteirinha
@@ -191,7 +198,9 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
         memberNumber={currentUser.memberNumber}
         memberPhoto={currentUser.photo}
         cardTier={cardTier}
+        showCompany={isCompany}
       />
+
     </div>
   );
 }

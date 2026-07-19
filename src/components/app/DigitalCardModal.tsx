@@ -9,9 +9,11 @@ interface DigitalCardModalProps {
   memberNumber: string;
   memberPhoto?: string | null;
   cardTier?: 'standard' | 'executive';
+  /** Exibir subtítulo da empresa (apenas contas Empresa). Cliente puro não deve ver "Empresa Associada". */
+  showCompany?: boolean;
 }
 
-export function DigitalCardModal({ isOpen, onClose, memberName, memberCompany, memberNumber, memberPhoto, cardTier = 'standard' }: DigitalCardModalProps) {
+export function DigitalCardModal({ isOpen, onClose, memberName, memberCompany, memberNumber, memberPhoto, cardTier = 'standard', showCompany = false }: DigitalCardModalProps) {
   if (!isOpen) return null;
 
   const isExec = cardTier === 'executive';
@@ -60,7 +62,9 @@ export function DigitalCardModal({ isOpen, onClose, memberName, memberCompany, m
             </div>
             <div className="min-w-0">
               <p className={`font-semibold text-base truncate ${isExec ? 'text-yellow-100' : 'text-white'}`}>{memberName}</p>
-              <p className={`text-xs truncate ${isExec ? 'text-yellow-500/80' : 'text-gray-400'}`}>{memberCompany}</p>
+              {(showCompany || isExec) && (
+                <p className={`text-xs truncate ${isExec ? 'text-yellow-500/80' : 'text-gray-400'}`}>{memberCompany}</p>
+              )}
             </div>
           </div>
 

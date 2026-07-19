@@ -15,6 +15,9 @@ export function ProfileSwitcherCard() {
   const [busy, setBusy] = useState<'client' | 'company' | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
+  // Só exibimos o switcher quando o usuário efetivamente possui os DOIS perfis vinculados.
+  if (!(hasClientProfile && hasCompanyProfile)) return null;
+
   const handleAction = async (type: 'client' | 'company') => {
     setBusy(type); setErr(null);
     try {

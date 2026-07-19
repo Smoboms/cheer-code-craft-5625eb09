@@ -9,6 +9,7 @@ interface Props {
   userName: string;
   onNavigate: (tab: TabType) => void;
   onOpenMore: (section: MoreSection) => void;
+  isCompany?: boolean;
 }
 
 type BannerAction = { type: 'tab'; value: TabType } | { type: 'more'; value: MoreSection };
@@ -53,7 +54,7 @@ type SlideItem =
   | { kind: 'info'; banner: Banner }
   | { kind: 'image'; imageUrl: string; ctaHref: string };
 
-export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
+export function HomePage({ userName, onNavigate, onOpenMore, isCompany = false }: Props) {
   const firstName = userName.split(' ')[0] || 'Associado';
   const [slide, setSlide] = useState(0);
   const bannerCfg = usePublicBanner();
@@ -166,11 +167,13 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
 
       {/* Grade compacta */}
       <div className="grid grid-cols-2 gap-2">
-        <button onClick={() => onOpenMore('minhaempresa')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
-          <Building2 size={18} className="text-white mb-1.5" />
-          <p className="text-white font-semibold text-xs">Minha Empresa</p>
-          <p className="text-gray-400 text-[10px]">Perfil e produtos</p>
-        </button>
+        {isCompany && (
+          <button onClick={() => onOpenMore('minhaempresa')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
+            <Building2 size={18} className="text-white mb-1.5" />
+            <p className="text-white font-semibold text-xs">Minha Empresa</p>
+            <p className="text-gray-400 text-[10px]">Perfil e produtos</p>
+          </button>
+        )}
         <button onClick={() => onOpenMore('nexus')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
           <Users size={18} className="text-yellow-400 mb-1.5" />
           <p className="text-white font-semibold text-xs">Nexus</p>
@@ -181,11 +184,13 @@ export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
           <p className="text-white font-semibold text-xs">Crescer</p>
           <p className="text-gray-400 text-[10px]">Diagnóstico</p>
         </button>
-        <button onClick={() => onOpenMore('juridico')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
-          <Scale size={18} className="text-yellow-400 mb-1.5" />
-          <p className="text-white font-semibold text-xs">Jurídico Empresarial</p>
-          <p className="text-gray-400 text-[10px]">Assessoria dedicada</p>
-        </button>
+        {isCompany && (
+          <button onClick={() => onOpenMore('juridico')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
+            <Scale size={18} className="text-yellow-400 mb-1.5" />
+            <p className="text-white font-semibold text-xs">Jurídico Empresarial</p>
+            <p className="text-gray-400 text-[10px]">Assessoria dedicada</p>
+          </button>
+        )}
         <button onClick={() => onOpenMore('panorama')} className="bg-gray-900 border border-gray-800 p-3 text-left hover:border-gray-600 transition-colors">
           <Globe size={18} className="text-blue-400 mb-1.5" />
           <p className="text-white font-semibold text-xs">Panorama</p>

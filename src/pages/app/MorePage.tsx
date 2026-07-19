@@ -4,11 +4,14 @@ export type MoreSection = 'nexus' | 'elas' | 'magna' | 'panorama' | 'minhaempres
 
 interface Props {
   onOpen: (section: MoreSection) => void;
+  isCompany?: boolean;
 }
 
-const items: { key: MoreSection; label: string; desc: string; icon: LucideIcon; accent: string }[] = [
-  { key: 'minhaempresa', label: 'Minha Empresa', desc: 'Perfil e produtos', icon: Building2, accent: 'text-white' },
-  { key: 'juridico', label: 'Jurídico Empresarial', desc: 'Assessoria jurídica', icon: Scale, accent: 'text-yellow-400' },
+type Item = { key: MoreSection; label: string; desc: string; icon: LucideIcon; accent: string; companyOnly?: boolean };
+
+const items: Item[] = [
+  { key: 'minhaempresa', label: 'Minha Empresa', desc: 'Perfil e produtos', icon: Building2, accent: 'text-white', companyOnly: true },
+  { key: 'juridico', label: 'Jurídico Empresarial', desc: 'Assessoria jurídica', icon: Scale, accent: 'text-yellow-400', companyOnly: true },
   { key: 'nexus', label: 'Nexus', desc: 'Networking e rodadas', icon: Users, accent: 'text-yellow-400' },
   { key: 'elas', label: 'Elas', desc: 'Liderança feminina', icon: Heart, accent: 'text-pink-400' },
   { key: 'magna', label: 'Magna', desc: 'Legado e reconhecimento', icon: Award, accent: 'text-yellow-400' },
@@ -17,7 +20,8 @@ const items: { key: MoreSection; label: string; desc: string; icon: LucideIcon; 
   { key: 'beneficios', label: 'Benefícios', desc: 'Parceiros e descontos', icon: Tag, accent: 'text-green-400' },
 ];
 
-export function MorePage({ onOpen }: Props) {
+export function MorePage({ onOpen, isCompany = false }: Props) {
+  const visible = items.filter(it => !it.companyOnly || isCompany);
   return (
     <div className="animate-fadeUp pb-4">
       <div className="mb-4">
@@ -26,7 +30,7 @@ export function MorePage({ onOpen }: Props) {
       </div>
 
       <div className="grid grid-cols-2 gap-2">
-        {items.map((it) => {
+        {visible.map((it) => {
           const Icon = it.icon;
           return (
             <button

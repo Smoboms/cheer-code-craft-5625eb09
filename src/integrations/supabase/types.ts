@@ -1692,6 +1692,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      has_company_profile: { Args: { _user_id: string }; Returns: boolean }
       issue_coupon: {
         Args: {
           _cashback_amount: number

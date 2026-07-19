@@ -25,9 +25,10 @@ function formatCardNumber(cardNumber: string): string {
 const ADMIN_EMAIL = 'rarquesmatriz@gmail.com';
 
 const Index = () => {
-  const { user, profile, isLoading, isAdmin, signOut, refreshProfile } = useAuth();
+  const { user, profile, isLoading, isAdmin, signOut, refreshProfile, activeAccountType, hasCompanyProfile } = useAuth();
   const [currentTab, setCurrentTab] = useState<TabType>('inicio');
   const [moreSection, setMoreSection] = useState<MoreSection | null>(null);
+  const isCompanyActive = activeAccountType === 'company' && hasCompanyProfile;
   
 
   const isAdminUser = isAdmin || user?.email === ADMIN_EMAIL;
@@ -83,6 +84,15 @@ const Index = () => {
   };
 
   const renderMoreSection = () => {
+    // Bloqueio hard: seções exclusivas de Empresa NUNCA carregam para conta Cliente.
+    if ((moreSection === 'minhaempresa' || moreSection === 'juridico') && !isCompanyActive) {
+      return (
+        <div className="animate-fadeUp">
+          <button onClick={() => setMoreSection(null)} className="text-gray-300 hover:text-white text-sm mb-3">← Voltar</button>
+          <p className="text-gray-400 text-sm">Área exclusiva para contas Empresa.</p>
+        </div>
+      );
+    }
     switch (moreSection) {
       case 'nexus': return <NexusPage onBack={() => setMoreSection(null)} />;
       case 'elas': return <ElasPage onBack={() => setMoreSection(null)} />;
@@ -117,11 +127,12 @@ const Index = () => {
                 userName={currentUser.name}
                 onNavigate={handleTabChange}
                 onOpenMore={(s) => { setCurrentTab('mais'); setMoreSection(s); }}
+                isCompany={isCompanyActive}
               />
             )}
-            {currentTab === 'rcard' && <NetworkPage currentUser={currentUser} />}
+            {currentTab === 'rcard' && <NetworkPage currentUser={currentUser} isCompany={isCompanyActive} />}
             {currentTab === 'journal' && <JournalPage onBack={() => setCurrentTab('inicio')} />}
-            {currentTab === 'mais' && <MorePage onOpen={setMoreSection} />}
+            {currentTab === 'mais' && <MorePage onOpen={setMoreSection} isCompany={isCompanyActive} />}
             {currentTab === 'beneficios' && <BenefitsPage />}
 
           </>
