@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { ListSkeleton } from '@/components/ui/skeleton';
 
 export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: string; actions?: ReactNode }) {
   return (
