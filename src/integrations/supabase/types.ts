@@ -1645,6 +1645,39 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_secondary_profile: {
+        Args: { _account_type: string }
+        Returns: {
+          account_type: string
+          avatar_url: string | null
+          bio: string | null
+          card_code: string | null
+          card_number: string
+          card_tier: string
+          company: string | null
+          cpf: string | null
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean
+          is_founding: boolean | null
+          is_public: boolean | null
+          name: string
+          phone: string | null
+          segment: string | null
+          total_savings: number
+          updated_at: string
+          user_id: string
+          what_i_offer: string | null
+          what_i_seek: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       generate_unique_card_code: { Args: never; Returns: string }
       generate_unique_card_number: { Args: never; Returns: string }
       get_public_card_by_code: {

@@ -4,69 +4,58 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 
 type Profile = Tables<'profiles'>;
+type AccountType = 'client' | 'company';
+
+const ACTIVE_TYPE_KEY = 'rarques.active_account_type';
 
 interface AuthContextType {
   session: Session | null;
   user: User | null;
   profile: any | null;
+  profiles: Profile[];
+  activeAccountType: AccountType | null;
+  hasClientProfile: boolean;
+  hasCompanyProfile: boolean;
   isLoading: boolean;
   isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, metadata?: Record<string, any>) => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
-
+  switchAccountType: (type: AccountType) => Promise<void>;
+  createSecondaryProfile: (type: AccountType) => Promise<Profile>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function readStoredActiveType(): AccountType | null {
+  try {
+    const v = localStorage.getItem(ACTIVE_TYPE_KEY);
+    return v === 'client' || v === 'company' ? v : null;
+  } catch { return null; }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [activeAccountType, setActiveAccountType] = useState<AccountType | null>(readStoredActiveType());
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const syncRequestRef = useRef(0);
 
-  const generateCardNumber = () => Array.from({ length: 16 }, () => Math.floor(Math.random() * 10)).join('');
-
   const resetUserState = useCallback(() => {
-    setProfile(null);
+    setProfiles([]);
     setIsAdmin(false);
   }, []);
 
-  const ensureProfile = useCallback(async (authUser: User) => {
+  const loadProfiles = useCallback(async (authUser: User): Promise<Profile[]> => {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('user_id', authUser.id)
-      .maybeSingle();
-
+      .eq('user_id', authUser.id);
     if (error) throw error;
-    if (data) return data;
-
-    for (let attempt = 0; attempt < 3; attempt += 1) {
-      const { data: createdProfile, error: insertError } = await supabase
-        .from('profiles')
-        .insert({
-          user_id: authUser.id,
-          email: authUser.email ?? null,
-          name: authUser.user_metadata?.full_name ?? '',
-          card_number: generateCardNumber(),
-        })
-        .select('*')
-        .single();
-
-      if (!insertError && createdProfile) {
-        return createdProfile;
-      }
-
-      if (insertError?.code !== '23505') {
-        throw insertError;
-      }
-    }
-
-    throw new Error('Não foi possível preparar o perfil do usuário');
+    return (data ?? []) as Profile[];
   }, []);
 
   const checkAdmin = useCallback(async (userId: string) => {
@@ -76,7 +65,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .eq('user_id', userId)
       .eq('role', 'admin')
       .maybeSingle();
-
     if (error) throw error;
     return !!data;
   }, []);
@@ -95,18 +83,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setIsLoading(true);
 
-    const [profileResult, adminResult] = await Promise.allSettled([
-      ensureProfile(nextSession.user),
+    const [profilesResult, adminResult] = await Promise.allSettled([
+      loadProfiles(nextSession.user),
       checkAdmin(nextSession.user.id),
     ]);
 
     if (requestId !== syncRequestRef.current) return;
 
-    if (profileResult.status === 'fulfilled') {
-      setProfile(profileResult.value);
+    if (profilesResult.status === 'fulfilled') {
+      const list = profilesResult.value;
+      setProfiles(list);
+      // Escolhe perfil ativo: preserva escolha do usuário se existir; senão prioriza client.
+      const stored = readStoredActiveType();
+      const pick: AccountType | null =
+        (stored && list.some(p => p.account_type === stored)) ? stored :
+        (list.find(p => p.account_type === 'client')?.account_type as AccountType) ??
+        (list[0]?.account_type as AccountType) ?? null;
+      setActiveAccountType(pick);
+      if (pick) { try { localStorage.setItem(ACTIVE_TYPE_KEY, pick); } catch {} }
     } else {
-      console.error('Profile sync error:', profileResult.reason);
-      setProfile(null);
+      console.error('Profile sync error:', profilesResult.reason);
+      setProfiles([]);
     }
 
     if (adminResult.status === 'fulfilled') {
@@ -117,13 +114,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     setIsLoading(false);
-  }, [checkAdmin, ensureProfile, resetUserState]);
+  }, [checkAdmin, loadProfiles, resetUserState]);
 
   const refreshProfile = async () => {
     if (user) {
-      const refreshedProfile = await ensureProfile(user);
-      setProfile(refreshedProfile);
+      const list = await loadProfiles(user);
+      setProfiles(list);
     }
+  };
+
+  const switchAccountType = async (type: AccountType) => {
+    if (!profiles.some(p => p.account_type === type)) {
+      throw new Error('Perfil inexistente para este tipo de conta');
+    }
+    setActiveAccountType(type);
+    try { localStorage.setItem(ACTIVE_TYPE_KEY, type); } catch {}
+  };
+
+  const createSecondaryProfile = async (type: AccountType): Promise<Profile> => {
+    const { data, error } = await supabase.rpc('create_secondary_profile', { _account_type: type });
+    if (error) throw error;
+    if (user) {
+      const list = await loadProfiles(user);
+      setProfiles(list);
+    }
+    setActiveAccountType(type);
+    try { localStorage.setItem(ACTIVE_TYPE_KEY, type); } catch {}
+    return data as unknown as Profile;
   };
 
   useEffect(() => {
@@ -131,7 +148,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let loadingFallbackId: number | null = null;
     let lastUserId: string | null = null;
 
-    // Limpa tokens corrompidos antes de tudo (não bloqueia).
     try {
       const storageKeys = Object.keys(localStorage);
       for (const key of storageKeys) {
@@ -150,15 +166,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      // onAuthStateChange já dispara INITIAL_SESSION ao se inscrever, então
-      // não precisamos chamar getSession() manualmente. Isso elimina o duplo
-      // sync (initSession + INITIAL_SESSION) que atrasava o Painel ADM.
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
         (_event, nextSession) => {
           if (!mounted) return;
           const nextUserId = nextSession?.user?.id ?? null;
-          // Ignora eventos que não mudam o usuário (TOKEN_REFRESHED, USER_UPDATED)
-          // para evitar refetch desnecessário de profile/roles.
           if (
             nextUserId === lastUserId &&
             _event !== 'INITIAL_SESSION' &&
@@ -183,22 +194,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return () => {
         mounted = false;
         subscription.unsubscribe();
-        if (loadingFallbackId) {
-          window.clearTimeout(loadingFallbackId);
-        }
+        if (loadingFallbackId) window.clearTimeout(loadingFallbackId);
       };
     } catch (err) {
       console.error('Auth state change error:', err);
       setIsLoading(false);
     }
 
-
-
     return () => {
       mounted = false;
-      if (loadingFallbackId) {
-        window.clearTimeout(loadingFallbackId);
-      }
+      if (loadingFallbackId) window.clearTimeout(loadingFallbackId);
     };
   }, [resetUserState, syncAuthState]);
 
@@ -216,25 +221,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
   };
 
-
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
-    setProfile(null);
+    setProfiles([]);
     setIsAdmin(false);
+    try { localStorage.removeItem(ACTIVE_TYPE_KEY); } catch {}
   };
+
+  const activeProfile =
+    (activeAccountType && profiles.find(p => p.account_type === activeAccountType)) ||
+    profiles[0] ||
+    null;
 
   return (
     <AuthContext.Provider value={{
       session,
       user,
-      profile,
+      profile: activeProfile,
+      profiles,
+      activeAccountType,
+      hasClientProfile: profiles.some(p => p.account_type === 'client'),
+      hasCompanyProfile: profiles.some(p => p.account_type === 'company'),
       isLoading,
       isAdmin,
       signIn: handleSignIn,
       signUp: handleSignUp,
       signOut: handleSignOut,
       refreshProfile,
+      switchAccountType,
+      createSecondaryProfile,
     }}>
       {children}
     </AuthContext.Provider>

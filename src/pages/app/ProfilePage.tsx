@@ -3,6 +3,7 @@ import { ArrowLeft, Camera, User, Mail, LogOut, Shield, Loader2 } from 'lucide-r
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { optimizeImage, toWebpName } from '@/lib/imageOptimizer';
+import { ProfileSwitcherCard } from '@/components/profile/ProfileSwitcherCard';
 
 interface ProfilePageProps {
   onBack: () => void;
@@ -20,7 +21,7 @@ interface ProfilePageProps {
 const AVATAR_SIGNED_TTL = 60 * 60 * 24 * 365; // ~1 ano
 
 export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout, onAdminPanel, isAdmin }: ProfilePageProps) {
-  const { user } = useAuth();
+  const { user, activeAccountType } = useAuth();
   const [name, setName] = useState(userProfile.name);
   const [photo, setPhoto] = useState<string | null>(userProfile.photo);
   const [uploading, setUploading] = useState(false);
@@ -62,7 +63,8 @@ export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout, on
     const { error } = await supabase
       .from('profiles')
       .update({ name: name.trim(), avatar_url: photo })
-      .eq('user_id', user.id);
+      .eq('user_id', user.id)
+      .eq('account_type', activeAccountType ?? 'client');
     setSaving(false);
     if (error) {
       setMsg('Erro ao salvar. Tente novamente.');
@@ -145,6 +147,8 @@ export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout, on
             </div>
             <p className="text-xs text-gray-500 mt-2">O e-mail não pode ser alterado</p>
           </div>
+
+          <ProfileSwitcherCard />
 
           {msg && <p className="text-sm text-center text-red-400">{msg}</p>}
 
