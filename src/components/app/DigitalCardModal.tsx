@@ -9,9 +9,11 @@ interface DigitalCardModalProps {
   memberNumber: string;
   memberPhoto?: string | null;
   cardTier?: 'standard' | 'executive';
+  /** Exibir subtítulo da empresa (apenas contas Empresa). Cliente puro não deve ver "Empresa Associada". */
+  showCompany?: boolean;
 }
 
-export function DigitalCardModal({ isOpen, onClose, memberName, memberCompany, memberNumber, memberPhoto, cardTier = 'standard' }: DigitalCardModalProps) {
+export function DigitalCardModal({ isOpen, onClose, memberName, memberCompany, memberNumber, memberPhoto, cardTier = 'standard', showCompany = false }: DigitalCardModalProps) {
   if (!isOpen) return null;
 
   const isExec = cardTier === 'executive';
