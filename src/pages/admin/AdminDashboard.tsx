@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, PageHeader, StatCard, EmptyState } from './ui';
 import { PeriodPicker, useAsync, useDateRange } from './hooks';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { PublicPlatformSwitchCard } from './PublicPlatformSwitchCard';
 
 function startOfToday() { const d = new Date(); d.setHours(0,0,0,0); return d.toISOString(); }
 function startOfWeek() { const d = new Date(); d.setDate(d.getDate() - 7); return d.toISOString(); }
@@ -147,6 +148,9 @@ export default function AdminDashboard() {
   return (
     <>
       <PageHeader title="Dashboard" subtitle="Visão geral da plataforma" />
+
+      {/* Modo Lançamento — controle global da Área Pública */}
+      <PublicPlatformSwitchCard />
 
       {/* Central de Controle */}
       <Card className="p-4 mb-4">
