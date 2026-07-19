@@ -54,7 +54,7 @@ type SlideItem =
   | { kind: 'info'; banner: Banner }
   | { kind: 'image'; imageUrl: string; ctaHref: string };
 
-export function HomePage({ userName, onNavigate, onOpenMore }: Props) {
+export function HomePage({ userName, onNavigate, onOpenMore, isCompany = false }: Props) {
   const firstName = userName.split(' ')[0] || 'Associado';
   const [slide, setSlide] = useState(0);
   const bannerCfg = usePublicBanner();
