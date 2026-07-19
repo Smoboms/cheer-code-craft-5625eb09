@@ -126,30 +126,32 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black">
-      <PremiumHeader onSettingsClick={() => setCurrentTab('config')} />
-      <div className="max-w-md mx-auto pt-20 pb-24 px-4">
-        {moreSection ? renderMoreSection() : (
-          <>
-            {currentTab === 'inicio' && (
-              <HomePage
-                userName={currentUser.name}
-                onNavigate={handleTabChange}
-                onOpenMore={(s) => { setCurrentTab('mais'); setMoreSection(s); }}
-                isCompany={isCompanyActive}
-              />
-            )}
-            {currentTab === 'rcard' && <NetworkPage currentUser={currentUser} isCompany={isCompanyActive} />}
-            {currentTab === 'journal' && <JournalPage onBack={() => setCurrentTab('inicio')} />}
-            {currentTab === 'mais' && <MorePage onOpen={setMoreSection} isCompany={isCompanyActive} />}
-            {currentTab === 'beneficios' && <BenefitsPage />}
-
-          </>
-        )}
+    <Wrap>
+      <div className="min-h-screen bg-black">
+        <PremiumHeader onSettingsClick={() => setCurrentTab('config')} />
+        <div className="max-w-md mx-auto pt-20 pb-24 px-4">
+          {moreSection ? renderMoreSection() : (
+            <>
+              {currentTab === 'inicio' && (
+                <HomePage
+                  userName={currentUser.name}
+                  onNavigate={handleTabChange}
+                  onOpenMore={(s) => { setCurrentTab('mais'); setMoreSection(s); }}
+                  isCompany={isCompanyActive}
+                />
+              )}
+              {currentTab === 'rcard' && <NetworkPage currentUser={currentUser} isCompany={isCompanyActive} />}
+              {currentTab === 'journal' && <JournalPage onBack={() => setCurrentTab('inicio')} />}
+              {currentTab === 'mais' && <MorePage onOpen={setMoreSection} isCompany={isCompanyActive} />}
+              {currentTab === 'beneficios' && <BenefitsPage />}
+            </>
+          )}
+        </div>
+        <PremiumBottomNav activeTab={currentTab} onTabChange={handleTabChange} />
       </div>
-      <PremiumBottomNav activeTab={currentTab} onTabChange={handleTabChange} />
-    </div>
+    </Wrap>
   );
+
 };
 
 export default Index;
