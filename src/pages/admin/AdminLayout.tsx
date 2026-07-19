@@ -168,27 +168,37 @@ export default function AdminLayout() {
       </div>
       {mobileOpen && (
         <div className="md:hidden fixed top-14 left-0 right-0 bottom-0 z-40 bg-[#070c19] overflow-y-auto">
-          {NAV_GROUPS.map(group => (
-            <div key={group.title} className="mb-2">
-              <div className="px-4 py-2 text-[10px] uppercase tracking-widest text-gray-500">{group.title}</div>
-              {group.items.map(item => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.end}
-                  onClick={() => setMobileOpen(false)}
-                  onTouchStart={() => prefetchRoute(item.to)}
-                  onFocus={() => prefetchRoute(item.to)}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 text-sm border-l-2 ${isActive ? 'border-yellow-500 bg-white/5 text-white' : 'border-transparent text-gray-300'}`
-                  }
+          {NAV_GROUPS.map(group => {
+            const isOpen = openGroups[group.title];
+            return (
+              <div key={group.title} className="mb-2">
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(group.title)}
+                  className="w-full flex items-center justify-between px-4 py-3 text-[10px] uppercase tracking-widest text-gray-500"
                 >
-                  <item.icon size={16} />
-                  {item.label}
-                </NavLink>
-              ))}
-            </div>
-          ))}
+                  <span>{group.title}</span>
+                  <ChevronDown size={12} className={`transition-transform ${isOpen ? '' : '-rotate-90'}`} />
+                </button>
+                {isOpen && group.items.map(item => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.end}
+                    onClick={() => setMobileOpen(false)}
+                    onTouchStart={() => prefetchRoute(item.to)}
+                    onFocus={() => prefetchRoute(item.to)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-3 text-sm border-l-2 ${isActive ? 'border-yellow-500 bg-white/5 text-white' : 'border-transparent text-gray-300'}`
+                    }
+                  >
+                    <item.icon size={16} />
+                    {item.label}
+                  </NavLink>
+                ))}
+              </div>
+            );
+          })}
         </div>
       )}
 
