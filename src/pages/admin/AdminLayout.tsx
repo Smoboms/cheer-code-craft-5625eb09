@@ -86,10 +86,6 @@ export default function AdminLayout() {
     setOpenGroups(prev => ({ ...prev, [title]: !prev[title] }));
 
   if (isLoading) {
-    // Skeleton em vez de tela vazia enquanto auth resolve
-    // (mantém fundo escuro para não haver flash branco)
-    // eslint-disable-next-line
-    const { DashboardSkeleton } = require('@/components/ui/skeleton');
     return (
       <div className="min-h-screen bg-[#0a0f1e] p-4 md:p-6">
         <DashboardSkeleton />
