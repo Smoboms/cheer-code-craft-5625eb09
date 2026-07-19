@@ -18,7 +18,7 @@ export default function AdminCupons() {
     const userIds = Array.from(new Set(rows.map((c: any) => c.user_id).filter(Boolean)));
     let profileMap = new Map<string, any>();
     if (userIds.length) {
-      const { data: profs } = await supabase.from('profiles').select('user_id, name, email').in('user_id', userIds);
+      const { data: profs } = await supabase.from('profiles').select('user_id, name, email').eq('account_type', 'client').in('user_id', userIds);
       (profs || []).forEach((p: any) => profileMap.set(p.user_id, p));
     }
     const list = rows.map((c: any) => ({ ...c, profile: profileMap.get(c.user_id) || null }));

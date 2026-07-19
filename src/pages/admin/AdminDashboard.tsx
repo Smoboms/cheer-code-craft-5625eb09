@@ -57,7 +57,7 @@ export default function AdminDashboard() {
   const goals = useAsync(async () => {
     const [{ data: gs }, associados, empresasMembro, rcards, produtos] = await Promise.all([
       supabase.from('platform_goals').select('*').order('sort_order'),
-      supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('is_active', true),
+      supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('account_type', 'client').eq('is_active', true),
       supabase.from('partners').select('id', { count: 'exact', head: true }).eq('is_member', true),
       supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('account_type', 'client').eq('is_active', true),
       supabase.from('marketplace_products').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
@@ -73,14 +73,14 @@ export default function AdminDashboard() {
 
   const { data, loading } = useAsync(async () => {
     const [associados, empresas, empresasMembro, cupons, cuponsPeriodo, coupSum, articleViews, newProfiles, weeklyCoupons, searches, productViews, professionalViews, companyViews] = await Promise.all([
-      supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('is_active', true),
+      supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('account_type', 'client').eq('is_active', true),
       supabase.from('partners').select('id', { count: 'exact', head: true }),
       supabase.from('partners').select('id', { count: 'exact', head: true }).eq('is_member', true),
       supabase.from('coupons').select('id', { count: 'exact', head: true }),
       supabase.from('coupons').select('id', { count: 'exact', head: true }).gte('created_at', dr.range.from).lte('created_at', dr.range.to),
       supabase.from('coupons').select('savings'),
       supabase.from('analytics_events').select('target_id, target_label').eq('event_type', 'article_view').gte('created_at', dr.range.from).lte('created_at', dr.range.to),
-      supabase.from('profiles').select('created_at').gte('created_at', new Date(Date.now() - 1000*60*60*24*30*6).toISOString()),
+      supabase.from('profiles').select('created_at').eq('account_type', 'client').gte('created_at', new Date(Date.now() - 1000*60*60*24*30*6).toISOString()),
       supabase.from('coupons').select('created_at').gte('created_at', new Date(Date.now() - 1000*60*60*24*7*8).toISOString()),
       supabase.from('analytics_events').select('target_label').eq('event_type', 'search_query').gte('created_at', dr.range.from).lte('created_at', dr.range.to),
       supabase.from('analytics_events').select('target_id, target_label').eq('event_type', 'product_view').gte('created_at', dr.range.from).lte('created_at', dr.range.to),
