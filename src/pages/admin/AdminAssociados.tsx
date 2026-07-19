@@ -78,6 +78,32 @@ export default function AdminAssociados() {
                       {!p.is_active && <span className="text-[10px] border border-red-500 text-red-400 px-1.5 py-0.5">INATIVO</span>}
                     </div>
                     <div className="text-xs text-gray-400 mt-0.5">{p.email} · {p.company || '—'}</div>
+                    {p.account_type === 'client' && p.card_code && (
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
+                        <span className="text-gray-500">R-CARD:</span>
+                        <span className="font-mono text-yellow-400 tracking-wider">{formatCardCode(p.card_code)}</span>
+                        <a
+                          href={`/cartao/${p.card_code}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 underline"
+                        >
+                          {`${window.location.origin}/cartao/${p.card_code}`}
+                          <ExternalLink size={10} />
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard.writeText(`${window.location.origin}/cartao/${p.card_code}`);
+                            toast({ title: 'Link copiado', description: 'Cole no chip NFC do cartão.' });
+                          }}
+                          className="inline-flex items-center gap-1 text-gray-300 hover:text-white border border-white/20 px-1.5 py-0.5"
+                          title="Copiar link para NFC"
+                        >
+                          <Copy size={10} /> Copiar
+                        </button>
+                      </div>
+                    )}
                     <div className="text-xs text-gray-400 mt-1">
                       Entrou em {new Date(p.created_at).toLocaleDateString()} · {nCup} cupons ·
                       <span className="text-green-400"> R$ {totalSavings.toFixed(2)} economizados</span>
