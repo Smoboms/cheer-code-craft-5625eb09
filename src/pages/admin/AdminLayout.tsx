@@ -124,6 +124,9 @@ export default function AdminLayout() {
                   key={item.to}
                   to={item.to}
                   end={item.end}
+                  onMouseEnter={() => prefetchRoute(item.to)}
+                  onFocus={() => prefetchRoute(item.to)}
+                  onTouchStart={() => prefetchRoute(item.to)}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-4 py-2.5 text-sm border-l-2 ${isActive ? 'border-yellow-500 bg-white/5 text-white' : 'border-transparent text-gray-300 hover:bg-white/5'}`
                   }
