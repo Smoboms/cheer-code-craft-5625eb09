@@ -28,7 +28,7 @@ export function NetworkPage({ currentUser }: NetworkPageProps) {
     if (!user) return;
     let active = true;
     (async () => {
-      const { data } = await supabase.from('profiles').select('card_tier').eq('user_id', user.id).maybeSingle();
+      const { data } = await supabase.from('profiles').select('card_tier').eq('user_id', user.id).eq('account_type', 'client').maybeSingle();
       if (active && data?.card_tier === 'executive') setCardTier('executive');
     })();
     return () => { active = false; };
