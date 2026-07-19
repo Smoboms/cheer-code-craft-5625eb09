@@ -31,6 +31,41 @@ export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout, on
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [isPublic, setIsPublic] = useState<boolean>(true);
+  const [publicBusy, setPublicBusy] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('is_public')
+        .eq('user_id', user.id)
+        .eq('account_type', activeAccountType ?? 'client')
+        .maybeSingle();
+      if (data && typeof data.is_public === 'boolean') setIsPublic(data.is_public);
+    })();
+  }, [user, activeAccountType]);
+
+  const handleTogglePublic = async () => {
+    if (!user || publicBusy) return;
+    const next = !isPublic;
+    setPublicBusy(true);
+    setIsPublic(next); // optimistic
+    const { error } = await supabase
+      .from('profiles')
+      .update({ is_public: next })
+      .eq('user_id', user.id)
+      .eq('account_type', activeAccountType ?? 'client');
+    setPublicBusy(false);
+    if (error) {
+      setIsPublic(!next);
+      toast.error('Não foi possível atualizar a preferência. Tente novamente.');
+      return;
+    }
+    toast.success(next ? 'Perfil público ativado com sucesso.' : 'Perfil público desativado.');
+  };
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
