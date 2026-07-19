@@ -1277,6 +1277,7 @@ export type Database = {
           bio: string | null
           card_code: string | null
           card_number: string
+          card_tier: string
           company: string | null
           cpf: string | null
           created_at: string
@@ -1300,6 +1301,7 @@ export type Database = {
           bio?: string | null
           card_code?: string | null
           card_number: string
+          card_tier?: string
           company?: string | null
           cpf?: string | null
           created_at?: string
@@ -1323,6 +1325,7 @@ export type Database = {
           bio?: string | null
           card_code?: string | null
           card_number?: string
+          card_tier?: string
           company?: string | null
           cpf?: string | null
           created_at?: string
@@ -1650,6 +1653,7 @@ export type Database = {
           avatar_url: string
           card_code: string
           card_number: string
+          card_tier: string
           is_active: boolean
           name: string
           user_id: string
