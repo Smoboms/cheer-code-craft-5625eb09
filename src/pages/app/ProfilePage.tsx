@@ -154,6 +154,43 @@ export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout, on
 
           <ProfileSwitcherCard />
 
+          {/* Tema (Escuro/Claro) — preferência por perfil ativo, persiste no localStorage */}
+          <div className="bg-gray-900 p-4 border border-gray-800">
+            <label className="block text-sm font-medium text-white mb-3">Tema</label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setTheme('dark')}
+                aria-pressed={theme === 'dark'}
+                className={`flex items-center justify-center gap-2 py-3 px-4 border-2 transition-all ${
+                  theme === 'dark'
+                    ? (activeAccountType === 'client' ? 'border-[#B85C2E] bg-[#B85C2E]/15 text-white' : 'border-yellow-500 bg-yellow-500/15 text-white')
+                    : 'border-gray-700 text-gray-400 hover:text-white'
+                }`}
+              >
+                <Moon size={16} />
+                <span className="text-sm font-medium">Escuro</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme('light')}
+                aria-pressed={theme === 'light'}
+                className={`flex items-center justify-center gap-2 py-3 px-4 border-2 transition-all ${
+                  theme === 'light'
+                    ? (activeAccountType === 'client' ? 'border-[#B85C2E] bg-[#B85C2E]/15 text-white' : 'border-yellow-500 bg-yellow-500/15 text-white')
+                    : 'border-gray-700 text-gray-400 hover:text-white'
+                }`}
+              >
+                <Sun size={16} />
+                <span className="text-sm font-medium">Claro</span>
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Preferência salva para o perfil {activeAccountType === 'company' ? 'Empresa' : 'Cliente'}.
+            </p>
+          </div>
+
+
           {msg && <p className="text-sm text-center text-red-400">{msg}</p>}
 
           <button
