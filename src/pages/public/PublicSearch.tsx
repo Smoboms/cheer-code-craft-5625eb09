@@ -57,7 +57,12 @@ export default function PublicSearch() {
     setLoading(true);
 
     const run = async () => {
-      const like = q ? `%${q}%` : null;
+      // Sanitiza caracteres reservados do PostgREST (,()*%\) no termo do usuário
+      // para impedir injeção de operadores em filtros .or()/.ilike().
+      const sanitize = (s: string) => s.replace(/[,()*%\\]/g, ' ').replace(/\s+/g, ' ').trim();
+      const safe = sanitize(q);
+      const like = safe ? `%${safe}%` : null;
+      const safeCat = sanitize(cat || '');
 
       const partnerP =
         type && type !== 'empresa'
@@ -65,7 +70,7 @@ export default function PublicSearch() {
           : (async () => {
               let qy: any = supabase.from('partners').select('id, name, category, description').eq('is_active', true).limit(20);
               if (like) qy = qy.or(`name.ilike.${like},category.ilike.${like},description.ilike.${like}`);
-              if (cat && type === 'empresa') qy = qy.ilike('category', `%${cat}%`);
+              if (safeCat && type === 'empresa') qy = qy.ilike('category', `%${safeCat}%`);
               return qy;
             })();
 
@@ -103,7 +108,7 @@ export default function PublicSearch() {
           : (async () => {
               let qy: any = supabase.from('lugares').select('id, nome, tipo, categoria, descricao').eq('ativo', true).limit(20);
               if (like) qy = qy.or(`nome.ilike.${like},categoria.ilike.${like},descricao.ilike.${like}`);
-              if (cat) qy = qy.eq('tipo', cat);
+              if (safeCat) qy = qy.eq('tipo', safeCat);
               return qy;
             })();
 
