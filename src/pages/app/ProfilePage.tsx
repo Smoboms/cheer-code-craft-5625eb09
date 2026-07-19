@@ -3,6 +3,7 @@ import { ArrowLeft, Camera, User, Mail, LogOut, Shield, Loader2 } from 'lucide-r
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { optimizeImage, toWebpName } from '@/lib/imageOptimizer';
+import { ProfileSwitcherCard } from '@/components/profile/ProfileSwitcherCard';
 
 interface ProfilePageProps {
   onBack: () => void;
