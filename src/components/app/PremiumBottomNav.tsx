@@ -1,4 +1,5 @@
 import { CreditCard, Home, LayoutGrid, Newspaper, Tag } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export type TabType = 'inicio' | 'rcard' | 'journal' | 'mais' | 'beneficios' | 'config';
 
@@ -8,6 +9,10 @@ interface PremiumBottomNavProps {
 }
 
 export function PremiumBottomNav({ activeTab, onTabChange }: PremiumBottomNavProps) {
+  const { activeAccountType, hasCompanyProfile } = useAuth();
+  const isClient = !(activeAccountType === 'company' && hasCompanyProfile);
+  const activeColor = isClient ? 'text-[#F1A56C]' : 'text-white';
+
   const tabs = [
     { id: 'inicio' as TabType, label: 'Início', icon: Home },
     { id: 'rcard' as TabType, label: 'R-CARD', icon: CreditCard },
@@ -15,7 +20,6 @@ export function PremiumBottomNav({ activeTab, onTabChange }: PremiumBottomNavPro
     { id: 'journal' as TabType, label: 'R.Journal', icon: Newspaper },
     { id: 'mais' as TabType, label: 'Mais', icon: LayoutGrid },
   ];
-
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-800 z-50">
@@ -31,10 +35,10 @@ export function PremiumBottomNav({ activeTab, onTabChange }: PremiumBottomNavPro
             >
               <Icon
                 size={22}
-                className={isActive ? 'text-white' : 'text-gray-400'}
+                className={isActive ? activeColor : 'text-gray-400'}
                 strokeWidth={isActive ? 2.5 : 2}
               />
-              <span className={`text-[11px] ${isActive ? 'text-white font-semibold' : 'text-gray-400'}`}>
+              <span className={`text-[11px] ${isActive ? `${activeColor} font-semibold` : 'text-gray-400'}`}>
                 {tab.label}
               </span>
             </button>
