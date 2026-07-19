@@ -163,16 +163,16 @@ export function NetworkPage({ currentUser, isCompany = false }: NetworkPageProps
       </button>
 
 
-      {/* Total Savings Card - Compressed */}
-      <div className={`mb-8 p-3 ${isCompany ? 'bg-gradient-to-br from-green-500 to-green-600' : 'bg-gradient-to-br from-[#B85C2E] to-[#7A3B1D]'}`}>
+      {/* Total Savings Card - Verde FIXO (não muda com perfil nem tema) */}
+      <div className="savings-fixed mb-8 p-3 bg-gradient-to-br from-green-500 to-green-600">
         <div className="flex items-center gap-3">
           <TrendingUp size={24} className="text-white flex-shrink-0" />
           <div className="flex-1">
-            <p className="text-white/90 text-xs font-semibold">Economia Total</p>
-            <p className="text-white text-2xl font-bold">{formatBRL(totalSavings)}</p>
+            <p className="text-white/90 text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.9)' }}>Economia Total</p>
+            <p className="text-white text-2xl font-bold" style={{ color: '#ffffff' }}>{formatBRL(totalSavings)}</p>
           </div>
         </div>
-        <p className="text-white/95 text-xs mt-2">
+        <p className="text-white/95 text-xs mt-2" style={{ color: 'rgba(255,255,255,0.95)' }}>
           Continue usando seus benefícios para aumentar sua economia!
         </p>
       </div>
