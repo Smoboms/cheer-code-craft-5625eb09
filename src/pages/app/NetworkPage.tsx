@@ -103,7 +103,7 @@ export function NetworkPage({ currentUser, isCompany = false }: NetworkPageProps
       <button
         type="button"
         onClick={() => setShowCardModal(true)}
-        className={`w-full text-left text-white shadow-2xl aspect-[1.586/1] flex flex-col justify-between p-3 sm:p-6 relative overflow-hidden border-2 mb-8 ${
+        className={`rcard-preserve w-full text-left text-white shadow-2xl aspect-[1.586/1] flex flex-col justify-between p-3 sm:p-6 relative overflow-hidden border-2 mb-8 ${
           isCompany
             ? 'bg-gradient-to-br from-black via-gray-900 to-black border-gray-400/40'
             : 'bg-gradient-to-br from-black via-[#3a1d0f] to-black border-[#B85C2E]/70'
