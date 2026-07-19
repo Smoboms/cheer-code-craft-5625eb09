@@ -1275,6 +1275,7 @@ export type Database = {
           account_type: string
           avatar_url: string | null
           bio: string | null
+          card_code: string | null
           card_number: string
           company: string | null
           cpf: string | null
@@ -1297,6 +1298,7 @@ export type Database = {
           account_type?: string
           avatar_url?: string | null
           bio?: string | null
+          card_code?: string | null
           card_number: string
           company?: string | null
           cpf?: string | null
@@ -1319,6 +1321,7 @@ export type Database = {
           account_type?: string
           avatar_url?: string | null
           bio?: string | null
+          card_code?: string | null
           card_number?: string
           company?: string | null
           cpf?: string | null
@@ -1639,6 +1642,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_unique_card_code: { Args: never; Returns: string }
+      generate_unique_card_number: { Args: never; Returns: string }
       issue_coupon: {
         Args: {
           _cashback_amount: number
