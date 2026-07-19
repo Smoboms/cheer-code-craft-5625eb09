@@ -33,13 +33,18 @@ export interface DirectoryPartner {
  * - Página pública Empresas
  * - Painel ADM
  */
+// Colunas seguras para exibição pública/associado — NUNCA incluir cnpj, email, legal_name,
+// responsible ou rejection_reason (dados internos / PII).
+const PUBLIC_PARTNER_COLUMNS =
+  'id, name, category, discount, discount_percent, distance, banner_url, profile_image_url, logo_url, is_member, description, address, city, phone, whatsapp, website, instagram, maps_link, opening_hours, display_order, status';
+
 export function useActivePartners() {
   const { data, isLoading } = useQuery({
     queryKey: ['partners', 'active'],
     queryFn: async (): Promise<DirectoryPartner[]> => {
       const { data, error } = await supabase
         .from('partners')
-        .select('*')
+        .select(PUBLIC_PARTNER_COLUMNS)
         .eq('is_active', true)
         .order('display_order', { ascending: true })
         .order('is_member', { ascending: false })
