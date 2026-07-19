@@ -108,3 +108,49 @@
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
+
+/* =========================================================
+   Tema CLARO — exclusivo da Área do Associado
+   Escopo: body[data-associate-theme="light"]
+   Inverte apenas fundos escuros / texto claro (utilidades Tailwind
+   hardcoded existentes). Mantém as cores de destaque
+   (amarelo/dourado para Empresa, laranja para Cliente).
+   Não afeta Área Pública nem Painel ADM (o atributo só existe
+   enquanto a Área do Associado está montada).
+   ========================================================= */
+body[data-associate-theme="light"] {
+  background-color: #f5f5f5;
+}
+/* Backgrounds escuros → claros */
+body[data-associate-theme="light"] .bg-black,
+body[data-associate-theme="light"] .bg-gray-950,
+body[data-associate-theme="light"] .bg-gray-900 { background-color: #ffffff !important; }
+body[data-associate-theme="light"] .bg-gray-800 { background-color: #f3f4f6 !important; }
+body[data-associate-theme="light"] .bg-gray-700 { background-color: #e5e7eb !important; }
+
+/* Bordas escuras → claras */
+body[data-associate-theme="light"] .border-gray-900,
+body[data-associate-theme="light"] .border-gray-800,
+body[data-associate-theme="light"] .border-gray-700 { border-color: #e5e7eb !important; }
+
+/* Texto claro → escuro (mantém accent yellow/orange intocados) */
+body[data-associate-theme="light"] .text-white { color: #0a0a0a !important; }
+body[data-associate-theme="light"] .text-gray-100,
+body[data-associate-theme="light"] .text-gray-200,
+body[data-associate-theme="light"] .text-gray-300 { color: #1f2937 !important; }
+body[data-associate-theme="light"] .text-gray-400 { color: #4b5563 !important; }
+body[data-associate-theme="light"] .text-gray-500 { color: #6b7280 !important; }
+
+/* Hover states escuros → claros equivalentes */
+body[data-associate-theme="light"] .hover\:bg-gray-800:hover,
+body[data-associate-theme="light"] .hover\:bg-gray-900:hover { background-color: #f3f4f6 !important; }
+body[data-associate-theme="light"] .hover\:bg-white\/10:hover { background-color: rgba(0,0,0,0.06) !important; }
+
+/* Gradientes de header/card escuros — suaviza para claro
+   (não toca gradientes do R-CARD que usam via-[#3a1d0f] / preto — carteirinha
+   permanece preta em ambos os temas, mantendo identidade visual da tarefa 5). */
+body[data-associate-theme="light"] .from-black.to-gray-950,
+body[data-associate-theme="light"] .from-black.via-black.to-gray-950 {
+  background-image: linear-gradient(to right, #ffffff, #f9fafb) !important;
+}
+

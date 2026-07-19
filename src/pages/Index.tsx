@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
+import { AssociateThemeProvider } from '@/contexts/ThemeContext';
+
 import { useAuth } from '@/contexts/AuthContext';
 import { LoginPage } from '@/pages/app/LoginPage';
 import { OnboardingPage } from '@/pages/app/OnboardingPage';
@@ -51,24 +53,31 @@ const Index = () => {
   if (profile && !profile.name) return <OnboardingPage />;
 
 
+  const Wrap = ({ children }: { children: ReactNode }) => (
+    <AssociateThemeProvider>{children}</AssociateThemeProvider>
+  );
+
   if (currentTab === 'config') {
     return (
-      <ProfilePage
-        onBack={() => setCurrentTab('inicio')}
-        userProfile={{
-          email: profile.email || user.email || '',
-          name: profile.name,
-          photo: profile.avatar_url,
-        }}
-        onUpdateProfile={async () => { await refreshProfile(); }}
-        onLogout={async () => { await signOut(); }}
-        isAdmin={isAdminUser}
-        onAdminPanel={() => {
-          window.location.assign('/admin');
-        }}
-      />
+      <Wrap>
+        <ProfilePage
+          onBack={() => setCurrentTab('inicio')}
+          userProfile={{
+            email: profile.email || user.email || '',
+            name: profile.name,
+            photo: profile.avatar_url,
+          }}
+          onUpdateProfile={async () => { await refreshProfile(); }}
+          onLogout={async () => { await signOut(); }}
+          isAdmin={isAdminUser}
+          onAdminPanel={() => {
+            window.location.assign('/admin');
+          }}
+        />
+      </Wrap>
     );
   }
+
 
   const currentUser = {
     name: profile?.name || 'Usuário',
@@ -117,30 +126,32 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black">
-      <PremiumHeader onSettingsClick={() => setCurrentTab('config')} />
-      <div className="max-w-md mx-auto pt-20 pb-24 px-4">
-        {moreSection ? renderMoreSection() : (
-          <>
-            {currentTab === 'inicio' && (
-              <HomePage
-                userName={currentUser.name}
-                onNavigate={handleTabChange}
-                onOpenMore={(s) => { setCurrentTab('mais'); setMoreSection(s); }}
-                isCompany={isCompanyActive}
-              />
-            )}
-            {currentTab === 'rcard' && <NetworkPage currentUser={currentUser} isCompany={isCompanyActive} />}
-            {currentTab === 'journal' && <JournalPage onBack={() => setCurrentTab('inicio')} />}
-            {currentTab === 'mais' && <MorePage onOpen={setMoreSection} isCompany={isCompanyActive} />}
-            {currentTab === 'beneficios' && <BenefitsPage />}
-
-          </>
-        )}
+    <Wrap>
+      <div className="min-h-screen bg-black">
+        <PremiumHeader onSettingsClick={() => setCurrentTab('config')} />
+        <div className="max-w-md mx-auto pt-20 pb-24 px-4">
+          {moreSection ? renderMoreSection() : (
+            <>
+              {currentTab === 'inicio' && (
+                <HomePage
+                  userName={currentUser.name}
+                  onNavigate={handleTabChange}
+                  onOpenMore={(s) => { setCurrentTab('mais'); setMoreSection(s); }}
+                  isCompany={isCompanyActive}
+                />
+              )}
+              {currentTab === 'rcard' && <NetworkPage currentUser={currentUser} isCompany={isCompanyActive} />}
+              {currentTab === 'journal' && <JournalPage onBack={() => setCurrentTab('inicio')} />}
+              {currentTab === 'mais' && <MorePage onOpen={setMoreSection} isCompany={isCompanyActive} />}
+              {currentTab === 'beneficios' && <BenefitsPage />}
+            </>
+          )}
+        </div>
+        <PremiumBottomNav activeTab={currentTab} onTabChange={handleTabChange} />
       </div>
-      <PremiumBottomNav activeTab={currentTab} onTabChange={handleTabChange} />
-    </div>
+    </Wrap>
   );
+
 };
 
 export default Index;

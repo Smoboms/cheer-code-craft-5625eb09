@@ -1,9 +1,11 @@
 import { useState, useRef } from 'react';
-import { ArrowLeft, Camera, User, Mail, LogOut, Shield, Loader2 } from 'lucide-react';
+import { ArrowLeft, Camera, User, Mail, LogOut, Shield, Loader2, Moon, Sun } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAssociateTheme } from '@/contexts/ThemeContext';
 import { optimizeImage, toWebpName } from '@/lib/imageOptimizer';
 import { ProfileSwitcherCard } from '@/components/profile/ProfileSwitcherCard';
+
 
 interface ProfilePageProps {
   onBack: () => void;
@@ -22,6 +24,8 @@ const AVATAR_SIGNED_TTL = 60 * 60 * 24 * 365; // ~1 ano
 
 export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout, onAdminPanel, isAdmin }: ProfilePageProps) {
   const { user, activeAccountType } = useAuth();
+  const { theme, setTheme } = useAssociateTheme();
+
   const [name, setName] = useState(userProfile.name);
   const [photo, setPhoto] = useState<string | null>(userProfile.photo);
   const [uploading, setUploading] = useState(false);
@@ -149,6 +153,43 @@ export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout, on
           </div>
 
           <ProfileSwitcherCard />
+
+          {/* Tema (Escuro/Claro) — preferência por perfil ativo, persiste no localStorage */}
+          <div className="bg-gray-900 p-4 border border-gray-800">
+            <label className="block text-sm font-medium text-white mb-3">Tema</label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setTheme('dark')}
+                aria-pressed={theme === 'dark'}
+                className={`flex items-center justify-center gap-2 py-3 px-4 border-2 transition-all ${
+                  theme === 'dark'
+                    ? (activeAccountType === 'client' ? 'border-[#B85C2E] bg-[#B85C2E]/15 text-white' : 'border-yellow-500 bg-yellow-500/15 text-white')
+                    : 'border-gray-700 text-gray-400 hover:text-white'
+                }`}
+              >
+                <Moon size={16} />
+                <span className="text-sm font-medium">Escuro</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme('light')}
+                aria-pressed={theme === 'light'}
+                className={`flex items-center justify-center gap-2 py-3 px-4 border-2 transition-all ${
+                  theme === 'light'
+                    ? (activeAccountType === 'client' ? 'border-[#B85C2E] bg-[#B85C2E]/15 text-white' : 'border-yellow-500 bg-yellow-500/15 text-white')
+                    : 'border-gray-700 text-gray-400 hover:text-white'
+                }`}
+              >
+                <Sun size={16} />
+                <span className="text-sm font-medium">Claro</span>
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Preferência salva para o perfil {activeAccountType === 'company' ? 'Empresa' : 'Cliente'}.
+            </p>
+          </div>
+
 
           {msg && <p className="text-sm text-center text-red-400">{msg}</p>}
 
