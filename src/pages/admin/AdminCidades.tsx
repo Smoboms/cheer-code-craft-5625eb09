@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Btn, Card, EmptyState, Input, Label, Modal, PageHeader } from './ui';
@@ -54,7 +55,7 @@ export default function AdminCidades() {
         actions={<Btn onClick={openNew}>+ Nova cidade</Btn>}
       />
 
-      {loading ? <Card className="p-6 text-gray-400 text-sm">Carregando…</Card>
+      {loading ? <div className="p-2"><CardGridSkeleton items={3} /></div>
        : !data?.length ? <EmptyState>Nenhuma cidade.</EmptyState> : (
         <div className="space-y-2">
           {data.map((c: any) => (

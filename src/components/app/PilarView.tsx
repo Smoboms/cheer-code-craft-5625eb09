@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useEffect, useState } from 'react';
 import { ArrowLeft, Calendar, Clock, MapPin } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -64,7 +65,7 @@ export function PilarView({ pilar, title, subtitle, badge, onBack }: Props) {
       </div>
 
       {loading ? (
-        <div className="text-gray-400 text-sm">Carregando…</div>
+        <CardGridSkeleton items={3} />
       ) : (
         <>
           {eventos.length > 0 && (

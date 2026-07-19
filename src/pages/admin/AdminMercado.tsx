@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -104,7 +105,7 @@ export default function AdminMercado() {
         </Select></div>
       </Card>
 
-      {loading ? <div className="text-gray-400 text-sm">Carregando…</div> :
+      {loading ? <CardGridSkeleton items={3} /> :
        !filtered.length ? <EmptyState>Nenhum produto encontrado.</EmptyState> : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {filtered.map((r) => (

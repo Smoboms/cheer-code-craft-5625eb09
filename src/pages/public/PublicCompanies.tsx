@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search } from 'lucide-react';
@@ -93,7 +94,7 @@ export default function PublicCompanies() {
       </div>
 
       {loading ? (
-        <p className="text-gray-500 text-sm text-center py-8">Carregando…</p>
+        <div className="py-6"><CardGridSkeleton items={6} /></div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 items-stretch">
           {filtered.map((p) => {

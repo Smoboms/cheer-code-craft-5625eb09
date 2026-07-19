@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Btn, Card, EmptyState, Input, Label, PageHeader, Select, Textarea } from './ui';
@@ -76,7 +77,7 @@ function BannerEditor() {
     alert('Banner salvo.');
   };
 
-  if (!loaded) return <Card className="p-4"><div className="text-gray-400 text-sm">Carregando…</div></Card>;
+  if (!loaded) return <Card className="p-4"><CardGridSkeleton items={3} /></Card>;
 
   return (
     <Card className="p-4">
@@ -186,7 +187,7 @@ function CarouselEditor() {
         <div><Label>Ordem</Label><Input type="number" value={f.sort_order} onChange={e=>setF({...f, sort_order: Number(e.target.value)})} /></div>
         <div className="md:col-span-2 text-right"><Btn onClick={add}>+ Adicionar slide</Btn></div>
       </div>
-      {loading ? <div className="text-gray-400 text-sm">Carregando…</div> :
+      {loading ? <CardGridSkeleton items={3} /> :
        !data?.length ? <EmptyState>Nenhum slide.</EmptyState> : (
         <div className="space-y-2">
           {data.map((s: any) => (

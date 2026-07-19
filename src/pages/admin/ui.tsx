@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { ListSkeleton } from '@/components/ui/skeleton';
 
 export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: string; actions?: ReactNode }) {
   return (
@@ -73,5 +74,9 @@ export function Modal({ open, onClose, title, children, footer }: { open: boolea
 }
 
 export function EmptyState({ children }: { children: ReactNode }) {
+  // Se estiver carregando, exibe skeleton em vez de texto (elimina tela em branco/textos "Carregando…").
+  if (typeof children === 'string' && /^Carregando/i.test(children)) {
+    return <Card className="p-4"><ListSkeleton rows={6} /></Card>;
+  }
   return <Card className="p-8 text-center text-gray-400 text-sm">{children}</Card>;
 }

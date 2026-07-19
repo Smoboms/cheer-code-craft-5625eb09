@@ -42,7 +42,7 @@ const Index = () => {
           <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl mx-auto mb-4 flex items-center justify-center animate-pulse">
             <span className="text-2xl font-bold text-white">R</span>
           </div>
-          <p className="text-gray-400 text-sm">Carregando...</p>
+          <div className="h-2 w-32 mx-auto rounded-full bg-white/10 overflow-hidden"><div className="h-full w-1/2 bg-yellow-500/60 skeleton-block" /></div>
         </div>
       </div>
     );

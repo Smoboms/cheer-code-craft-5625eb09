@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
@@ -105,7 +106,7 @@ export default function PublicLocais() {
       )}
 
       {loading ? (
-        <p className="text-gray-500 text-sm">Carregando…</p>
+        <div><CardGridSkeleton items={3} /></div>
       ) : lugares.length === 0 ? (
         <p className="text-gray-500 text-sm text-center py-8">Nenhum local encontrado.</p>
       ) : (

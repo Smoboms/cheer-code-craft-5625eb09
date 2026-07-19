@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useJournalArticles } from '@/data/useJournalArticles';
@@ -85,7 +86,7 @@ export default function PublicJournal() {
       )}
 
       {loading ? (
-        <p className="text-gray-500 text-sm">Carregando…</p>
+        <div><CardGridSkeleton items={3} /></div>
       ) : list.length === 0 ? (
         <p className="text-gray-500 text-sm">Nenhuma matéria publicada ainda.</p>
       ) : (

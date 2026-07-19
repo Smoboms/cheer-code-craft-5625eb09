@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Btn, Card, Input, PageHeader } from './ui';
@@ -47,7 +48,7 @@ function CategorySection({
         <Input placeholder="Nova categoria" value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key === 'Enter' && add()} />
         <Btn onClick={() => add()}>Adicionar</Btn>
       </div>
-      {loading ? <div className="text-gray-400 text-sm">Carregando…</div> :
+      {loading ? <CardGridSkeleton items={3} /> :
         !data?.length ? <div className="text-gray-400 text-sm">Nenhuma categoria oficial.</div> : (
           <div className="space-y-1 mb-3">
             {data.map((c: any) => (

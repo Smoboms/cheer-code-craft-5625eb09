@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useEffect, useMemo, useState } from 'react';
 import { Search, X, MessageCircle, Store, ShoppingBag } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -153,7 +154,7 @@ export default function PublicMarket() {
         </div>
       )}
 
-      {loading && <p className="text-gray-400 text-sm text-center py-10">Carregando…</p>}
+      {loading && <div className="py-6"><CardGridSkeleton items={6} /></div>}
 
       {!loading && featured.length > 0 && (
         <div className="mb-5">

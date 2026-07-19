@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Lock } from 'lucide-react';
@@ -42,7 +43,7 @@ export default function PublicJournalArticle() {
   if (loading) {
     return (
       <div className="animate-fadeUp pb-4">
-        <p className="text-gray-400 text-sm">Carregando…</p>
+        <div><CardGridSkeleton items={3} /></div>
       </div>
     );
   }

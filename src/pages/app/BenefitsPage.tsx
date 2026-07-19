@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useMemo, useState } from 'react';
 import { Check, Copy, MapPin, Phone, User, Building, Loader2 } from 'lucide-react';
 import { copyToClipboard } from '@/utils/clipboard';

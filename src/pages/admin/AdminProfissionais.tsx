@@ -1,3 +1,4 @@
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Btn, Card, EmptyState, Input, Label, PageHeader, Select, Textarea } from './ui';
@@ -111,7 +112,7 @@ export default function AdminProfissionais() {
       </div>
 
       {loading ? (
-        <p className="text-gray-400 text-sm">Carregando…</p>
+        <div><CardGridSkeleton items={3} /></div>
       ) : tab === 'categories' ? (
         <Card className="p-4">
           <div className="flex gap-2 mb-4">
