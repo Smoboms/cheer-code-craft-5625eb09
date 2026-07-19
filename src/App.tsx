@@ -22,6 +22,7 @@ const PublicProfessionalSubmit = lazy(() => import("./pages/public/PublicProfess
 const PublicLocais = lazy(() => import("./pages/public/PublicLocais"));
 const SejaMembro = lazy(() => import("./pages/public/SejaMembro"));
 const JournalInfo = lazy(() => import("./pages/public/JournalInfo"));
+const PublicCard = lazy(() => import("./pages/public/PublicCard"));
 
 // Authenticated area — lazy
 const Index = lazy(() => import("./pages/Index.tsx"));
@@ -99,6 +100,7 @@ const App = () => (
                 <Route path="/locais" element={<PublicLocais />} />
                 <Route path="/seja-membro" element={<SejaMembro />} />
                 <Route path="/journal-info" element={<JournalInfo />} />
+                <Route path="/cartao/:cardCode" element={<PublicCard />} />
               </Route>
               <Route path="/app" element={<Index />} />
               <Route path="/admin" element={<AdminLayout />}>
