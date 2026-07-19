@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Btn, Card, EmptyState, Input, Label, Modal, PageHeader, Select } from './ui';
 import { useAsync } from './hooks';
-import { Pencil, Trash2, UserCheck, UserX } from 'lucide-react';
+import { Pencil, Trash2, UserCheck, UserX, Copy, ExternalLink } from 'lucide-react';
+import { formatCardCode } from '@/lib/card';
+import { toast } from '@/hooks/use-toast';
 
 export default function AdminAssociados() {
   const [search, setSearch] = useState('');
