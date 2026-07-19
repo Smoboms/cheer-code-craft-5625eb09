@@ -1,5 +1,5 @@
 import { useState, ReactNode } from 'react';
-import { AssociateThemeProvider } from '@/contexts/ThemeContext';
+
 
 import { useAuth } from '@/contexts/AuthContext';
 import { LoginPage } from '@/pages/app/LoginPage';
