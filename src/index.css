@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
+/* Cormorant Garamond é carregada em index.html via <link rel="stylesheet"> não-bloqueante */
 
 @tailwind base;
 @tailwind components;

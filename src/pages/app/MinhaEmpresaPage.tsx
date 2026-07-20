@@ -294,7 +294,7 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
               {uploading ? (
                 <Loader2 size={20} className="text-gray-400 animate-spin" />
               ) : form.avatar_url ? (
-                <img src={form.avatar_url} alt="logo" className="w-full h-full object-cover" />
+                <img src={form.avatar_url} alt="logo" className="w-full h-full object-cover" loading="lazy" decoding="async" />
               ) : (
                 <span className="text-gray-600 text-xs">Sem foto</span>
               )}

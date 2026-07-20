@@ -137,7 +137,7 @@ export default function AdminProfissionais() {
           {filtered.map((r) => (
             <Card key={r.id} className="p-3 flex items-center gap-3">
               <div className="w-14 h-14 bg-[#0a0f1e] shrink-0 overflow-hidden flex items-center justify-center">
-                {r.photo_url ? <img src={r.photo_url} alt="" className="w-full h-full object-cover" /> : <span className="text-gray-600 text-[10px]">Sem foto</span>}
+                {r.photo_url ? <img src={r.photo_url} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" /> : <span className="text-gray-600 text-[10px]">Sem foto</span>}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">

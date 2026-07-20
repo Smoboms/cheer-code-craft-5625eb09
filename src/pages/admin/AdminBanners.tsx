@@ -98,7 +98,7 @@ function BannerEditor() {
             <input ref={fileRef} type="file" accept="image/*" className="hidden"
               onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
           </div>
-          {f.image_url && <img src={f.image_url} alt="preview" className="mt-2 max-h-32 object-cover border border-white/10" />}
+          {f.image_url && <img src={f.image_url} alt="preview" className="mt-2 max-h-32 object-cover border border-white/10" loading="lazy" decoding="async" />}
         </div>
         <div className="md:col-span-2"><Label>Texto (fallback)</Label><Textarea rows={2} value={f.text} onChange={e => setF({ ...f, text: e.target.value })} /></div>
         <div><Label>Texto do botão (fallback)</Label><Input value={f.cta_label} onChange={e => setF({ ...f, cta_label: e.target.value })} /></div>
@@ -153,7 +153,7 @@ function SlotRow({ index, slot, onChange, onUpload, uploading }: {
         </div>
         {slot.imageUrl && (
           <div className="md:col-span-12">
-            <img src={slot.imageUrl} alt={`slot-${index}`} className="max-h-24 object-cover border border-white/10" />
+            <img src={slot.imageUrl} alt={`slot-${index}`} className="max-h-24 object-cover border border-white/10" loading="lazy" decoding="async" />
           </div>
         )}
       </div>

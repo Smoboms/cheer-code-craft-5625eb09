@@ -75,7 +75,7 @@ export default function AdminMercado() {
           <div className="space-y-2">
             {pending.map((r) => (
               <div key={r.id} className="flex items-center gap-3 bg-[#0a0f1e] p-3 border border-yellow-500/30">
-                {r.images?.[0] && <img src={r.images[0]} alt="" className="w-14 h-14 object-cover bg-black" />}
+                {r.images?.[0] && <img src={r.images[0]} alt="" className="w-14 h-14 object-cover bg-black" loading="lazy" decoding="async" />}
                 <div className="flex-1 min-w-0">
                   <div className="text-white text-sm font-semibold truncate">{r.name}</div>
                   <div className="text-xs text-gray-400 truncate">{r.partners?.name} · {r.category || 'Sem categoria'}</div>
@@ -111,7 +111,7 @@ export default function AdminMercado() {
           {filtered.map((r) => (
             <Card key={r.id} className="p-3 flex gap-3">
               <div className="w-20 h-20 bg-black shrink-0">
-                {r.images?.[0] && <img src={r.images[0]} alt="" className="w-full h-full object-cover" />}
+                {r.images?.[0] && <img src={r.images[0]} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
