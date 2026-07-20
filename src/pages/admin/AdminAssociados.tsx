@@ -81,7 +81,7 @@ export default function AdminAssociados() {
                     {p.account_type === 'client' && p.card_code && (() => {
                       // Sempre usar o domínio de produção para links do R-CARD (NFC/compartilhamento),
                       // independente de estarmos no preview do editor Lovable.
-                      const PUBLIC_ORIGIN = 'https://rarques.com.br';
+                      const PUBLIC_ORIGIN = 'https://www.rarques.com.br';
                       const shareUrl = `${PUBLIC_ORIGIN}/cartao/${p.card_code}`;
                       return (
                         <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
