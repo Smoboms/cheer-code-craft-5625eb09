@@ -17,6 +17,7 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
+  const [signupDone, setSignupDone] = useState<{ email: string; isCompany: boolean } | null>(null);
   const [resetLoading, setResetLoading] = useState(false);
 
 
@@ -76,9 +77,7 @@ export function LoginPage() {
           cnpj: accountType === 'company' ? documento.replace(/\D/g, '') : null,
           company_name: accountType === 'company' ? companyName.trim() : null,
         });
-        setInfo(accountType === 'company'
-          ? 'Cadastro realizado. Sua empresa passará por curadoria após o primeiro login.'
-          : 'Cadastro realizado. Verifique seu e-mail.');
+        setSignupDone({ email: email.trim(), isCompany: accountType === 'company' });
       } else {
         await signIn(email, password);
       }
@@ -91,6 +90,45 @@ export function LoginPage() {
     }
   };
 
+
+  if (signupDone) {
+    return (
+      <div className="min-h-screen relative flex items-center justify-center p-4"
+        style={{ background: 'linear-gradient(180deg, #0a0a0a 0%, #111111 40%, #0d0d0d 100%)' }}>
+        <div className="max-w-md w-full text-center rounded-sm p-8 border border-white/10"
+          style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)', backdropFilter: 'blur(20px)' }}>
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full border border-white/20 flex items-center justify-center">
+            <Mail className="text-white/80" size={28} />
+          </div>
+          <h1 className="text-3xl text-white mb-3 tracking-wide"
+            style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif", fontWeight: 300 }}>
+            Confirme seu e-mail
+          </h1>
+          <p className="text-white/70 text-sm mb-2">
+            Enviamos um link de confirmação para
+          </p>
+          <p className="text-white font-medium text-sm mb-6 break-all">{signupDone.email}</p>
+          <p className="text-white/50 text-xs mb-6 leading-relaxed">
+            Abra sua caixa de entrada (ou spam) e clique no link para ativar sua conta.
+            {signupDone.isCompany && ' Após confirmar, sua empresa passará por curadoria.'}
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              setSignupDone(null);
+              setIsRegistering(false);
+              setPassword('');
+              setConfirmPassword('');
+            }}
+            className="w-full py-3 rounded-sm font-medium text-sm tracking-widest uppercase border border-white/20 text-white hover:bg-white/10 transition-all"
+            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+          >
+            Voltar ao login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden"
