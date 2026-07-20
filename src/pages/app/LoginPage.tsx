@@ -17,6 +17,7 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
+  const [signupDone, setSignupDone] = useState<{ email: string; isCompany: boolean } | null>(null);
   const [resetLoading, setResetLoading] = useState(false);
 
 
