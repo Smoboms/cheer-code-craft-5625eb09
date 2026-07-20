@@ -216,7 +216,7 @@ function PartnerForm({ partner, categories, onClose, onSaved }: { partner: any |
           {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
         </Select></div>
         <div><Label>Cidade</Label><Input value={f.city} onChange={e=>setF({...f, city: e.target.value})} /></div>
-        <div><Label>Desconto</Label><Input value={f.discount} onChange={e=>setF({...f, discount: e.target.value})} placeholder="Ex: 15%" /></div>
+        <div><Label>Desconto (%)</Label><Input value={f.discount} onChange={e=>setF({...f, discount: e.target.value})} placeholder="Ex: 15" inputMode="decimal" /></div>
         <div><Label>WhatsApp</Label><Input value={f.whatsapp} onChange={e=>setF({...f, whatsapp: e.target.value})} /></div>
         <div><Label>Instagram</Label><Input value={f.instagram} onChange={e=>setF({...f, instagram: e.target.value})} /></div>
         <div><Label>Site</Label><Input value={f.website} onChange={e=>setF({...f, website: e.target.value})} /></div>
