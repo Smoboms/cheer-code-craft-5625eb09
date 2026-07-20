@@ -31,8 +31,6 @@ export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout, on
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
-  const [isPublic, setIsPublic] = useState<boolean>(true);
-  const [publicBusy, setPublicBusy] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
