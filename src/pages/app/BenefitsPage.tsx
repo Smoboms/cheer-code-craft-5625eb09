@@ -217,6 +217,8 @@ export function BenefitsPage() {
                       src={benefit.logo} 
                       alt={benefit.company}
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <span className="text-2xl">{benefit.emoji}</span>
