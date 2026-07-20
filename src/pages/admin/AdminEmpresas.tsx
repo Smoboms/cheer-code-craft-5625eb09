@@ -163,11 +163,14 @@ export default function AdminEmpresas() {
 }
 
 function PartnerForm({ partner, categories, onClose, onSaved }: { partner: any | null; categories: any[]; onClose: () => void; onSaved: () => void }) {
+  const initialDiscount = partner?.discount_percent != null
+    ? String(partner.discount_percent)
+    : String(partner?.discount || '').replace(/\D/g, '');
   const [f, setF] = useState({
     name: partner?.name || '',
     category: partner?.category || (categories[0]?.name || ''),
     city: partner?.city || '',
-    discount: partner?.discount || '',
+    discount: initialDiscount,
     description: partner?.description || '',
     whatsapp: partner?.whatsapp || '',
     instagram: partner?.instagram || '',
@@ -183,8 +186,18 @@ function PartnerForm({ partner, categories, onClose, onSaved }: { partner: any |
   const save = async () => {
     setSaving(true);
     try {
-      if (partner) await supabase.from('partners').update(f).eq('id', partner.id);
-      else await supabase.from('partners').insert(f);
+      // Parse discount input: aceita "15", "15%", "15,5" e grava tanto o rótulo
+      // ("15%") quanto o numérico usado no cupom (discount_percent).
+      const raw = String(f.discount || '').replace(',', '.').replace(/[^0-9.]/g, '');
+      const num = raw === '' ? null : Math.max(0, Math.min(100, Number(raw)));
+      const { discount: _ignore, ...rest } = f;
+      const payload: any = {
+        ...rest,
+        discount: num != null ? `${num}%` : '',
+        discount_percent: num,
+      };
+      if (partner) await supabase.from('partners').update(payload).eq('id', partner.id);
+      else await supabase.from('partners').insert(payload);
       onSaved();
     } catch (e: any) {
       alert(e.message);
