@@ -110,7 +110,7 @@ export function OnboardingPage() {
                 <div onClick={() => fileInputRef.current?.click()}
                   className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors overflow-hidden border-4 border-gray-200">
                   {photo ? (
-                    <img src={photo} alt="Profile" className="w-full h-full object-cover" />
+                    <img src={photo} alt="Profile" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   ) : (
                     <User className="text-gray-400" size={48} />
                   )}
