@@ -106,7 +106,7 @@ export function ProfilePage({ onBack, userProfile, onUpdateProfile, onLogout, on
                   {uploading ? (
                     <Loader2 size={32} className="text-gray-500 animate-spin" />
                   ) : photo ? (
-                    <img src={photo} alt="Profile" className="w-full h-full object-cover" />
+                    <img src={photo} alt="Profile" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   ) : (
                     <User className="text-gray-400" size={48} />
                   )}
