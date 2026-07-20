@@ -92,7 +92,7 @@ export function DashboardSkeleton() {
 /** Página inteira — usada como fallback de rota. */
 export function PageSkeleton() {
   return (
-    <div className="min-h-[60vh] p-4 sm:p-6 max-w-6xl mx-auto space-y-4 route-fade">
+    <div className="min-h-screen bg-black p-4 sm:p-6 max-w-6xl mx-auto space-y-4 route-fade">
       <Skeleton width="35%" height={22} />
       <Skeleton width="55%" height={12} />
       <div className="pt-4">
