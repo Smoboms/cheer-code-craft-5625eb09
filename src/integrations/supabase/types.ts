@@ -759,7 +759,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           description: string | null
-          discount: string
+          discount: string | null
           discount_percent: number | null
           display_order: number
           distance: string | null
@@ -798,7 +798,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
-          discount: string
+          discount?: string | null
           discount_percent?: number | null
           display_order?: number
           distance?: string | null
@@ -837,7 +837,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
-          discount?: string
+          discount?: string | null
           discount_percent?: number | null
           display_order?: number
           distance?: string | null
