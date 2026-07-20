@@ -41,12 +41,13 @@ type PartnerSummary = {
 const PARTNER_SELECT = 'id, name, category, phone, description, created_by, status, is_active, discount_percent, cashback_enabled, cashback_percent, cashback_feature_unlocked, products_feature_unlocked, rejection_reason';
 const AVATAR_SIGNED_TTL = 60 * 60 * 24 * 365;
 
-type View = 'hub' | 'config' | 'products' | 'coupon';
+type View = 'hub' | 'config' | 'products' | 'coupon' | 'dashboard';
 
 export function MinhaEmpresaPage({ onBack }: Props) {
   const [view, setView] = useState<View>('hub');
 
   if (view === 'products') return <MyProductsPage onBack={() => setView('hub')} />;
+  if (view === 'dashboard') return <MinhaEmpresaDashboard onBack={() => setView('hub')} />;
   if (view === 'config' || view === 'coupon') {
     return <MinhaEmpresaHubDetail view={view} onBack={() => setView('hub')} />;
   }
@@ -54,6 +55,7 @@ export function MinhaEmpresaPage({ onBack }: Props) {
 }
 
 const HUB_ITEMS: { key: Exclude<View, 'hub'>; label: string; desc: string; icon: LucideIcon; accent: string }[] = [
+  { key: 'dashboard', label: 'Dashboard', desc: 'Cupons e faturamento', icon: LayoutDashboard, accent: 'text-blue-400' },
   { key: 'config', label: 'Configurar Minha Empresa', desc: 'Foto, nome, contato e descrição', icon: Settings, accent: 'text-white' },
   { key: 'products', label: 'Meus Produtos', desc: 'Vitrine (em breve)', icon: Package, accent: 'text-yellow-400' },
   { key: 'coupon', label: 'Emitir Cupom', desc: 'Descontos para clientes', icon: Ticket, accent: 'text-green-400' },
