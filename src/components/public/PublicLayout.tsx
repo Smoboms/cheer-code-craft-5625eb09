@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { PublicHeader } from './PublicHeader';
 import { PublicBottomNav } from './PublicBottomNav';
 import { PublicComingSoonOverlay } from './PublicComingSoonOverlay';
@@ -8,12 +8,15 @@ import { useAuth } from '@/contexts/AuthContext';
 export function PublicLayout() {
   const { enabled } = usePlatformStatus();
   const { user, isAdmin } = useAuth();
+  const location = useLocation();
   // Área Pública restrita: quando desativada, SOMENTE administradores
   // (rarquesmatriz@gmail.com / imobiliario454@gmail.com) navegam.
-  // Todos os demais — visitantes, associados e empresas — veem o overlay.
+  // EXCEÇÃO: rotas do R-CARD (/cartao e /cartao/:code) são endpoints funcionais
+  // do NFC/QR-Code e devem permanecer acessíveis a todos — inclusive deslogados.
   const ADMIN_EMAILS = ['rarquesmatriz@gmail.com', 'imobiliario454@gmail.com'];
   const isAllowed = isAdmin || (user?.email ? ADMIN_EMAILS.includes(user.email) : false);
-  const showOverlay = !enabled && !isAllowed;
+  const isCardRoute = location.pathname.startsWith('/cartao');
+  const showOverlay = !enabled && !isAllowed && !isCardRoute;
 
   return (
     <div className="min-h-screen bg-black relative">
