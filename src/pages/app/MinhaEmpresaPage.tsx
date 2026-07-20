@@ -182,7 +182,14 @@ function MinhaEmpresaHubDetail({ view, onBack }: { view: 'config' | 'coupon'; on
       setMsg({ kind: 'ok', text: 'Alterações salvas com sucesso.' });
     } catch (err: any) {
       console.error('Salvar empresa erro:', err);
-      setMsg({ kind: 'err', text: 'Erro ao salvar. Tente novamente.' });
+      const raw = err?.message || err?.error_description || '';
+      let friendly = 'Erro ao salvar. Tente novamente.';
+      if (/row-level security|violates row-level/i.test(raw) || err?.code === '42501') {
+        friendly = 'Sua conta ainda não tem perfil empresarial. Faça logout e crie a conta como "Sou Empresa" para configurar sua empresa.';
+      } else if (raw) {
+        friendly = `Erro ao salvar: ${raw}`;
+      }
+      setMsg({ kind: 'err', text: friendly });
     } finally {
       setSaving(false);
     }
