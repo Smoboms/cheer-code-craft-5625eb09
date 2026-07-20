@@ -77,9 +77,7 @@ export function LoginPage() {
           cnpj: accountType === 'company' ? documento.replace(/\D/g, '') : null,
           company_name: accountType === 'company' ? companyName.trim() : null,
         });
-        setInfo(accountType === 'company'
-          ? 'Cadastro realizado. Sua empresa passará por curadoria após o primeiro login.'
-          : 'Cadastro realizado. Verifique seu e-mail.');
+        setSignupDone({ email: email.trim(), isCompany: accountType === 'company' });
       } else {
         await signIn(email, password);
       }
