@@ -227,6 +227,13 @@ export type Database = {
             referencedRelation: "partners"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "client_cashback_balances_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       coupons: {
@@ -269,6 +276,13 @@ export type Database = {
             columns: ["partner_id"]
             isOneToOne: false
             referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupons_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners_public"
             referencedColumns: ["id"]
           },
         ]
@@ -328,6 +342,13 @@ export type Database = {
             columns: ["partner_id"]
             isOneToOne: false
             referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "favorites_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners_public"
             referencedColumns: ["id"]
           },
         ]
@@ -658,6 +679,13 @@ export type Database = {
             referencedRelation: "partners"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "marketplace_products_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       partner_benefits: {
@@ -691,6 +719,13 @@ export type Database = {
             columns: ["partner_id"]
             isOneToOne: false
             referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partner_benefits_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners_public"
             referencedColumns: ["id"]
           },
         ]
@@ -741,6 +776,13 @@ export type Database = {
             columns: ["partner_id"]
             isOneToOne: false
             referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partner_photos_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners_public"
             referencedColumns: ["id"]
           },
         ]
@@ -922,6 +964,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "payments_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "payments_revenue_stream_id_fkey"
             columns: ["revenue_stream_id"]
             isOneToOne: false
@@ -1070,6 +1119,13 @@ export type Database = {
             columns: ["partner_id"]
             isOneToOne: false
             referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pilar_empresas_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners_public"
             referencedColumns: ["id"]
           },
           {
@@ -1441,6 +1497,13 @@ export type Database = {
             referencedRelation: "partners"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "purchases_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       ratings: {
@@ -1486,6 +1549,13 @@ export type Database = {
             columns: ["partner_id"]
             isOneToOne: false
             referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ratings_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1663,7 +1733,93 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      partners_public: {
+        Row: {
+          address: string | null
+          banner_url: string | null
+          cashback_enabled: boolean | null
+          cashback_percent: number | null
+          category: string | null
+          city: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          discount: string | null
+          discount_percent: number | null
+          display_order: number | null
+          distance: string | null
+          id: string | null
+          instagram: string | null
+          is_active: boolean | null
+          is_member: boolean | null
+          logo_url: string | null
+          maps_link: string | null
+          name: string | null
+          opening_hours: string | null
+          phone: string | null
+          profile_image_url: string | null
+          status: string | null
+          website: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          address?: string | null
+          banner_url?: string | null
+          cashback_enabled?: boolean | null
+          cashback_percent?: number | null
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          discount?: string | null
+          discount_percent?: number | null
+          display_order?: number | null
+          distance?: string | null
+          id?: string | null
+          instagram?: string | null
+          is_active?: boolean | null
+          is_member?: boolean | null
+          logo_url?: string | null
+          maps_link?: string | null
+          name?: string | null
+          opening_hours?: string | null
+          phone?: string | null
+          profile_image_url?: string | null
+          status?: string | null
+          website?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string | null
+          banner_url?: string | null
+          cashback_enabled?: boolean | null
+          cashback_percent?: number | null
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          discount?: string | null
+          discount_percent?: number | null
+          display_order?: number | null
+          distance?: string | null
+          id?: string | null
+          instagram?: string | null
+          is_active?: boolean | null
+          is_member?: boolean | null
+          logo_url?: string | null
+          maps_link?: string | null
+          name?: string | null
+          opening_hours?: string | null
+          phone?: string | null
+          profile_image_url?: string | null
+          status?: string | null
+          website?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       create_secondary_profile: {
