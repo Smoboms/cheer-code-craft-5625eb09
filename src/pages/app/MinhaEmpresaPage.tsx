@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, CheckCircle2, AlertCircle, Loader2, Clock, XCircle, Settings, Package, Ticket, LucideIcon } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, AlertCircle, Loader2, Clock, XCircle, Settings, Package, Ticket, LayoutDashboard, LucideIcon } from 'lucide-react';
+import { MinhaEmpresaDashboard } from './MinhaEmpresaDashboard';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
